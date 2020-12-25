@@ -1,6 +1,8 @@
 <?php
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 class AdminController extends Controller
 {
     /**
@@ -8,6 +10,11 @@ class AdminController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function __construct()
+    {
+       if(!Auth::check())
+             return redirect(route('login'),302,['message'=>'not authenticated']);
+    }
     public function index($id)
     {
         if(view()->exists($id)){

@@ -20,8 +20,11 @@ use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 Route::group( [ 'prefix' => LaravelLocalization::setLocale(), 'middleware' => [ 'localeSessionRedirect', 'localizationRedirect', 'localeViewPath' ]],
     function(){
-        Auth::routes();
-        Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-        //Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-        Route::get('/{page}', [App\Http\Controllers\AdminController::class,'index']);
+        //only for logging
+        Auth::routes(['register'=>false]);
+        Route::group(['middleware'=>'auth'], function () {
+            //available links for logged users
+            Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+            Route::get('/{page}', [App\Http\Controllers\AdminController::class,'index']);
+        });
 });
