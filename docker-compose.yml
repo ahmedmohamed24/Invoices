@@ -37,6 +37,21 @@ services:
       SERVICE_NAME: mysql
     networks:
       - laravel
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin/phpmyadmin:latest
+    restart: always
+    links:
+      - mysql:mysql
+    environment:
+      MYSQL_USER: homestead
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: secret
+      PMA_HOST: mysql
+    ports:
+      - "8080:80"
+    networks:
+      - laravel
   php:
     build:
       context: .
