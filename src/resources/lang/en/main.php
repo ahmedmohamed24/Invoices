@@ -1,8 +1,8 @@
 <?php
 return [
 
-    'logout'=>'logout'
-
+    'logout'=>'logout',
+    'app-name'=>'Invoices'
 
 ];
 

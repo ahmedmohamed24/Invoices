@@ -19,10 +19,21 @@ class InvoiceController extends Controller
     }
     public function index()
     {
-        $invoices=$this->invoice::all();
-        return view('invoices',['invoices'=>$invoices]);
+        $invoices=$this->invoice::select('invoice_number','user','product','section','total','status')->paginate(30);
+        return view('invoices.invoices',['invoices'=>$invoices]);
     }
-
+    public function getPaid(){
+        $invoices=$this->invoice::select('invoice_number','user','product','section','total','status')->where('status','1')->paginate(30);
+        return view('invoices.invoices-paid',['invoices'=>$invoices]);
+    }
+    public function getNotPaid(){
+        $invoices=$this->invoice::select('invoice_number','user','product','section','total','status')->where('status','0')->paginate(30);
+        return view('invoices.invoices-notPaid',['invoices'=>$invoices]);
+    }
+    public function getPartiallyPaid(){
+        $invoices=$this->invoice::select('invoice_number','user','product','section','total','status')->where('status','2')->paginate(30);
+        return view('invoices.invoices-partiallyPaid',['invoices'=>$invoices]);
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -50,9 +61,10 @@ class InvoiceController extends Controller
      * @param  \App\Models\Invoice  $invoice
      * @return \Illuminate\Http\Response
      */
-    public function show(Invoice $invoice)
+    public function show($id)
     {
-        //
+       $invoice=$this->invoice::where('invoice_number',$id)->firstOrFail();
+
     }
 
     /**

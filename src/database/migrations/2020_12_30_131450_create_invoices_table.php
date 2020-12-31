@@ -16,7 +16,7 @@ class CreateInvoicesTable extends Migration
     {
         Schema::create('invoices', function (Blueprint $table) {
             $table->id();
-            $table->string('invoice_number');
+            $table->string('invoice_number')->unique();
             $table->timestamp('invoice_date');
             $table->timestamp('due_date')->nullable();
             $table->string('product');

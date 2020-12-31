@@ -2,6 +2,10 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\DepartmentController;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 /*
@@ -19,12 +23,16 @@ use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 Route::group( [ 'prefix' => LaravelLocalization::setLocale(), 'middleware' => [ 'localeSessionRedirect', 'localizationRedirect', 'localeViewPath' ]],
     function(){
         //only for logging
-        Auth::routes(['register'=>false]);
+        Auth::routes();
+        //Auth::routes(['register'=>false]);
         Route::group(['middleware'=>'auth'], function () {
             //available links for logged users
 
             //invoices routes
             Route::get('/invoice/all',[App\Http\Controllers\InvoiceController::class,'index'])->name('invoice.all');
+            Route::get('/invoice/paid',[App\Http\Controllers\InvoiceController::class,'getPaid'])->name('invoice.paid');
+            Route::get('/invoice/paid/partially',[App\Http\Controllers\InvoiceController::class,'getPartiallyPaid'])->name('invoice.paid.partially');
+            Route::get('/invoice/notpaid',[App\Http\Controllers\InvoiceController::class,'getNotPaid'])->name('invoice.notPaid');
             Route::get('/invoice/show/{id}',[App\Http\Controllers\InvoiceController::class,'show'])->name('invoice.show');
             Route::get('/invoice/create',[App\Http\Controllers\InvoiceController::class,'create'])->name('invoice.create');
             Route::post('/invoice/store',[App\Http\Controllers\InvoiceController::class,'store'])->name('invoice.store');
@@ -32,6 +40,8 @@ Route::group( [ 'prefix' => LaravelLocalization::setLocale(), 'middleware' => [ 
             Route::get('/invoices/edit/{id}',[App\Http\Controllers\InvoiceController::class,'edit'])->name('invoice.edit');
             Route::post('/invoice/update',[App\Http\Controllers\InvoiceController::class,'update'])->name('invoice.update');
 
+            //departments reoutes
+            Route::resource('department', DepartmentController::class);
 
             Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
             Route::get('/{page}', [App\Http\Controllers\AdminController::class,'index']);

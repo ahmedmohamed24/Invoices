@@ -1,4 +1,7 @@
 @extends('layouts.master')
+@section('title')
+    {{ __('invoice.not paid') }}
+@endsection
 @section('css')
 <!-- Internal Data table css -->
 <link href="{{URL::asset('assets/plugins/datatable/css/dataTables.bootstrap4.min.css')}}" rel="stylesheet" />
@@ -8,8 +11,6 @@
 <link href="{{URL::asset('assets/plugins/datatable/css/responsive.dataTables.min.css')}}" rel="stylesheet">
 <link href="{{URL::asset('assets/plugins/select2/css/select2.min.css')}}" rel="stylesheet">
 @endsection
-@section('page-header')
-				@endsection
 @section('content')
 				<!-- row opened -->
 				<div class="row row-sm my-5">
@@ -17,7 +18,7 @@
 						<div class="card mg-b-20">
 							<div class="card-header pb-0">
 								<div class="d-flex justify-content-between">
-									<h4 class="card-title mg-b-0">All Invoices</h4>
+									<h4 class="card-title mg-b-0">{{ __('invoice.partially paid') }}</h4>
 									<i class="mdi mdi-dots-horizontal text-gray"></i>
 								</div>
 							</div>
@@ -26,12 +27,12 @@
 									<table id="example" class="table key-buttons text-md-nowrap">
 										<thead>
 											<tr>
-												<th class="border-bottom-0">Invoice Number</th>
-												<th class="border-bottom-0">User</th>
-												<th class="border-bottom-0">Product</th>
-												<th class="border-bottom-0">Section</th>
-												<th class="border-bottom-0">Total</th>
-												<th class="border-bottom-0">Status</th>
+                                                <th class="border-bottom-0">{{ __('invoice.invoice number') }}</th>
+												<th class="border-bottom-0">{{ __('invoice.user') }}</th>
+												<th class="border-bottom-0">{{ __('invoice.product') }}</th>
+												<th class="border-bottom-0">{{ __('invoice.section') }}</th>
+												<th class="border-bottom-0">{{ __('invoice.total') }}</th>
+												<th class="border-bottom-0">{{ __('invoice.status') }}</th>
 											</tr>
 										</thead>
 										<tbody>
