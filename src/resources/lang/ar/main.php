@@ -2,6 +2,7 @@
 return [
 
     'logout'=>'تسجيل الخروج',
-    'app-name'=>'الفواتير'
+    'app-name'=>'الفواتير',
+    'language'=>'اللغة'
 ];
 

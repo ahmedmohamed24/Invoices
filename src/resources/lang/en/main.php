@@ -2,7 +2,7 @@
 return [
 
     'logout'=>'logout',
-    'app-name'=>'Invoices'
-
+    'app-name'=>'Invoices',
+    'language'=>'Language'
 ];
 

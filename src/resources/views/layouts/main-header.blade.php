@@ -41,7 +41,17 @@
 
 							<li class="">
 
-								<div class="dropdown  nav-itemd-none d-md-flex">
+                                <button aria-expanded="false" aria-haspopup="true" class="btn ripple btn-secondary"
+                                data-toggle="dropdown" type="button"> {{ __('main.language') }} <i class="fas fa-caret-down ml-1"></i></button>
+                                <div class="dropdown-menu tx-13">
+                                    @foreach(LaravelLocalization::getSupportedLocales() as $localeCode => $properties)
+                                        <a class="dropdown-item" rel="alternate" hreflang="{{ $localeCode }}" href="{{ LaravelLocalization::getLocalizedURL($localeCode, null, [], true) }}">
+                                        {{ $properties['native'] }}
+                                        </a>
+                                    @endforeach
+                                </div>
+
+								{{-- <div class="dropdown  nav-itemd-none d-md-flex">
 
 									<a href="#" class="d-flex  nav-item nav-link pl-0 country-flag1" data-toggle="dropdown" aria-expanded="false">
 
@@ -120,7 +130,7 @@
 									</div>
 
 								</div>
-
+ --}}
 							</li>
 
 						</ul>

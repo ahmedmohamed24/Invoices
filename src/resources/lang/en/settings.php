@@ -10,5 +10,7 @@ return [
     'delete'=>'delete',
     'Department Title'=>'Department Title',
     'Description'=>'Description',
+    'save'=>'save',
+    'close'=>'close',
 
 ];

@@ -10,5 +10,8 @@ return [
     'delete'=>'حذف',
     'Department Title'=>'اسم القسم',
     'Description'=>'الوصف',
+    'save'=>'حفظ',
+    'close'=>'غلق',
+
 
 ];

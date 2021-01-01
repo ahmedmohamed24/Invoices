@@ -13,12 +13,20 @@
 @endsection
 
 @section('page-header')
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                @foreach ($errors->all() as $error)
+                   <p class="my-1">{{ $error }}</p>
+                @endforeach
+            </div>
+
+        @endif
         @if (session('message') !== null)
             <div class="alert alert-success" role="alert">
                 {{ session('message') }}
             </div>
         @endif
-        <div class="w-50 mt-5">
+        <div class="w-50 mt-3">
 			<a class="modal-effect btn btn-success btn-block" data-effect="effect-scale" data-toggle="modal" href="#modaldemo1">{{ __('settings.add department') }}</a>
         </div>
 		<!-- Basic modal -->
@@ -84,16 +92,21 @@
 										</thead>
 										<tbody>
                                                 @foreach ($departments as $department)
-
-											<tr>
+    											<tr>
                                                     <td>{{ $loop->index }}</td>
 												    <td>{{ $department->title}}</td>
 												    <td>{{ $department->description}}</td>
 												    <td class="d-flex">
-												        <a class="btn btn-danger ml-2" href="{{ route('department.destroy',$department->id) }}">{{ __('settings.delete') }}</a>
-												        <a class="btn btn-warning" href="{{ route('department.edit',$department->id) }}">{{ __('settings.update') }}</a>
+												        <a class="btn btn-info ml-2" onclick="event.preventDefault();showEditModal({{ $department->id }});"><i class="las la-pen"></i></a>
+                                                        <form action="{{ route('department.destroy',$department->id) }}" method="POST">
+                                                            @method('DELETE')
+                                                            @csrf
+												            <button class="btn btn-danger"><i class="las la-trash"></i></button>
+                                                        </form>
+
+
                                                     </td>
-											</tr>
+			    								</tr>
                                                 @endforeach
 									</table>
 								</div>
@@ -105,15 +118,52 @@
 			</div>
 			<!-- Container closed -->
 		</div>
-		<!-- main-content closed -->
+        <!-- main-content closed -->
+
+
+    {{-- Update Model --}}
+    <div class="hidden">
+		<a class="modal-effect hidden" id="openEditModel" data-effect="effect-scale" data-toggle="modal" href="#modaldemo5">Update</a>
+    </div>
+    <form method="POST" action="" id="updateForm" class="w-75 my-4">
+        {{ route('department.update',10)  }}
+        @csrf
+        @method('PUT')
+		<div class="modal" id="modaldemo5">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content modal-content-demo">
+					<div class="modal-header">
+						<h6 class="modal-title">{{ __('settings.update') }}</h6><button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
+					</div>
+					<div class="modal-body">
+                        <div class="form-group">
+                            <input class="form-control" value="" type="text" id="departmentTitle" name="title">
+                        </div>
+                        <div class="form-group">
+                            <textarea class="form-control" value="" rows="3"id="departmentDesc" name="description"></textarea>
+                        </div>
+					</div>
+					<div class="modal-footer">
+                        <button class="btn ripple btn-primary" type="submit">{{ __('settings.save') }}</button>
+						<a class="btn ripple btn-secondary" href="{{ route('department.index') }}" type="button">{{ __('settings.close') }}</a>
+					</div>
+				</div>
+			</div>
+        </div>
+	</form>
+	<!-- End of update Model -->
 @endsection
 @section('js')
 <!-- Internal Data tables -->
-<script src="{{URL::asset('assets/plugins/datatable/js/jquery.dataTables.min.js')}}"></script>
+@if (LaravelLocalization::getCurrentLocale()=="ar")
+    <script src="{{URL::asset('assets/plugins/datatable/js/jquery.dataTables-rtl.js')}}"></script>
+@else
+    <script src="{{URL::asset('assets/plugins/datatable/js/jquery.dataTables.js')}}"></script>
+@endif
+{{-- <script src="{{URL::asset('assets/plugins/datatable/js/jquery.dataTables.min.js')}}"></script> --}}
 <script src="{{URL::asset('assets/plugins/datatable/js/dataTables.dataTables.min.js')}}"></script>
 <script src="{{URL::asset('assets/plugins/datatable/js/dataTables.responsive.min.js')}}"></script>
 <script src="{{URL::asset('assets/plugins/datatable/js/responsive.dataTables.min.js')}}"></script>
-<script src="{{URL::asset('assets/plugins/datatable/js/jquery.dataTables.js')}}"></script>
 <script src="{{URL::asset('assets/plugins/datatable/js/dataTables.bootstrap4.js')}}"></script>
 <script src="{{URL::asset('assets/plugins/datatable/js/dataTables.buttons.min.js')}}"></script>
 <script src="{{URL::asset('assets/plugins/datatable/js/buttons.bootstrap4.min.js')}}"></script>
@@ -128,6 +178,29 @@
 <!--Internal  Datatable js -->
 <script src="{{URL::asset('assets/js/table-data.js')}}"></script>
     <script>
+
+        // for displaying modal to update data
+        function showEditModal(id){
+            $.ajax({
+                type: 'GET',
+                enctype: 'multipart/form-data',
+                url: window.location.href+`/${id}`,
+                data: null,
+                processData: false,
+                contentType: false,
+                cache: false,
+                success: function (data) {
+                  document.getElementById('openEditModel').click();
+                  if(data.status===200)
+                  {
+                    document.getElementById('departmentTitle').value=data.data.title;
+                    document.getElementById('departmentDesc').value=data.data.description;
+                    document.getElementById('updateForm').action=window.location.href+'/'+data.data.id;
+                  }
+                },
+            });
+        }
+        //for creating new departmnet
         $('#homeForm').submit((e)=>{
             e.preventDefault();
             let formData= new FormData($('#homeForm')[0]);
@@ -169,5 +242,6 @@
 
             });
         })
+
     </script>
 @endsection

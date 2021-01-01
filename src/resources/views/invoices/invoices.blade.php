@@ -64,8 +64,28 @@
 												<td>{{ $invoice->user}}</td>
 												<td>{{ $invoice->product }}</td>
 												<td>{{ $invoice->section }}</td>
-												<td>{{ $invoice->total }}</td>
-												<td>{{ $invoice->status }}</td>
+                                                <td>{{ $invoice->total }}</td>
+                                                @switch($invoice->status)
+                                                    @case('paid')
+                                                        <td class="text-center">
+                                                            <span class="label text-success d-flex"><div class="dot-label bg-success ml-1"></div>Paid</span>
+                                                        </td>
+                                                        @break
+                                                    @case('not_paid')
+                                                        <td class="text-center">
+                                                            <span class="label text-danger d-flex"><div class="dot-label bg-danger ml-1"></div> Not Paid</span>
+                                                        </td>
+                                                        @break
+                                                    @case('partially_paid')
+                                                        <td class="text-center">
+													        <span class="label text-muted d-flex"><div class="dot-label bg-gray-300 ml-1"></div>Partially Paid</span>
+												        </td>
+                                                        @break
+                                                    @default
+                                                        <td class="text-center">
+                                                            <span class="label text-danger d-flex"><div class="dot-label bg-danger ml-1"></div> Error</span>
+                                                        </td>
+                                                @endswitch
 											</tr>
                                             @endforeach
 										</tbody>
@@ -83,11 +103,15 @@
 @endsection
 @section('js')
 <!-- Internal Data tables -->
+@if (LaravelLocalization::getCurrentLocale()=="ar")
+    <script src="{{URL::asset('assets/plugins/datatable/js/jquery.dataTables-rtl.js')}}"></script>
+@else
+    <script src="{{URL::asset('assets/plugins/datatable/js/jquery.dataTables.js')}}"></script>
+@endif
 <script src="{{URL::asset('assets/plugins/datatable/js/jquery.dataTables.min.js')}}"></script>
 <script src="{{URL::asset('assets/plugins/datatable/js/dataTables.dataTables.min.js')}}"></script>
 <script src="{{URL::asset('assets/plugins/datatable/js/dataTables.responsive.min.js')}}"></script>
 <script src="{{URL::asset('assets/plugins/datatable/js/responsive.dataTables.min.js')}}"></script>
-<script src="{{URL::asset('assets/plugins/datatable/js/jquery.dataTables.js')}}"></script>
 <script src="{{URL::asset('assets/plugins/datatable/js/dataTables.bootstrap4.js')}}"></script>
 <script src="{{URL::asset('assets/plugins/datatable/js/dataTables.buttons.min.js')}}"></script>
 <script src="{{URL::asset('assets/plugins/datatable/js/buttons.bootstrap4.min.js')}}"></script>

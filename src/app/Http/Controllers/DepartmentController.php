@@ -68,9 +68,10 @@ class DepartmentController extends Controller
      * @param  \App\Models\Department  $department
      * @return \Illuminate\Http\Response
      */
-    public function show(Department $department)
+    public function show(int $id)
     {
-        //
+        $department=$this->department::findOrFail($id);
+        return $this->customResponse(200,"success",$department);
     }
 
     /**
@@ -92,14 +93,17 @@ class DepartmentController extends Controller
      * @param  \App\Models\Department  $department
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request,$id)
+    public function update(Request $request,int $id)
     {
         $request->validate([
-            'title'=>'required|string|unique:departments,title|max:50',
+            'title'=>"required|string|max:50",
             'description'=>'nullable|string'
         ]);
+        $isUnique=$this->department::select('*')->where('title',$request->title)->where('id','!=',$id)->count();
+        if($isUnique!=0)
+            return redirect()->back()->with('msg','Title is already taken');
         $this->department::findOrFail($id)->update(['title'=>$request->title,'description'=>$request->description]);
-        return redirect()->route('department.index')->with('message',"Department update successfully");
+        return redirect(route('department.index'))->with('message',"Department update successfully");
     }
 
     /**
@@ -108,8 +112,9 @@ class DepartmentController extends Controller
      * @param  \App\Models\Department  $department
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Department $department)
+    public function destroy(int $id)
     {
-        //
+       $this->department::findOrFail($id)->delete();
+       return redirect()->back()->with('message','Department deleted successfully');
     }
 }

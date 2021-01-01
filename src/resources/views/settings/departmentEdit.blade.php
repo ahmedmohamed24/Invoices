@@ -16,13 +16,16 @@
 								<div class="row row-sm">
 									<div class="col-lg">
                                         <div class="form-group">
-											<input class="form-control" placeholder="{{ $department->title }}" type="text"name="title">
+                                            <input class="form-control" value="{{ $department->title }}" type="text"name="title">
                                         </div>
+                                        @if (session('msg') != null)
+                                            <p class="alert alert-danger">{{ session('msg') }}</p>
+                                        @endif
                                         @error('title')
                                             {{ $message }}
                                         @enderror
 										<div class="form-group">
-									        <textarea class="form-control" placeholder="{{ $department->description }}" rows="3" name="description"></textarea>
+									        <textarea class="form-control" value="{{ $department->description }}" rows="3" name="description"></textarea>
                                         </div>
                                         @error('title')
                                             {{ $message }}
@@ -31,8 +34,8 @@
 								</div>
 							</div>
                         </div>
-                        <button class="btn ripple btn-primary" type="submit">Save</button>
-						<a class="btn ripple btn-secondary" href="{{ route('department.index') }}" type="button">Close</a>
+                        <button class="btn ripple btn-primary" type="submit">{{ __('setting.save') }}</button>
+						<a class="btn ripple btn-secondary" href="{{ route('department.index') }}" type="button">{{ __('settings.close') }}</a>
 
 					</form>
 @endsection
