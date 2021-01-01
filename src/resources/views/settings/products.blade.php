@@ -9,7 +9,7 @@
 <link href="{{URL::asset('assets/plugins/select2/css/select2.min.css')}}" rel="stylesheet">
 @endsection
 @section('title')
-   {{ __('settings.departments') }}
+   {{ __('product.products') }}
 @endsection
 
 @section('page-header')
@@ -26,21 +26,21 @@
                 {{ session('message') }}
             </div>
         @endif
+        {{-- adding new product modal --}}
         <div class="w-50 mt-3">
-			<a class="modal-effect btn btn-success btn-block" data-effect="effect-scale" data-toggle="modal" href="#modaldemo1">{{ __('settings.add department') }}</a>
+			<a class="modal-effect btn btn-success btn-block" data-effect="effect-scale" data-toggle="modal" href="#modaldemo1">{{ __('product.add prduct') }}</a>
         </div>
-		<!-- Basic modal -->
 		<div class="modal" id="modaldemo1">
 			<div class="modal-dialog" role="document">
-                <form id="homeForm" action="{{ route('department.store') }}"  method="POST" class="modal-content modal-content-demo">
+                <form id="homeForm" action="{{ route('product.store') }}"  method="POST" class="modal-content modal-content-demo">
                     @csrf
                     <div class="alert alert-success mg-y-1 succesContainer d-none" role="alert">
                     </div>
                     <div class="alert alert-danger mg-y-1 errorContainer d-none" role="alert">
                     </div>
 					<div class="modal-header">
-						<h6 class="modal-title">{{ __('settings.add department') }}</h6><button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
-					</div>
+						<h6 class="modal-title">{{ __('product.add prduct') }}</h6><button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
+                    </div>
 					<div class="modal-body">
                         <div class="card">
 							<div class="card-body">
@@ -48,10 +48,26 @@
 									<div class="col-lg-12">
 										<div class="bg-gray-200 p-4">
 											<div class="form-group">
-												<input class="form-control" placeholder="{{ __('settings.Department Title') }}" type="text"name="title">
+												<input class="form-control" placeholder="{{ __('product.title') }}" type="text"name="title">
+                                            </div>
+                                            <div class="form-group">
+												<input class="form-control" placeholder="{{ __('product.price') }}" type="number" name="price">
 											</div>
+                                            <div class="row row-sm mb-2">
+                                                <div class="col-sm-7 col-md-6 col-lg-4">
+                                                    <div class="custom-file">
+                                                        <input class="custom-file-input" name="img" id="customFile" type="file"> <label class="custom-file-label" for="customFile">{{ __('product.image') }}</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <select class="form-control mb-2" required name="department">
+                                                <option disabled default value="-1">{{ __('product.select department') }}</option>
+                                                @foreach ($departments as $department)
+                                                    <option class="dropdown-item" value="{{ $department->id }}">{{ $department->title }}</option>
+                                                @endforeach
+                                            </select>
 											<div class="form-group">
-										        <textarea class="form-control" placeholder="{{ __('settings.Description') }}" rows="3" name="description"></textarea>
+										        <textarea class="form-control" placeholder="{{ __('product.description') }}" rows="3" name="description"></textarea>
 											</div>
 										</div>
 									</div>
@@ -76,7 +92,7 @@
 						<div class="card">
 							<div class="card-header pb-0">
 								<div class="d-flex justify-content-between">
-									<h4 class="card-title mg-b-0">{{ __('settings.departments') }}</h4>
+									<h4 class="card-title mg-b-0">{{ __('product.all products') }}</h4>
 								</div>
 							</div>
 							<div class="card-body">
@@ -85,20 +101,28 @@
 										<thead>
 											<tr>
 												<th>#</th>
-												<th>{{ __('settings.title') }}</th>
-												<th>{{ __('settings.notes') }}</th>
-												<th>{{ __('settings.operations') }}</th>
+                                                <th>{{ __('product.image') }}</th>
+												<th>{{ __('product.title') }}</th>
+												<th>{{ __('product.description') }}</th>
+                                                <th>{{ __('product.price') }}</th>
+                                                <th>{{ __('product.department') }}</th>
+                                                <th>{{ __('product.operations') }}</th>
+
 											</tr>
 										</thead>
 										<tbody>
-                                                @foreach ($departments as $department)
+                                                @foreach ($products as $product)
     											<tr>
                                                     <td>{{ $loop->index }}</td>
-												    <td>{{ $department->title}}</td>
-												    <td>{{ $department->description}}</td>
+                                                    <td><img src="{{asset(($product->img))}}" alt="{{ $product->title}}"></td>
+												    <td>{{ $product->title}}</td>
+                                                    <td>{{ $product->description}}</td>
+                                                    <td>{{ $product->price}}</td>
+                                                    <td>{{ $product->department->title}}</td>
+
 												    <td class="d-flex">
-												        <a class="btn btn-info ml-2" onclick="event.preventDefault();showEditModal({{ $department->id }});"><i class="las la-pen"></i></a>
-                                                        <form action="{{ route('department.destroy',$department->id) }}" method="POST">
+												        <a class="btn btn-info ml-2" onclick="event.preventDefault();showEditModal({{ $product->id }});"><i class="las la-pen"></i></a>
+                                                        <form action="{{ route('product.destroy',$product->id) }}" method="POST">
                                                             @method('DELETE')
                                                             @csrf
 												            <button class="btn btn-danger"><i class="las la-trash"></i></button>
@@ -132,19 +156,19 @@
 			<div class="modal-dialog" role="document">
 				<div class="modal-content modal-content-demo">
 					<div class="modal-header">
-						<h6 class="modal-title">{{ __('settings.update') }}</h6><button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
+						<h6 class="modal-title">{{ __('product.update') }}</h6><button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
 					</div>
 					<div class="modal-body">
                         <div class="form-group">
-                            <input class="form-control" value="" type="text" id="departmentTitle" name="title">
+                            <input class="form-control" value="" type="text" id="productTitle" name="title">
                         </div>
                         <div class="form-group">
-                            <textarea class="form-control" value="" rows="3"id="departmentDesc" name="description"></textarea>
+                            <textarea class="form-control" value="" rows="3"id="productDesc" name="description"></textarea>
                         </div>
 					</div>
 					<div class="modal-footer">
-                        <button class="btn ripple btn-primary" type="submit">{{ __('settings.save') }}</button>
-						<a class="btn ripple btn-secondary" href="{{ route('department.index') }}" type="button">{{ __('settings.close') }}</a>
+                        <button class="btn ripple btn-primary" type="submit">{{ __('product.save') }}</button>
+						<a class="btn ripple btn-secondary" href="{{ route('product.index') }}" type="button">{{ __('product.cancel') }}</a>
 					</div>
 				</div>
 			</div>
@@ -192,8 +216,8 @@
                   document.getElementById('openEditModel').click();
                   if(data.status===200)
                   {
-                    document.getElementById('departmentTitle').value=data.data.title;
-                    document.getElementById('departmentDesc').value=data.data.description;
+                    document.getElementById('productTitle').value=data.data.title;
+                    document.getElementById('productDesc').value=data.data.description;
                     document.getElementById('updateForm').action=window.location.href+'/'+data.data.id;
                   }
                 },
@@ -218,7 +242,7 @@
             $.ajax({
                 type: 'POST',
                 enctype: 'multipart/form-data',
-                url: "{{route('department.store')}}",
+                url: "{{route('product.store')}}",
                 data: formData,
                 processData: false,
                 contentType: false,

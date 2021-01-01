@@ -2,10 +2,8 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\ProductController;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 /*
@@ -40,8 +38,10 @@ Route::group( [ 'prefix' => LaravelLocalization::setLocale(), 'middleware' => [ 
             Route::get('/invoices/edit/{id}',[App\Http\Controllers\InvoiceController::class,'edit'])->name('invoice.edit');
             Route::post('/invoice/update',[App\Http\Controllers\InvoiceController::class,'update'])->name('invoice.update');
 
-            //departments reoutes
+            //departments routes
             Route::resource('department', DepartmentController::class);
+            //products routes
+            Route::resource('product', ProductController::class);
 
             Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
             Route::get('/{page}', [App\Http\Controllers\AdminController::class,'index']);
