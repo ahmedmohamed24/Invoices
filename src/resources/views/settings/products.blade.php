@@ -53,12 +53,10 @@
                                             <div class="form-group">
 												<input class="form-control" placeholder="{{ __('product.price') }}" type="number" name="price">
 											</div>
-                                            <div class="row row-sm mb-2">
-                                                <div class="col-sm-7 col-md-6 col-lg-4">
+                                            <div class=" mb-2">
                                                     <div class="custom-file">
                                                         <input class="custom-file-input" name="img" id="customFile" type="file"> <label class="custom-file-label" for="customFile">{{ __('product.image') }}</label>
                                                     </div>
-                                                </div>
                                             </div>
                                             <select class="form-control mb-2" required name="department">
                                                 <option disabled default value="-1">{{ __('product.select department') }}</option>
@@ -223,7 +221,7 @@
                 },
             });
         }
-        //for creating new departmnet
+        //for creating new Product
         $('#homeForm').submit((e)=>{
             e.preventDefault();
             let formData= new FormData($('#homeForm')[0]);

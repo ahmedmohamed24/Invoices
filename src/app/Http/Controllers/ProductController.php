@@ -55,7 +55,7 @@ class ProductController extends Controller
                 'description'=>'string|required',
                 'img'=>'nullable|image|mimes:png,jpg,jpeg|max:1024',
                 'price'=>'required|numeric|min:0|max:999999.99',
-                'department'=>"exists:departments,id|required",
+                'department'=>"required|exists:departments,id",
                 'create_at'=>now(),
                 'updated_at'=>now()
 
@@ -63,7 +63,7 @@ class ProductController extends Controller
         );
         if($validators->fails())
             return $this->customResponse(406,$validators->errors(),null);
-        if($request->img===null){
+        if(!$request->hasFile('img')){
             //no image uploaded so upload default one
             $this->product::create([
                 'title'=>$request->title,
@@ -71,7 +71,7 @@ class ProductController extends Controller
                 'price'=>$request->price,
                 'created_by'=>Auth::user()->id,
                 'img'=>'assets/img/ecommerce/01.jpg',
-                'department'=>$request->department_id,
+                'department_id'=>$request->department,
                 'created_at'=>now(),
                 'updated_at'=>now(),
             ]);
@@ -80,19 +80,19 @@ class ProductController extends Controller
             $img=$request->file('img');
             $ext=$img->getClientOriginalExtension();
             $newImageName='product'.now().uniqid().".$ext";
-            $img->move(public_path('/uploads/products',$newImageName));
+            $img->move(public_path('uploads/products'),$newImageName);
             $this->product::create([
                 'title'=>$request->title,
                 'description'=>$request->description,
                 'price'=>$request->price,
                 'created_by'=>Auth::user()->id,
                 'img'=>"/uploads/products/$newImageName",
-                'department_id'=>$request->department_id,
+                'department_id'=>$request->department,
                 'created_at'=>now(),
                 'updated_at'=>now(),
             ]);
-        }
-        $this->customResponse(200,"product $request->title Uploaded");
+       }
+       return $this->customResponse(200,"product $request->title Uploaded");
     }
 
     /**
