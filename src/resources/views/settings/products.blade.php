@@ -26,8 +26,20 @@
                 {{ session('message') }}
             </div>
         @endif
+
+@endsection
+@section('content')
+        				<!-- row opened -->
+				<div class="row row-sm mt-3">
+					<div class="col-xl-12">
+						<div class="card">
+							<div class="card-header pb-0">
+								<div class="d-flex justify-content-between">
+									<h4 class="card-title mg-b-0">{{ __('product.all products') }}</h4>
+								</div>
+                            </div>
         {{-- adding new product modal --}}
-        <div class="w-50 mt-3">
+        <div class="w-50 mt-3 mr-2">
 			<a class="modal-effect btn btn-success btn-block" data-effect="effect-scale" data-toggle="modal" href="#modaldemo1">{{ __('product.add prduct') }}</a>
         </div>
 		<div class="modal" id="modaldemo1">
@@ -82,17 +94,6 @@
 		</div>
 
 
-@endsection
-@section('content')
-        				<!-- row opened -->
-				<div class="row row-sm mt-3">
-					<div class="col-xl-12">
-						<div class="card">
-							<div class="card-header pb-0">
-								<div class="d-flex justify-content-between">
-									<h4 class="card-title mg-b-0">{{ __('product.all products') }}</h4>
-								</div>
-							</div>
 							<div class="card-body">
 								<div class="table-responsive hoverable-table w-100">
 									<table id="example-delete" class="table text-md-nowrap">
