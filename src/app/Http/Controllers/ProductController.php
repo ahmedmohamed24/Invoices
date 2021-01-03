@@ -28,7 +28,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = $this->product::select('id', 'img', 'description', 'title', 'department_id', 'price')->paginate(20);
+        $products = $this->product::select('id', 'img', 'description', 'title', 'department_id', 'price')->paginate(10);
         $departments = $this->department->select('id', 'title')->get();
         return view('settings.products', ['products' => $products, "departments" => $departments]);
     }

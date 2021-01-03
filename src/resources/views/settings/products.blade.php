@@ -1,18 +1,11 @@
+
 @extends('layouts.master')
 @section('css')
-    <!-- Internal Data table css -->
-    <link href="{{ URL::asset('assets/plugins/datatable/css/dataTables.bootstrap4.min.css') }}" rel="stylesheet" />
-    <link href="{{ URL::asset('assets/plugins/datatable/css/buttons.bootstrap4.min.css') }}" rel="stylesheet">
-    <link href="{{ URL::asset('assets/plugins/datatable/css/responsive.bootstrap4.min.css') }}" rel="stylesheet" />
-    <link href="{{ URL::asset('assets/plugins/datatable/css/jquery.dataTables.min.css') }}" rel="stylesheet">
-    <link href="{{ URL::asset('assets/plugins/datatable/css/responsive.dataTables.min.css') }}" rel="stylesheet">
-    <link href="{{ URL::asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
 @endsection
 @section('title')
     {{ __('product.products') }}
 @endsection
-
-@section('page-header')
+@section('content')
     @if ($errors->any())
         <div class="alert alert-danger mt-2">
             @foreach ($errors->all() as $error)
@@ -26,140 +19,165 @@
             {{ session('message') }}
         </div>
     @endif
-
-@endsection
-@section('content')
-    <!-- row opened -->
-    <div class="row row-sm mt-3">
-        <div class="col-xl-12">
-            <div class="card">
-                <div class="card-header pb-0">
-                    <div class="d-flex justify-content-between">
-                        <h4 class="card-title mg-b-0">{{ __('product.all products') }}</h4>
-                    </div>
-                </div>
-                {{-- create new product modal --}}
-                <div class="w-50 mt-3 mr-2">
-                    <a class="modal-effect btn btn-success btn-block" data-effect="effect-scale" data-toggle="modal"
-                        href="#modaldemo1">{{ __('product.add prduct') }}</a>
-                </div>
-                <div class="modal" id="modaldemo1">
-                    <div class="modal-dialog" role="document">
-                        <form id="homeForm" action="{{ route('product.store') }}" method="POST"
-                            class="modal-content modal-content-demo" enctype="multipart/form-data">
-                            @csrf
-                            <div class="alert alert-success mg-y-1 succesContainer d-none" role="alert">
+				<!-- row opened -->
+				<div class="row row-sm">
+					<div class="col-xl-12">
+						<div class="card">
+							<div class="card-header pb-0">
+								<div class="d-flex justify-content-between">
+									<h4 class="card-title mg-b-0">{{ __('product.all products') }}</h4>
+								</div>
                             </div>
-                            <div class="alert alert-danger mg-y-1 errorContainer d-none" role="alert">
+                            {{-- create new product modal --}}
+                            <div class="w-50 mt-3 mr-2">
+                                <a class="modal-effect btn btn-success btn-block" data-effect="effect-scale" data-toggle="modal"
+                                    href="#modaldemo1">{{ __('product.add prduct') }}</a>
                             </div>
-                            <div class="modal-header">
-                                <h6 class="modal-title">{{ __('product.add prduct') }}</h6><button aria-label="Close"
-                                    class="close" data-dismiss="modal" type="button"><span
-                                        aria-hidden="true">&times;</span></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col-lg-12">
-                                                <div class="bg-gray-200 p-4">
-                                                    <div class="form-group">
-                                                        <input class="form-control" placeholder="{{ __('product.title') }}"
-                                                            type="text" name="title">
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <input class="form-control" placeholder="{{ __('product.price') }}"
-                                                            type="number" name="price">
-                                                    </div>
-                                                    <div class=" mb-2">
-                                                        <div class="custom-file">
-                                                            <input class="custom-file-input" name="img" id="customFile"
-                                                                type="file"> <label class="custom-file-label"
-                                                                for="customFile">{{ __('product.image') }}</label>
+                            <div class="modal" id="modaldemo1">
+                                <div class="modal-dialog" role="document">
+                                    <form id="homeForm" action="{{ route('product.store') }}" method="POST"
+                                        class="modal-content modal-content-demo" enctype="multipart/form-data">
+                                        @csrf
+                                        <div class="alert alert-success mg-y-1 succesContainer d-none" role="alert">
+                                        </div>
+                                        <div class="alert alert-danger mg-y-1 errorContainer d-none" role="alert">
+                                        </div>
+                                        <div class="modal-header">
+                                            <h6 class="modal-title">{{ __('product.add prduct') }}</h6><button aria-label="Close"
+                                                class="close" data-dismiss="modal" type="button"><span
+                                                    aria-hidden="true">&times;</span></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <div class="bg-gray-200 p-4">
+                                                                <div class="form-group">
+                                                                    <input class="form-control" placeholder="{{ __('product.title') }}"
+                                                                        type="text" name="title">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <input class="form-control" placeholder="{{ __('product.price') }}"
+                                                                        type="number" name="price">
+                                                                </div>
+                                                                <div class=" mb-2">
+                                                                    <div class="custom-file">
+                                                                        <input class="custom-file-input" name="img" id="customFile"
+                                                                            type="file"> <label class="custom-file-label"
+                                                                            for="customFile">{{ __('product.image') }}</label>
+                                                                    </div>
+                                                                </div>
+                                                                <select class="form-control mb-2" required name="department">
+                                                                    <option disabled selected value="-1">
+                                                                        {{ __('product.select department') }}
+                                                                    </option>
+                                                                    @foreach ($departments as $department)
+                                                                        <option class="dropdown-item" value="{{ $department->id }}">
+                                                                            {{ $department->title }}
+                                                                        </option>
+                                                                    @endforeach
+                                                                </select>
+                                                                <div class="form-group">
+                                                                    <textarea class="form-control"
+                                                                        placeholder="{{ __('product.description') }}" rows="3"
+                                                                        name="description"></textarea>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <select class="form-control mb-2" required name="department">
-                                                        <option disabled selected value="-1">
-                                                            {{ __('product.select department') }}
-                                                        </option>
-                                                        @foreach ($departments as $department)
-                                                            <option class="dropdown-item" value="{{ $department->id }}">
-                                                                {{ $department->title }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                    <div class="form-group">
-                                                        <textarea class="form-control"
-                                                            placeholder="{{ __('product.description') }}" rows="3"
-                                                            name="description"></textarea>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                        <div class="modal-footer">
+                                            <button class="btn ripple btn-primary" type="submit">Save</button>
+                                            <button class="btn ripple btn-secondary" data-dismiss="modal" type="button">Close</button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
-                            <div class="modal-footer">
-                                <button class="btn ripple btn-primary" type="submit">Save</button>
-                                <button class="btn ripple btn-secondary" data-dismiss="modal" type="button">Close</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
 
+							<div class="card-body">
+								<div class="table-responsive">
+									<table class="table mg-b-0 text-md-nowrap table-hover">
+										<thead>
+											<tr>
+												<th>#</th>
+                                                <th>{{ __('product.image') }}</th>
+                                                <th>{{ __('product.title') }}</th>
+                                                <th>{{ __('product.description') }}</th>
+                                                <th>{{ __('product.price') }}</th>
+                                                <th>{{ __('product.department') }}</th>
+                                                <th>{{ __('product.operations') }}</th>
+											</tr>
+										</thead>
+										<tbody>
+                                            @foreach ($products as $product)
+                                                <tr>
+                                                    <td>{{ $loop->index }}</td>
+                                                    <td><img src="{{ asset($product->img) }}" alt="{{ $product->title }}"></td>
+                                                    <td>{{ $product->title }}</td>
+                                                    <td>{{ $product->description }}</td>
+                                                    <td>{{ $product->price }}</td>
+                                                    <td>{{ $product->department->title }}</td>
 
-                <div class="card-body">
-                    <div class="table-responsive hoverable-table w-100">
-                        <table id="example-delete" class="table text-md-nowrap">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>{{ __('product.image') }}</th>
-                                    <th>{{ __('product.title') }}</th>
-                                    <th>{{ __('product.description') }}</th>
-                                    <th>{{ __('product.price') }}</th>
-                                    <th>{{ __('product.department') }}</th>
-                                    <th>{{ __('product.operations') }}</th>
+                                                    <td class="d-flex">
+                                                        <a class="btn btn-info ml-2"
+                                                            onclick="event.preventDefault();showEditModal({{ $product->id }});"><i
+                                                                class="las la-pen"></i></a>
+                                                        <form action="{{ route('product.destroy', $product->id) }}" method="POST">
+                                                            @method('DELETE')
+                                                            @csrf
+                                                            <button class="btn btn-danger"><i class="las la-trash"></i></button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
 
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($products as $product)
-                                    <tr>
-                                        <td>{{ $loop->index }}</td>
-                                        <td><img src="{{ asset($product->img) }}" alt="{{ $product->title }}"></td>
-                                        <td>{{ $product->title }}</td>
-                                        <td>{{ $product->description }}</td>
-                                        <td>{{ $product->price }}</td>
-                                        <td>{{ $product->department->title }}</td>
-
-                                        <td class="d-flex">
-                                            <a class="btn btn-info ml-2"
-                                                onclick="event.preventDefault();showEditModal({{ $product->id }});"><i
-                                                    class="las la-pen"></i></a>
-                                            <form action="{{ route('product.destroy', $product->id) }}" method="POST">
-                                                @method('DELETE')
-                                                @csrf
-                                                <button class="btn btn-danger"><i class="las la-trash"></i></button>
-                                            </form>
-
-
-                                        </td>
-                                    </tr>
-                                @endforeach
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- /row -->
-    </div>
-    <!-- Container closed -->
-    </div>
-    <!-- main-content closed -->
-
-
+								</div>
+							</div>
+						</div>
+					</div>
+					<!--/div-->
+				</div>
+                <!-- /row -->
+<div class="">
+</div>
+{{-- <ul class="pagination pagination-circled mb-0">
+    <li class="page-item @if (!$products->hasMorePages()) disabled @endif"><a class="page-link" href="{{ $products->nextPageUrl() }}">next<i class="icon ion-ios-arrow-forward"></i></a></li>
+    @if ($products->onFirstPage())
+	    <li class="page-item active"><a class="page-link" href="#">{{ $products->currentPage() }}</a></li>
+	    <li class="page-item @if ($products->lastPage()==$products->currentPage())
+            disabled
+        @endif"><a class="page-link" href="#">{{ $products->currentPage()+1 }}</a></li>
+	    <li class="page-item @if ($products->lastPage()== $products->currentPage()+1)
+            disabled
+        @endif"><a class="page-link" href="#">{{ $products->currentPage()+2 }}</a></li>
+    @else
+        <li class="page-item @if ($products->firstPage()== $products->currentPage())
+            disabled
+        @endif"><a class="page-link" href="#">{{ $products->currentPage()-2 }}</a></li>
+	    <li class="page-item active "><a class="page-link" href="#">{{ $products->currentPage()-1 }}</a></li>
+	    <li class="page-item "><a class="page-link" href="#">{{ $products->currentPage() }}</a></li>
+    @endif
+	<li class="page-item @if ($products->onFirstPage()) disabled @endif"><a class="page-link " href="{{ $products->previousPageUrl() }}"> prev<i class="icon ion-ios-arrow-back"></i></a></li>
+</ul> --}}
+<div class="d-flex justify-content-center">
+    <ul class="pagination pagination-circled mb-0 text-center "data-placement="top" data-toggle="tooltip" title="{{ $products->total() }} total items">
+        <li class="page-item @if (!$products->hasMorePages()) disabled @endif"><a class="page-link" href="{{ $products->nextPageUrl() }}"><i class="icon ion-ios-arrow-forward"></i></a></li>
+        <li class="page-item @if (!$products->hasMorePages())
+        disabled
+        @endif"><a class="page-link" href="#">{{ $products->currentPage()+1 }}</a></li>
+        <li class="page-item active"><a class="page-link" href="{{ $products->previousPageUrl() }}">{{ $products->currentPage() }}</a></li>
+        <li class="page-item @if ($products->onFirstPage()) disabled @endif"><a class="page-link " href="{{ $products->previousPageUrl() }}"><i class="icon ion-ios-arrow-back"></i></a></li>
+    </ul>
+</div>
+	</div>
+			<!-- Container closed -->
+		</div>
+        <!-- main-content closed -->
     {{-- Update Model --}}
     <div class="hidden">
         <a class="modal-effect hidden" id="openEditModel" data-effect="effect-scale" data-toggle="modal"
@@ -218,31 +236,10 @@
             </div>
         </div>
     </form>
+
 @endsection
 @section('js')
-    <!-- Internal Data tables -->
-    @if (LaravelLocalization::getCurrentLocale() == 'ar')
-        <script src="{{ URL::asset('assets/plugins/datatable/js/jquery.dataTables-rtl.js') }}"></script>
-    @else
-        <script src="{{ URL::asset('assets/plugins/datatable/js/jquery.dataTables.js') }}"></script>
-    @endif
-    <script src="{{ URL::asset('assets/plugins/datatable/js/dataTables.dataTables.min.js') }}"></script>
-    <script src="{{ URL::asset('assets/plugins/datatable/js/dataTables.responsive.min.js') }}"></script>
-    <script src="{{ URL::asset('assets/plugins/datatable/js/responsive.dataTables.min.js') }}"></script>
-    <script src="{{ URL::asset('assets/plugins/datatable/js/dataTables.bootstrap4.js') }}"></script>
-    <script src="{{ URL::asset('assets/plugins/datatable/js/dataTables.buttons.min.js') }}"></script>
-    <script src="{{ URL::asset('assets/plugins/datatable/js/buttons.bootstrap4.min.js') }}"></script>
-    <script src="{{ URL::asset('assets/plugins/datatable/js/jszip.min.js') }}"></script>
-    <script src="{{ URL::asset('assets/plugins/datatable/js/pdfmake.min.js') }}"></script>
-    <script src="{{ URL::asset('assets/plugins/datatable/js/vfs_fonts.js') }}"></script>
-    <script src="{{ URL::asset('assets/plugins/datatable/js/buttons.html5.min.js') }}"></script>
-    <script src="{{ URL::asset('assets/plugins/datatable/js/buttons.print.min.js') }}"></script>
-    <script src="{{ URL::asset('assets/plugins/datatable/js/buttons.colVis.min.js') }}"></script>
-    <script src="{{ URL::asset('assets/plugins/datatable/js/dataTables.responsive.min.js') }}"></script>
-    <script src="{{ URL::asset('assets/plugins/datatable/js/responsive.bootstrap4.min.js') }}"></script>
-    <!--Internal  Datatable js -->
-    <script src="{{ URL::asset('assets/js/table-data.js') }}"></script>
-    <script>
+<script>
         // for displaying modal to update data
         function showEditModal(id) {
             $.ajax({
