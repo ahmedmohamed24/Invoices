@@ -55,8 +55,9 @@
                             <div class="alert alert-danger mg-y-1 errorContainer d-none" role="alert">
                             </div>
                             <div class="modal-header">
-                                <h6 class="modal-title">{{ __('settings.add department') }}</h6><button aria-label="Close" class="close"
-                                    data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
+                                <h6 class="modal-title">{{ __('settings.add department') }}</h6><button aria-label="Close"
+                                    class="close" data-dismiss="modal" type="button"><span
+                                        aria-hidden="true">&times;</span></button>
                             </div>
                             <div class="modal-body">
                                 <div class="card">
@@ -65,12 +66,14 @@
                                             <div class="col-lg-12">
                                                 <div class="bg-gray-200 p-4">
                                                     <div class="form-group">
-                                                        <input class="form-control" placeholder="{{ __('settings.Department Title') }}"
-                                                            type="text" name="title">
+                                                        <input class="form-control"
+                                                            placeholder="{{ __('settings.Department Title') }}" type="text"
+                                                            name="title">
                                                     </div>
                                                     <div class="form-group">
-                                                        <textarea class="form-control" placeholder="{{ __('settings.Description') }}"
-                                                            rows="3" name="description"></textarea>
+                                                        <textarea class="form-control"
+                                                            placeholder="{{ __('settings.Description') }}" rows="3"
+                                                            name="description"></textarea>
                                                     </div>
                                                 </div>
                                             </div>
@@ -141,6 +144,7 @@
                             data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
                     </div>
                     <div class="modal-body">
+                        <input value="" type="hidden" id="department" name="department">
                         <div class="form-group">
                             <input class="form-control" value="" type="text" id="departmentTitle" name="title">
                         </div>
@@ -151,8 +155,9 @@
                     </div>
                     <div class="modal-footer">
                         <button class="btn ripple btn-primary" type="submit">{{ __('settings.save') }}</button>
-                        <a class="btn ripple btn-secondary" href="{{ route('department.index') }}"
-                            type="button">{{ __('settings.close') }}</a>
+						<button class="btn ripple btn-secondary" data-dismiss="modal" type="button">Close</button>
+                        {{-- <a class="btn ripple btn-secondary" href="{{ route('department.index') }}"
+                            type="button">{{ __('settings.close') }}</a> --}}
                     </div>
                 </div>
             </div>
@@ -192,18 +197,19 @@
             $.ajax({
                 type: 'GET',
                 enctype: 'multipart/form-data',
-                url: window.location.href + `/${id}`,
+                url: window.location.origin + `/department/${id}`,
                 data: null,
                 processData: false,
                 contentType: false,
                 cache: false,
                 success: function(data) {
+                    console.log(data);
                     document.getElementById('openEditModel').click();
                     if (data.status === 200) {
                         document.getElementById('departmentTitle').value = data.data.title;
                         document.getElementById('departmentDesc').value = data.data.description;
-                        document.getElementById('updateForm').action = window.location.href + '/' + data.data
-                        .id;
+                        document.getElementById('department').value = data.data.id;
+                        document.getElementById('updateForm').action =window.location.origin+`/department/`+ data.data.id;
                     }
                 },
             });

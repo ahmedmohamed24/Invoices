@@ -41,6 +41,7 @@ Route::group( [ 'prefix' => LaravelLocalization::setLocale(), 'middleware' => [ 
             //departments routes
             Route::resource('department', DepartmentController::class);
             //products routes
+            Route::put('product/update',[\App\Http\Controllers\ProductController::class,'update'])->name('product.update.custom');
             Route::resource('product', ProductController::class);
 
             Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

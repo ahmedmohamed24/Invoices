@@ -58,6 +58,8 @@ class DepartmentController extends Controller
             'title'=>$request->title,
             'description'=>$request->description,
             'created_by'=>Auth::id(),
+            'created_at'=>now(),
+            'updated_at'=>now()
         ]);
         return $this->customResponse(200,"data added successfully");
     }
@@ -93,16 +95,18 @@ class DepartmentController extends Controller
      * @param  \App\Models\Department  $department
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request,int $id)
+    public function update(Request $request)
     {
+        dd($request);
         $request->validate([
+            'department'=>"required|numeric",
             'title'=>"required|string|max:50",
             'description'=>'nullable|string'
         ]);
-        $isUnique=$this->department::select('*')->where('title',$request->title)->where('id','!=',$id)->count();
+        $isUnique=$this->department::select('*')->where('title',$request->title)->where('id','!=',$request->department)->count();
         if($isUnique!=0)
             return redirect()->back()->with('msg','Title is already taken');
-        $this->department::findOrFail($id)->update(['title'=>$request->title,'description'=>$request->description]);
+        $this->department::findOrFail($request->product)->update(['title'=>$request->title,'description'=>$request->description,'updated_at'=>now()]);
         return redirect(route('department.index'))->with('message',"Department update successfully");
     }
 

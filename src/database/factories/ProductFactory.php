@@ -24,7 +24,7 @@ class ProductFactory extends Factory
         return [
             'title'=>$this->faker->words(2,true),
             'created_by'=>1,
-            'img'=>'assets/img/ecommerce/01.jpg',
+            'img'=>null,
             'description'=>$this->faker->sentences(3,true),
             'created_at'=>now(),
             'updated_at'=>now(),

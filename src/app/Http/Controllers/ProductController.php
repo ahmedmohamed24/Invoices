@@ -3,21 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Http\Traits\CustomResponse;
+use App\Http\Traits\CustomValidation;
+use App\Http\Traits\ProductCreate;
+use App\Http\Traits\UploadImage;
 use App\Models\Department;
 use App\Models\Product;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
-    use CustomResponse;
+    use CustomResponse, UploadImage, ProductCreate,CustomValidation;
     private Product $product;
     private Department $department;
-    public function __construct(Product $product,Department $department)
+    public function __construct(Product $product, Department $department)
     {
-       $this->product=$product;
-       $this->department=$department;
+        $this->product = $product;
+        $this->department = $department;
     }
     /**
      * Display a listing of the resource.
@@ -26,9 +28,9 @@ class ProductController extends Controller
      */
     public function index()
     {
-       $products=$this->product::select('id','img','description','title','department_id','price')->paginate(20);
-       $departments=$this->department->select('id','title')->get();
-       return view('settings.products',['products'=>$products,"departments"=>$departments]);
+        $products = $this->product::select('id', 'img', 'description', 'title', 'department_id', 'price')->paginate(20);
+        $departments = $this->department->select('id', 'title')->get();
+        return view('settings.products', ['products' => $products, "departments" => $departments]);
     }
 
     /**
@@ -49,50 +51,16 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $validators=Validator::make($request->all(),
-            [
-                'title'=>'required|string|max:255',
-                'description'=>'string|required',
-                'img'=>'nullable|image|mimes:png,jpg,jpeg|max:1024',
-                'price'=>'required|numeric|min:0|max:999999.99',
-                'department'=>"required|exists:departments,id",
-                'create_at'=>now(),
-                'updated_at'=>now()
-
-            ]
-        );
-        if($validators->fails())
-            return $this->customResponse(406,$validators->errors(),null);
-        if(!$request->hasFile('img')){
-            //no image uploaded so upload default one
-            $this->product::create([
-                'title'=>$request->title,
-                'description'=>$request->description,
-                'price'=>$request->price,
-                'created_by'=>Auth::user()->id,
-                'img'=>'assets/img/ecommerce/01.jpg',
-                'department_id'=>$request->department,
-                'created_at'=>now(),
-                'updated_at'=>now(),
-            ]);
-        }else{
-            //the user uploaded image for product
-            $img=$request->file('img');
-            $ext=$img->getClientOriginalExtension();
-            $newImageName='product'.now().uniqid().".$ext";
-            $img->move(public_path('uploads/products'),$newImageName);
-            $this->product::create([
-                'title'=>$request->title,
-                'description'=>$request->description,
-                'price'=>$request->price,
-                'created_by'=>Auth::user()->id,
-                'img'=>"/uploads/products/$newImageName",
-                'department_id'=>$request->department,
-                'created_at'=>now(),
-                'updated_at'=>now(),
-            ]);
-       }
-       return $this->customResponse(200,"product $request->title Uploaded");
+        $isValid =$this->validateProduct($request);
+        if ($isValid->fails())
+            return $this->customResponse(406, $isValid->errors(), null);
+        $newImageName=null;
+        if ($request->hasFile('img')) {
+            //the user uploaded an image for product
+            $newImageName =$this->customUpload($request->file('img'));
+        }
+        $this->createProduct($request,$newImageName);
+        return $this->customResponse(200, "product $request->title Uploaded");
     }
 
     /**
@@ -101,9 +69,10 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function show(Product $product)
+    public function show(int $id)
     {
-        //
+        $product = $this->product::findOrFail($id);
+        return $this->customResponse(200, "success", $product);
     }
 
     /**
@@ -114,7 +83,7 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        //
+        //no logic because of using AJAX
     }
 
     /**
@@ -124,9 +93,27 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Product $product)
+    public function update(Request $request)
     {
-        //
+        $isValid=$this->validateProduct($request);
+        if($isValid->fails())
+            return $this->customResponse(406,$isValid->errors(),null);
+        $oldProductData = $this->product::findOrFail($request->product);
+
+        $newImageName = null;
+        //check if the product has new image or not
+        if( $request->img !== null)
+        {
+            //check if the product had a previous image
+            if ( $oldProductData->img !== "assets/img/ecommerce/01.jpg") {
+                //delete the old one
+                unlink(public_path($oldProductData->img));
+            }
+            $newImageName = $this->customUpload($request->file('img'));
+        }
+        //update using custom trait
+        $this->updateProduct($request,$newImageName);
+        return $this->customResponse(200, "product /$request->title/ updated, please reload the page to view");
     }
 
     /**
@@ -137,7 +124,8 @@ class ProductController extends Controller
      */
     public function destroy(int $id)
     {
-       $this->product::findOrFail($id)->delete();
-       return redirect()->back()->with('message','Product deleted successfully');
+        $this->product::findOrFail($id)->delete();
+        //may delete it's image also
+        return redirect()->back()->with('message', 'Product deleted successfully');
     }
 }

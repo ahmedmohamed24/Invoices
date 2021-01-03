@@ -19,4 +19,17 @@ class Product extends Model
     {
         return $this->belongsTo(Department::class,'department_id');
     }
+    /**
+     * Get the
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public function getImgAttribute($img)
+    {
+        //to retutn default image when image is null
+        if($img)
+            return $img;
+        return "assets/img/ecommerce/01.jpg";
+    }
 }
