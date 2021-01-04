@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Department;
 use App\Models\Invoice;
 use Illuminate\Http\Request;
 
@@ -13,35 +14,38 @@ class InvoiceController extends Controller
      * @return \Illuminate\Http\Response
      */
     private Invoice $invoice;
-    public function __construct(Invoice $invoice)
+    private Department $department;
+    public function __construct(Invoice $invoice,Department $department)
     {
         $this->invoice=$invoice;
+        $this->department=$department;
     }
     public function index()
     {
-        $invoices=$this->invoice::select('invoice_number','user','product','section','total','status')->paginate(30);
+        $invoices=$this->invoice::select('invoice_number','user','product','department','total','status')->paginate(30);
         return view('invoices.invoices',['invoices'=>$invoices]);
     }
     public function getPaid(){
-        $invoices=$this->invoice::select('invoice_number','user','product','section','total','status')->where('status','1')->paginate(30);
+        $invoices=$this->invoice::select('invoice_number','user','product','department','total','status')->where('status','1')->paginate(30);
         return view('invoices.invoices-paid',['invoices'=>$invoices]);
     }
     public function getNotPaid(){
-        $invoices=$this->invoice::select('invoice_number','user','product','section','total','status')->where('status','0')->paginate(30);
+        $invoices=$this->invoice::select('invoice_number','user','product','department','total','status')->where('status','0')->paginate(30);
         return view('invoices.invoices-notPaid',['invoices'=>$invoices]);
     }
     public function getPartiallyPaid(){
-        $invoices=$this->invoice::select('invoice_number','user','product','section','total','status')->where('status','2')->paginate(30);
+        $invoices=$this->invoice::select('invoice_number','user','product','department','total','status')->where('status','2')->paginate(30);
         return view('invoices.invoices-partiallyPaid',['invoices'=>$invoices]);
     }
     /**
-     * Show the form for creating a new resource.
+     * Show the form for creating a new Invoice.
      *
      * @return \Illuminate\Http\Response
      */
     public function create()
     {
-        //
+        $departments=$this->department::all();
+        return view('invoices.create',['departments'=>$departments]);
     }
 
     /**
@@ -52,7 +56,7 @@ class InvoiceController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        dd($request);
     }
 
     /**
@@ -99,5 +103,14 @@ class InvoiceController extends Controller
     public function destroy(Invoice $invoice)
     {
         //
+    }
+    /**
+     * retrieves the products based on the selected dapartment
+     * @param int $departmentId
+     * @return object
+     */
+    public function getDepartmentProducts($departmentId){
+        $products=$this->department::findOrFail($departmentId);
+        return $products->product;
     }
 }

@@ -30,7 +30,7 @@
 												<th class="border-bottom-0">{{ __('invoice.invoice number') }}</th>
 												<th class="border-bottom-0">{{ __('invoice.user') }}</th>
 												<th class="border-bottom-0">{{ __('invoice.product') }}</th>
-												<th class="border-bottom-0">{{ __('invoice.section') }}</th>
+												<th class="border-bottom-0">{{ __('invoice.Department') }}</th>
 												<th class="border-bottom-0">{{ __('invoice.total') }}</th>
 												<th class="border-bottom-0">{{ __('invoice.status') }}</th>
 											</tr>
@@ -41,7 +41,7 @@
 												<td>{{ $invoice->invoice_number }}</td>
 												<td>{{ $invoice->user}}</td>
 												<td>{{ $invoice->product }}</td>
-												<td>{{ $invoice->section }}</td>
+												<td>{{ $invoice->department}}</td>
 												<td>{{ $invoice->total }}</td>
 												<td>{{ $invoice->status }}</td>
 											</tr>

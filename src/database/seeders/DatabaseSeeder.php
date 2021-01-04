@@ -13,6 +13,5 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        \App\Models\Invoice::factory(10)->create();
     }
 }

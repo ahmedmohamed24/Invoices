@@ -14,15 +14,7 @@
 @section('page-header')
 <div class="row my-3">
 	<div class="col-sm-6 col-md-3">
-        <button class="btn btn-primary-gradient btn-block">New Invoice</button>
-        <div class="card custom-card">
-			<div class="card-body">
-				<div>
-	    			<h6 class="card-title">Basic Modal</h6>
-				</div>
-				<a class="btn ripple btn-primary" data-target="#modaldemo1" data-toggle="modal" href="">View Demo</a>
-			</div>
-		</div>
+        <a class="btn btn-primary-gradient btn-block" href="{{ route('invoice.create') }}">{{ __('invoice.create invoice') }}</a>
 	</div>
 	<div class="col-sm-6 col-md-3 ">
 		<button class="btn btn-warning-gradient btn-block">Archive</button>
