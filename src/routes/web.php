@@ -39,9 +39,10 @@ Route::group( [ 'prefix' => LaravelLocalization::setLocale(), 'middleware' => [ 
             Route::post('/invoice/update',[App\Http\Controllers\InvoiceController::class,'update'])->name('invoice.update');
 
             //departments routes
+            Route::put('department/update',[\App\Http\Controllers\DepartmentController::class,'customUpdate'])->name('department.update.custom');
             Route::resource('department', DepartmentController::class);
             //products routes
-            Route::put('product/update',[\App\Http\Controllers\ProductController::class,'update'])->name('product.update.custom');
+            Route::put('product/update',[\App\Http\Controllers\ProductController::class,'customUpdate'])->name('product.update.custom');
             Route::resource('product', ProductController::class);
 
             Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

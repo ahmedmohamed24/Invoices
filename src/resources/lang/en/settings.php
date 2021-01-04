@@ -12,5 +12,6 @@ return [
     'Description'=>'Description',
     'save'=>'save',
     'close'=>'close',
+    'products number'=>'products number',
 
 ];

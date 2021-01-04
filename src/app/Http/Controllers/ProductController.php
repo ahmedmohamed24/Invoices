@@ -3,17 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Http\Traits\CustomResponse;
-use App\Http\Traits\CustomValidation;
-use App\Http\Traits\ProductCreate;
+use App\Http\Traits\Product as ProductTrait;
 use App\Http\Traits\UploadImage;
 use App\Models\Department;
 use App\Models\Product;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
-    use CustomResponse, UploadImage, ProductCreate,CustomValidation;
+    use  UploadImage, ProductTrait, CustomResponse;
     private Product $product;
     private Department $department;
     public function __construct(Product $product, Department $department)
@@ -40,7 +38,7 @@ class ProductController extends Controller
      */
     public function create()
     {
-        //
+       return redirect(route('product.index'));
     }
 
     /**
@@ -85,7 +83,9 @@ class ProductController extends Controller
     {
         //no logic because of using AJAX
     }
-
+    public function update(Product $product){
+        return redirect(route('product.update'));
+    }
     /**
      * Update the specified resource in storage.
      *
@@ -93,7 +93,7 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function customUpdate(Request $request)
     {
         $isValid=$this->validateProduct($request);
         if($isValid->fails())

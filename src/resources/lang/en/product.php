@@ -2,7 +2,7 @@
 
 return [
     'products'=>'products',
-    'add prduct'=>'add prduct',
+    'add prduct'=>'add product',
     'update'=>'update',
     'update product'=>'update product',
     'delete product'=>'delete product',

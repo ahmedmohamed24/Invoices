@@ -4,13 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Department;
 use Illuminate\Http\Request;
+use App\Http\Traits\Department as DepartmentTrait;
 use App\Http\Traits\CustomResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 
 class DepartmentController extends Controller
 {
-    use CustomResponse;
+    use CustomResponse,DepartmentTrait;
     private Department $department;
     public function __construct(Department $department)
     {
@@ -34,7 +34,7 @@ class DepartmentController extends Controller
      */
     public function create()
     {
-        //
+        return redirect(route('department.index'));
     }
 
     /**
@@ -45,22 +45,11 @@ class DepartmentController extends Controller
      */
     public function store(Request $request)
     {
-        $validators=Validator::make(
-            $request->all(),
-            [
-                'title'=>'required|string|unique:departments,title|max:50',
-                'description'=>'nullable|string'
-            ]
-        );
-        if($validators->fails())
-           return $this->customResponse(406,$validators->errors()->all(),null);
-        $this->department::create([
-            'title'=>$request->title,
-            'description'=>$request->description,
-            'created_by'=>Auth::id(),
-            'created_at'=>now(),
-            'updated_at'=>now()
-        ]);
+        $isValid=$this->validateDepartment($request);
+        if($isValid->fails())
+           return $this->customResponse(406,$isValid->errors()->all(),null);
+        $this->createDepartment($request);
+
         return $this->customResponse(200,"data added successfully");
     }
 
@@ -84,30 +73,25 @@ class DepartmentController extends Controller
      */
     public function edit(int $id)
     {
-        $department=$this->department::findOrFail($id);
-        return view('settings.departmentEdit',['department'=>$department]);
+        return redirect(route('department.index'));
     }
-
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Department  $department
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Traits\CustomResponse
      */
-    public function update(Request $request)
+    public function customUpdate(Request $request)
     {
-        dd($request);
-        $request->validate([
-            'department'=>"required|numeric",
-            'title'=>"required|string|max:50",
-            'description'=>'nullable|string'
-        ]);
+        $isValid=$this->validateDepartment($request);
+        if($isValid->fails()){
+            return $this->customResponse(406,$isValid->errors(),null);
+        }
         $isUnique=$this->department::select('*')->where('title',$request->title)->where('id','!=',$request->department)->count();
         if($isUnique!=0)
-            return redirect()->back()->with('msg','Title is already taken');
-        $this->department::findOrFail($request->product)->update(['title'=>$request->title,'description'=>$request->description,'updated_at'=>now()]);
-        return redirect(route('department.index'))->with('message',"Department update successfully");
+            return $this->customResponse(406,'Title is already taken',null);
+        $this->department::findOrFail($request->department)->update(['title'=>$request->title,'description'=>$request->description,'updated_at'=>now()]);
+        return $this->customResponse(200,'Department update successfully, reload to view changes',null);
     }
 
     /**

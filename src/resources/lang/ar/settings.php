@@ -12,6 +12,7 @@ return [
     'Description'=>'الوصف',
     'save'=>'حفظ',
     'close'=>'غلق',
+    'products number'=>'عدد المنتجات',
 
 
 ];
