@@ -13,5 +13,6 @@ return [
     'save'=>'save',
     'close'=>'close',
     'products number'=>'products number',
+    "can not delete department, if it has products"=>"can not delete department, if it has products",
 
 ];

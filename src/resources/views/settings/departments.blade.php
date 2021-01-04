@@ -19,8 +19,6 @@
             {{ session('message') }}
         </div>
     @endif
-
-
 				<!-- row opened -->
 				<div class="row row-sm">
 					<div class="col-xl-12">
@@ -97,16 +95,16 @@
 										<tbody>
                                             @foreach ($departments as $department)
                                                 <tr>
-                                                    <td>{{ $loop->index }}</td>
+                                                    <td>{{ $loop->iteration}}</td>
                                                     <td>{{ $department->title }}</td>
                                                     <td>{{ $department->description }}</td>
                                                     <td>{{ $department->product->count() }}</td>
                                                     <td class="d-flex">
-                                                        <a class="btn btn-info ml-2 text-light"
+                                                        <a class="btn btn-info ml-2 "
                                                             onclick="event.preventDefault();showEditModal({{ $department->id }});"><i
                                                                 class="las la-pen"></i></a>
                                                         @if ($department->product->count() > 0)
-                                                            <button class="btn btn-danger disabled" disabled><i class="las la-trash"></i></button>
+                                                            <button data-placement="top" data-toggle="tooltip" title="{{ __('settings.can not delete department, if it has products') }}"  class="btn btn-danger disabled"><i class="las la-trash"></i></button>
                                                         @else
                                                         <form action="{{ route('department.destroy', $department->id) }}" method="POST">
                                                             @method('DELETE')
@@ -127,6 +125,7 @@
 					</div>
 				</div>
                 <!-- /row -->
+                {{-- pagination --}}
                 <div class="d-flex justify-content-center">
                     <ul class="pagination pagination-circled mb-0 text-center "data-placement="top" data-toggle="tooltip" title="{{ $departments->total() }} total items">
                         <li class="page-item @if (!$departments->hasMorePages()) disabled @endif"><a class="page-link" href="{{ $departments->nextPageUrl() }}"><i class="icon ion-ios-arrow-forward"></i></a></li>

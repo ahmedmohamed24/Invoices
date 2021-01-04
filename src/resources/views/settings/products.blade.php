@@ -38,10 +38,7 @@
                                     <form id="homeForm" action="{{ route('product.store') }}" method="POST"
                                         class="modal-content modal-content-demo" enctype="multipart/form-data">
                                         @csrf
-                                        <div class="alert alert-success mg-y-1 succesContainer d-none" role="alert">
-                                        </div>
-                                        <div class="alert alert-danger mg-y-1 errorContainer d-none" role="alert">
-                                        </div>
+
                                         <div class="modal-header">
                                             <h6 class="modal-title">{{ __('product.add prduct') }}</h6><button aria-label="Close"
                                                 class="close" data-dismiss="modal" type="button"><span
@@ -83,6 +80,10 @@
                                                                         placeholder="{{ __('product.description') }}" rows="3"
                                                                         name="description"></textarea>
                                                                 </div>
+                                                                <div class="alert alert-success mg-y-1 succesContainer d-none" role="alert">
+                                                                </div>
+                                                                <div class="alert alert-danger mg-y-1 errorContainer d-none" role="alert">
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -114,7 +115,7 @@
 										<tbody>
                                             @foreach ($products as $product)
                                                 <tr>
-                                                    <td>{{ $loop->index }}</td>
+                                                    <td>{{ $loop->iteration}}</td>
                                                     <td><img src="{{ asset($product->img) }}" alt="{{ $product->title }}"></td>
                                                     <td>{{ $product->title }}</td>
                                                     <td>{{ $product->description }}</td>
@@ -122,7 +123,7 @@
                                                     <td>{{ $product->department->title }}</td>
 
                                                     <td class="d-flex">
-                                                        <a class="btn btn-info ml-2"
+                                                        <a class="btn btn-info ml-2 text-light"
                                                             onclick="event.preventDefault();showEditModal({{ $product->id }});"><i
                                                                 class="las la-pen"></i></a>
                                                         <form action="{{ route('product.destroy', $product->id) }}" method="POST">
@@ -145,25 +146,7 @@
                 <!-- /row -->
 <div class="">
 </div>
-{{-- <ul class="pagination pagination-circled mb-0">
-    <li class="page-item @if (!$products->hasMorePages()) disabled @endif"><a class="page-link" href="{{ $products->nextPageUrl() }}">next<i class="icon ion-ios-arrow-forward"></i></a></li>
-    @if ($products->onFirstPage())
-	    <li class="page-item active"><a class="page-link" href="#">{{ $products->currentPage() }}</a></li>
-	    <li class="page-item @if ($products->lastPage()==$products->currentPage())
-            disabled
-        @endif"><a class="page-link" href="#">{{ $products->currentPage()+1 }}</a></li>
-	    <li class="page-item @if ($products->lastPage()== $products->currentPage()+1)
-            disabled
-        @endif"><a class="page-link" href="#">{{ $products->currentPage()+2 }}</a></li>
-    @else
-        <li class="page-item @if ($products->firstPage()== $products->currentPage())
-            disabled
-        @endif"><a class="page-link" href="#">{{ $products->currentPage()-2 }}</a></li>
-	    <li class="page-item active "><a class="page-link" href="#">{{ $products->currentPage()-1 }}</a></li>
-	    <li class="page-item "><a class="page-link" href="#">{{ $products->currentPage() }}</a></li>
-    @endif
-	<li class="page-item @if ($products->onFirstPage()) disabled @endif"><a class="page-link " href="{{ $products->previousPageUrl() }}"> prev<i class="icon ion-ios-arrow-back"></i></a></li>
-</ul> --}}
+{{-- pagination --}}
 <div class="d-flex justify-content-center">
     <ul class="pagination pagination-circled mb-0 text-center "data-placement="top" data-toggle="tooltip" title="{{ $products->total() }} total items">
         <li class="page-item @if (!$products->hasMorePages()) disabled @endif"><a class="page-link" href="{{ $products->nextPageUrl() }}"><i class="icon ion-ios-arrow-forward"></i></a></li>
@@ -193,10 +176,7 @@
                             data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
                     </div>
                     <div class="modal-body">
-                    <div class="alert alert-success mg-y-1 succesContainerUpdate d-none" role="alert">
-                    </div>
-                    <div class="alert alert-danger mg-y-1 errorContainerUpdate d-none" role="alert">
-                    </div>
+
                         @csrf
                         @method('PUT')
                         <input type="hidden" name="product" id="product-update-id">
@@ -226,6 +206,10 @@
                         <div class="form-group mt-2">
                             <textarea class="form-control" value="" rows="3" id="product-update-description"
                                 name="description"></textarea>
+                        </div>
+                        <div class="alert alert-success mg-y-1 succesContainerUpdate d-none" role="alert">
+                        </div>
+                        <div class="alert alert-danger mg-y-1 errorContainerUpdate d-none" role="alert">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -258,7 +242,7 @@
                         document.getElementById('product-update-description').value = data.data.description;
                         document.getElementById('product-update-price').value = data.data.price;
                         //document.getElementById('product-update-form').action = window.location.origin + `/product/` + data.data.id;
-                        document.getElementById('product-update-img').src = window.location.origin + data.data .img;
+                        document.getElementById('product-update-img').src = window.location.origin +'/'+ data.data .img;
                         document.getElementById('product-update-img').alt = data.data.title;
                     } else {
 

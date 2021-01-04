@@ -13,6 +13,7 @@ return [
     'save'=>'حفظ',
     'close'=>'غلق',
     'products number'=>'عدد المنتجات',
+    "can not delete department, if it has products"=>"لا يمكن حذف قسم لديه منتجات",
 
 
 ];
