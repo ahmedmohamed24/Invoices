@@ -17,7 +17,12 @@ class CreateInvoiceDetailsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('invoice_id');
             $table->foreign('invoice_id')->references('id')->on("invoices")->onDelete("cascade")->onUpdate("cascade");
-            $table->text("details");
+            $table->timestamp('due_date')->nullable();
+            $table->decimal('total');
+            $table->char('status',1)->default('2');//when there's an update, mostly it's partially paid
+            $table->text("note");
+            $table->unsignedBigInteger('created_by');
+            $table->foreign('created_by')->references('id')->on('users');
             $table->timestamps();
         });
     }

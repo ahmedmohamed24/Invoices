@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Department;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -14,22 +13,23 @@ class Product extends Model
      *
      * @var array
      */
-    protected $fillable = ['title','price','created_by','description','img','department_id'];
-    public function department()
-    {
-        return $this->belongsTo(Department::class,'department_id');
-    }
-    /**
-     * Get the
-     *
-     * @param  string  $value
-     * @return string
-     */
+    protected $fillable = ['title','price','created_by','deleted_at','description','img','department_id'];
+
+    //accessors and mutators
     public function getImgAttribute($img)
     {
         //to retutn default image when image is null
         if($img)
             return $img;
         return "assets/img/ecommerce/01.jpg";
+    }
+
+    //product model relations
+    public function invoices(){
+        return $this->belongsTo(\App\Models\Invoice::class,'product');
+    }
+    public function department()
+    {
+        return $this->belongsTo(\App\Models\Department::class,'department_id');
     }
 }

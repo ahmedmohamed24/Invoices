@@ -63,6 +63,13 @@ $(function() {
 			var picker = handler.getPicker();
 			$(picker).addClass('main-datetimepicker');
 		}
+    });
+    $('#datetimepicker22').appendDtpicker({
+		closeOnSelected: true,
+		onInit: function(handler) {
+			var picker = handler.getPicker();
+			$(picker).addClass('main-datetimepicker');
+		}
 	});
 	$(document).ready(function() {
 		$('.select2').select2({

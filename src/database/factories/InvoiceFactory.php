@@ -24,18 +24,17 @@ class InvoiceFactory extends Factory
     public function definition()
     {
            return [
-            'invoice_number' => $this->faker->randomNumber(),
+            'invoice_number' => $this->faker->unique()->randomNumber(),
             'invoice_date' => Carbon::now()->format('Y-m-d H:i:s'),
             'due_date' =>Carbon::now()->format('Y-m-d H:i:s'),
-            'product' => $this->faker->sentence( 3,true),
-            'department' => $this->faker->sentence( 3,true),
+            'product' => $this->faker->randomDigitNot(0),
+            'department' =>$this->faker->randomDigitNot(0),
             'deduction' => $this->faker->randomFloat(2,0,100),
-            'vat_rate' => $this->faker->randomFloat(2,0,40),
+            'commision_value' => $this->faker->randomFloat(2,0,40),
             'vat_value' => $this->faker->randomNumber(3,false) ,
             'total' => $this->faker->numberBetween(1000,9000),
             'status' => '0',
-            'note' => $this->faker->sentence( 6,true),
-            'created_by' => Auth::user()->id ,
+            'created_by' => 1 ,
             'deleted_at' =>null ,
             'created_at' =>Carbon::now()->format('Y-m-d H:i:s') ,
             'updated_at' => null,

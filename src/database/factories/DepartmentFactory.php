@@ -22,7 +22,7 @@ class DepartmentFactory extends Factory
     public function definition()
     {
         return [
-            'title'=>$this->faker->word(),
+            'title'=>$this->faker->unique()->word(),
             'description'=>$this->faker->sentences(3,true),
             'created_by'=>1,
 

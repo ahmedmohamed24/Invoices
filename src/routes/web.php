@@ -38,6 +38,7 @@ Route::group( [ 'prefix' => LaravelLocalization::setLocale(), 'middleware' => [ 
             Route::get('/invoices/edit/{id}',[App\Http\Controllers\InvoiceController::class,'edit'])->name('invoice.edit');
             Route::post('/invoice/update',[App\Http\Controllers\InvoiceController::class,'update'])->name('invoice.update');
             Route::get('/invoice/get/products/{id}',[App\Http\Controllers\InvoiceController::class,'getDepartmentProducts'])->name('invoice.getProducts');
+            Route::get('/invoice/getInvoiceInfo/{id}',[App\Http\Controllers\InvoiceController::class,'getInfo'])->name('invoice.getInvoiceInfo');
 
             //departments routes
             Route::put('department/update',[\App\Http\Controllers\DepartmentController::class,'customUpdate'])->name('department.update.custom');

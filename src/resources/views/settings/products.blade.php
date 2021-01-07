@@ -152,7 +152,7 @@
         <li class="page-item @if (!$products->hasMorePages()) disabled @endif"><a class="page-link" href="{{ $products->nextPageUrl() }}"><i class="icon ion-ios-arrow-forward"></i></a></li>
         <li class="page-item @if (!$products->hasMorePages())
         disabled
-        @endif"><a class="page-link" href="#">{{ $products->currentPage()+1 }}</a></li>
+        @endif"><a class="page-link" href="{{ $products->nextPageUrl() }}">{{ $products->currentPage()+1 }}</a></li>
         <li class="page-item active"><a class="page-link" href="{{ $products->previousPageUrl() }}">{{ $products->currentPage() }}</a></li>
         <li class="page-item @if ($products->onFirstPage()) disabled @endif"><a class="page-link " href="{{ $products->previousPageUrl() }}"><i class="icon ion-ios-arrow-back"></i></a></li>
     </ul>

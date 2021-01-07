@@ -19,14 +19,15 @@ class CreateInvoicesTable extends Migration
             $table->string('invoice_number')->unique();
             $table->timestamp('invoice_date');
             $table->timestamp('due_date')->nullable();
-            $table->string('product');
-            $table->string('department');
+            $table->unsignedBigInteger('product');
+            $table->foreign('product')->references('id')->on('products');
+            $table->unsignedBigInteger('department');
+            $table->foreign('department')->references('id')->on('departments');
             $table->string('deduction')->nullable();
-            $table->decimal('vat_rate');
+            $table->decimal('commision_value');
             $table->decimal('vat_value');
             $table->decimal('total');
             $table->char('status',1)->default('0');//0-> not paid , 1=> paid , 2 => partially paid
-            $table->text('note')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->foreign('created_by')->references('id')->on('users');
             $table->softDeletes();

@@ -2,12 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Department;
+use App\Http\Traits\CustomResponse;
 use App\Models\Invoice;
+use App\Models\Department;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use App\Http\Traits\UploadImage;
+use App\Models\Attachment;
+use App\Models\InvoiceDetails;
+use Illuminate\Support\Facades\Auth;
 
 class InvoiceController extends Controller
 {
+    use UploadImage,CustomResponse;
     /**
      * Display a listing of the resource.
      *
@@ -15,27 +22,31 @@ class InvoiceController extends Controller
      */
     private Invoice $invoice;
     private Department $department;
-    public function __construct(Invoice $invoice,Department $department)
+    private InvoiceDetails $invoiceDetails;
+    private Attachment $attachment;
+    public function __construct(Invoice $invoice,Department $department, InvoiceDetails $invoiceDetails, Attachment $attachment)
     {
         $this->invoice=$invoice;
         $this->department=$department;
+        $this->invoiceDetails=$invoiceDetails;
+        $this->attachment=$attachment;
     }
     public function index()
     {
-        $invoices=$this->invoice::select('invoice_number','user','product','department','total','status')->paginate(30);
+        $invoices=$this->invoice::with('user')->where('deleted_at',null)->paginate(30);
         return view('invoices.invoices',['invoices'=>$invoices]);
     }
     public function getPaid(){
-        $invoices=$this->invoice::select('invoice_number','user','product','department','total','status')->where('status','1')->paginate(30);
-        return view('invoices.invoices-paid',['invoices'=>$invoices]);
+        $invoices=$this->invoice::with('user')->where('status',1)->where('deleted_at',null)->paginate(30);
+        return view('invoices.invoices',['invoices'=>$invoices]);
     }
     public function getNotPaid(){
-        $invoices=$this->invoice::select('invoice_number','user','product','department','total','status')->where('status','0')->paginate(30);
-        return view('invoices.invoices-notPaid',['invoices'=>$invoices]);
+        $invoices=$this->invoice::with('user')->where('status',0)->where('deleted_at',null)->paginate(30);
+        return view('invoices.invoices',['invoices'=>$invoices]);
     }
     public function getPartiallyPaid(){
-        $invoices=$this->invoice::select('invoice_number','user','product','department','total','status')->where('status','2')->paginate(30);
-        return view('invoices.invoices-partiallyPaid',['invoices'=>$invoices]);
+        $invoices=$this->invoice::with('user')->where('status',2)->where('deleted_at',null)->paginate(30);
+        return view('invoices.invoices',['invoices'=>$invoices]);
     }
     /**
      * Show the form for creating a new Invoice.
@@ -56,7 +67,52 @@ class InvoiceController extends Controller
      */
     public function store(Request $request)
     {
-        dd($request);
+        //deduction, vat-rate, vat-value, total
+        $request->validate([
+            'invoiceNumber'=>'required|unique:invoices,invoice_number|string',
+            'invoiceDate'=>'required|date',
+            'invoiceDueDate'=>'required|date',
+            'department'=>'required|exists:departments,id',
+            'product'=> ['required',Rule::exists('products','id')->where(function($query)use($request){$query->where('department_id',$request->department);})],
+            'commisionAmount'=>"required|numeric|min:0|max:999999",
+            'deductionAmount'=>"required|numeric|min:0|max:$request->commisionAmount",
+            'vatValue'=>"required|numeric|min:0|max:$request->commisionAmount",
+            'totalAmount'=>"required|numeric",
+            'notes'=>"string|nullable",
+            'attachments'=>'nullable|file|mimes:png,jpg,jpeg,pdf|max:2048',
+        ]);
+        $attachmentName=null;
+        if($request->hasFile('attachments')){
+            //upload these files
+            $attachmentName=$this->uploadAttachment($request->attachments);
+        }
+        //store main data in invoices table and get the id to store the attachments and details
+        $invoice=Invoice::create([
+            'invoice_number'=> $request->invoiceNumber,
+            'invoice_date'=> $request->invoiceDate,
+            'due_date'=> $request->invoiceDueDate,
+            'product'=> $request->product,
+            'department'=> $request->department,
+            'deduction'=> $request->deductionAmount,
+            'commision_value'=> $request->commisionAmount,
+            'vat_value'=> $request->vatValue,
+            'total'=> $request->totalAmount,
+            'status'=>0 ,
+            'created_by'=> Auth::user()->id ,
+            'deleted_at'=>null ,
+            'created_at'=> now() ,
+            'updated_at'=> null ,
+        ]);
+        $invoiceId=$invoice->id;
+        if($attachmentName){
+            Attachment::create([
+                'invoice_id'=>$invoiceId,
+                'attachment-path'=>$attachmentName,
+                'created_at'=>now(),
+                'updated_at'=>null
+            ]);
+        }
+        return back()->with('msg','invoice added successfully');
     }
 
     /**
@@ -67,8 +123,8 @@ class InvoiceController extends Controller
      */
     public function show($id)
     {
-       $invoice=$this->invoice::where('invoice_number',$id)->firstOrFail();
-
+       $invoice=$this->invoice::where('deleted_at',null)->findOrFail($id);
+        return view('invoices.showDetails',['invoice'=>$invoice]);
     }
 
     /**
@@ -83,15 +139,61 @@ class InvoiceController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     *  update a specific fields in old data of invoices and push the old data to new invoice details table
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Invoice  $invoice
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Invoice $invoice)
+    public function update(Request $request)
     {
-        //
+        $validator=$request->validate([
+            'id'=>"required|numeric",
+            'invoiceDueDate'=>"required|date|after:today",
+            'totalAmount'=>'required|numeric|min:0|max:999999',
+            'status'=>["required","regex:/^(0|1|2)$/i"],
+            'notes'=>'required|string',
+            'attachments'=>'nullable|file|mimes:pdf,jpg,jpeg,png'
+        ]);
+        //if the data is valid, get the old data
+        $oldInvoiceData=$this->invoice::where('deleted_at',null)->findOrFail($validator['id']);
+        //change the format of status to insert it again
+        switch($oldInvoiceData->status){
+            case 'paid':
+                $status=1;
+            break;
+            case 'not_paid':
+                $status=0;
+            break;
+            default:
+                $status=2;
+        }
+        //create new row in invoice-details table
+        $detailsInfo=[
+            'invoice_id'=>$validator['id'],
+            'due_date'=>$oldInvoiceData->due_date,
+            'total'=>$oldInvoiceData->total,
+            'status'=> $status,
+            'note'=>$validator['notes'],
+            'created_by'=>Auth::user()->id,
+            'created_at'=>now()
+        ];
+        //store the fetched old data to invoice-details table
+        $this->invoiceDetails::create($detailsInfo);
+        $this->invoice::where('deleted_at',null)->findOrFail($validator['id'])->update([
+            'due_date'=>$validator['invoiceDueDate'],
+            'total'=>$validator['totalAmount'],
+            'status'=>$validator['status'],
+            'update_at'=>now(),
+        ]);
+        //check if there is an attachment and store into attachments table
+        if($request->hasFile('attachments')){
+           $attachmentName=$this->uploadAttachment($request->attachments);
+           $this->attachment::create(['invoice_id'=>$validator['id'],'attachment-path'=>$attachmentName,'created_at'=>now(),'updated_at'=>null]);
+        }
+
+        return back()->with('msg','invoice updated successfully');
+
     }
 
     /**
@@ -100,9 +202,15 @@ class InvoiceController extends Controller
      * @param  \App\Models\Invoice  $invoice
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Invoice $invoice)
+    public function destroy(Request $invoice)
     {
-        //
+        $invoice->validate([
+            'id'=>'required|numeric|exists:invoices,id'
+        ]);
+        $this->invoice::where('deleted_at',null)->findOrFail($invoice->id)->update([
+            'deleted_at'=>now(),
+        ]);
+        return back()->with('msg','successfully deleted');
     }
     /**
      * retrieves the products based on the selected dapartment
@@ -112,5 +220,12 @@ class InvoiceController extends Controller
     public function getDepartmentProducts($departmentId){
         $products=$this->department::findOrFail($departmentId);
         return $products->product;
+    }
+    /**
+     * retrieves the info of an invoice to push them in modal for updating
+     */
+    public function getInfo(int $id){
+        $invoiceInfo=$this->invoice::select('id','due_date','total','status')->where('deleted_at',null)->findOrFail($id);
+        return $this->customResponse(200,'success',$invoiceInfo);
     }
 }

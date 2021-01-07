@@ -1,5 +1,7 @@
 @extends('layouts.master')
 @section('css')
+<!--Internal   Notify -->
+    <link href="{{URL::asset('assets/plugins/notify/css/notifIt.css')}}" rel="stylesheet"/>
     <!-- Internal Select2 css -->
     <link href="{{ URL::asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
     <!--Internal  Datetimepicker-slider css -->
@@ -9,6 +11,14 @@
     <link href="{{ URL::asset('assets/plugins/pickerjs/picker.min.css') }}" rel="stylesheet">
     <!-- Internal Spectrum-colorpicker css -->
     <link href="{{ URL::asset('assets/plugins/spectrum-colorpicker/spectrum.css') }}" rel="stylesheet">
+    <!---Internal Fileupload css-->
+    <link href="{{URL::asset('assets/plugins/fileuploads/css/fileupload.css')}}" rel="stylesheet" type="text/css"/>
+
+    <style>
+        #notes{
+            height: auto !important;
+        }
+    </style>
 @endsection
 @section('page-header')
 
@@ -17,6 +27,17 @@
     {{ __('invoice.create invoice') }}
 @endsection
 @section('content')
+@if (session('msg')!==null)
+    <p class="alert alert-success mt-2">{{ session()->get('msg') }}</p>
+
+@endif
+@if ($errors->any())
+<div class="alert alert-danger">
+   @foreach ($errors->all() as $error)
+        <p>{{ $error }}</p>
+   @endforeach
+</div>
+@endif
     <!-- row -->
     <div class="row mt-2">
         <div class="col-lg-12 col-md-12">
@@ -25,14 +46,14 @@
                     <div class="main-content-label mg-b-5">
                         {{ __('invoice.create invoice') }}
                     </div>
-                    <form action="{{ route('invoice.store') }}" method="POST" autocomplete="off">
+                    <form action="{{ route('invoice.store') }}" enctype="multipart/form-data" method="POST" autocomplete="off">
                         @csrf
                         <div class="row row-xs formgroup-wrapper mt-4">
                             {{-- invoice number --}}
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="form-label">{{ __('invoice.invoice number') }}</label> <input
-                                        class="form-control" placeholder="EX:1999" type="text" value=""
+                                        class="form-control" placeholder="EX:1999" type="text" value="{{ old('invoiceNumber') }}"
                                         name="invoiceNumber">
                                 </div><!-- main-form-group -->
                             </div>
@@ -40,13 +61,12 @@
                             <div class="col-md-4 ">
                                 <label class="form-label">{{ __('invoice.invoice date') }}</label>
                                 <div class="row row-sm mg-b-20 ">
-                                    <div class="input-group ">
+                                    <div class="input-group">
                                         <div class="input-group-prepend">
                                             <div class="input-group-text">
                                                 <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
                                             </div>
-                                        </div><input class="form-control" id="datetimepicker" name="invoiceDate" type="text"
-                                            value="2018-12-20 21:05">
+                                        </div><input class="form-control fc-datepicker" value="{{ old('invoiceDate') }}" id="datetimepicker2"name="invoiceDate" placeholder="MM/DD/YYYY" type="text">
                                     </div>
                                 </div>
                             </div>
@@ -54,19 +74,18 @@
                             <div class="col-md-4 ">
                                 <label class="form-label">{{ __('invoice.due date') }}</label>
                                 <div class="row row-sm mg-b-20 ">
-                                    <div class="input-group ">
+                                    <div class="input-group">
                                         <div class="input-group-prepend">
                                             <div class="input-group-text">
                                                 <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
                                             </div>
-                                        </div><input class="form-control fc-datepicker" id="invoiceDueDate"
-                                            name="invoiceDueDate" placeholder="MM/DD/YYYY" type="text">
+                                        </div><input class="form-control fc-datepicker" id="datetimepicker22" name="invoiceDueDate" placeholder="MM/DD/YYYY" type="text" value="{{ old('invoiceDueDate') }}">
                                     </div>
                                 </div>
                             </div>
                             {{-- department --}}
                             <div class="col-lg-4 ">
-                                <p class="mg-b-10">{{ __('invoice.Department') }}</p><select onchange="getProducts(this.value)" id="departments"
+                                <p class="mg-b-10">{{ __('invoice.Department') }}</p><select name="department" onchange="getProducts(this.value)"onfocusout="getProducts(this.value)" id="departments"
                                     class="form-control select2">
                                     <option label="Choose Department">
                                     </option>
@@ -79,86 +98,89 @@
                             </div>
                             {{-- prodcuts --}}
                             <div class="col-lg-4 ">
-                                <p class="mg-b-10">{{ __('invoice.product') }}</p><select id="prodcuts" disabled
+                                <p class="mg-b-10">{{ __('invoice.product') }}</p><select name="product" id="prodcuts" disabled
                                     class="form-control select2">
                                 </select>
                             </div>
-                            {{-- money amount --}}
-                            <div class="col-md-4">
+                            {{-- paid amount --}}
+                            <div class="col-lg-4 col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label">{{ __('invoice.paid amount') }}</label> <input id="paidAmount"
-                                        class="form-control" type="text" value="0" name="paidAmount">
+                                    <label class="mg-b-10 form-label">{{ __('invoice.paid amount') }}</label> <input id="paidAmount"
+                                        class="form-control" type="text" value="{{ old('paidAmount')??0 }}"  onchange="claculateCommisionAmount()" onfocusout="claculateCommisionAmount()" onchange="claculateCommisionAmount()" name="paidAmount">
                                 </div>
+                                <small class="alert alert-danger d-none" id="paidAmountError">{{ __('invoice.paid amount error') }}</small>
                             </div>
-                            {{-- amount Commision--}}
-                            <div class="col-md-4">
+                            {{-- Commision percent--}}
+                            <div class="col-lg-4 col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">{{ __('invoice.commision percent') }}</label> <input
+                                        class="form-control" type="text" onfocusout="claculateCommisionAmount()"onchange="claculateCommisionAmount()" onchange="claculateCommisionAmount()" value="{{ old('commisionPercent')??0 }}" name="commisionPercent"
+                                        id="commisionPercent">
+                                </div>
+                                <small class="alert alert-danger d-none" id="comissionError">{{ __('invoice.commision percent error') }}</small>
+                            </div>
+                            {{-- commision Amount --}}
+                            <div class="col-lg-4 col-md-6">
                                 <div class="form-group">
                                     <label class="form-label">{{ __('invoice.commision amount') }}</label> <input
-                                        class="form-control" type="text" value="0" name="commisionAmount"
+                                        class="form-control" type="text" value="{{ old('commisionAmount')??0 }}" name="commisionAmount" readonly
                                         id="commisionAmount">
                                 </div>
                             </div>
-                            {{-- discount --}}
-                            <div class="col-md-4">
+                            {{-- deduction--}}
+                            <div class="col-lg-4 col-md-6">
                                 <div class="form-group">
                                     <label class="form-label">{{ __('invoice.deduction') }}</label> <input
-                                        class="form-control" type="text" value="0" name="deductionAmount"
+                                        class="form-control" type="text" value="{{ old('deductionAmount')??0 }}" onfocusout="changeDeductionAmount()" onchange="changeDeductionAmount()"name="deductionAmount"
                                         id="deductionAmount">
                                 </div>
+                                <small class="alert alert-danger d-none" id='deductionError'>{{ __('invoice.deduction amount error') }}</small>
                             </div>
-                            {{-- vat rate --}}
-                            <div class="col-md-4">
+                            {{-- vat percent--}}
+                            <div class="col-lg-4 col-md-6">
                                 <label class="form-label">{{ __('invoice.vat rate') }}</label>
                                 <div class="input-group mb-3">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">%</span>
-                                    </div><input class="form-control" type="text" value="0" name="vatRate" id="vatRate">
+                                    </div><input onchange="calculateVatValue()"onfocusout="calculateVatValue()" class="form-control" type="text" value="{{ old('vatRate')??0 }}" name="vatRate" id="vatRate">
                                 </div>
+                                <small class="alert alert-danger d-none" id="vatRateError">{{ __('invoice.vat rate error') }}</small>
                             </div>
                             {{-- vat value --}}
-                            <div class="col-md-6">
+                            <div class="col-lg-4 col-md-6">
                                 <div class="form-group">
                                     <label class="form-label">{{ __('invoice.vat value') }}</label> <input
-                                        class="form-control" disabled type="text" value="0" name="vatValue" id="vatValue">
+                                        class="form-control" readonly type="text" value="{{ old('vatValue')??0 }}" name="vatValue" id="vatValue">
                                 </div>
                             </div>
                             {{-- Total --}}
-                            <div class="col-md-6">
+                            <div class="col-lg-4 col-md-6">
                                 <div class="form-group">
                                     <label class="form-label">{{ __('invoice.total') }}</label> <input class="form-control "
-                                        disabled type="text" value="0" name="totalAmount" id="totalAmount">
+                                        readonly type="text" value="{{ old('totalAmount')??0 }}" name="totalAmount" id="totalAmount">
                                 </div><!-- main-form-group -->
                             </div>
                             {{-- notes --}}
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label">{{ __('invoice.note') }}</label><textarea class="form-control"
-                                        placeholder="Write your notes here ..." name="notes" id="notes" rows="4"></textarea>
-                                </div><!-- main-form-group -->
+                            <div class="col-12">
+                                <label class="form-label">{{ __('invoice.note') }}</label>
+                                <div class="">
+                                    <textarea class="form-control" placeholder="Write your notes here ..." name="notes" cols="auto" id="notes" rows="5" >{{ old('notes') }}</textarea>
+                                </div>
                             </div>
                             {{-- Attachments --}}
-                            <div class="col-md-6">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="row row-sm">
-                                            <div class="col-12">
-                                                <div class="custom-file">
-                                                    <input class="custom-file-input" id="attachments" name="attachments"
-                                                        type="file" multiple> <label class="custom-file-label"
-                                                        for="attachments">{{ __('invoice.attachments') }}</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="col-12">
+                                <label for="attachments">{{ __('invoice.attachments') }}</label>
+                                <div class="col-12 ">
+									<input type="file" class="dropify" data-height="200" id="attachments" name="attachments" multiple/>
+								</div>
                             </div>
                             {{-- submit buttons --}}
-                            <div class="row row-xs wd-xl-80p">
-                                <div class="col-sm-6 col-md-3 mg-t-10 mg-md-t-0">
-                                    <button class="btn btn-success btn-block"
-                                        type="submit">{{ __('invoice.create') }}</button>
+                            <div class="d-flex  align-items-center col-md-6 mt-2">
+                                <div class="ml-2">
+                                    <button id="submitBtn" class="btn px-5 btn-success btn-block "
+                                        type="submit" disabled>{{ __('invoice.create') }}</button>
                                 </div>
-                                <div class="col-sm-6 col-md-3 mg-t-10 mg-sm-t-0">
+                                <div class=" ">
                                     <button class="btn btn-secondary btn-block"
                                         type="reset">{{ __('invoice.cancel') }}</button>
                                 </div>
@@ -196,33 +218,128 @@
     <script src="{{ URL::asset('assets/plugins/pickerjs/picker.min.js') }}"></script>
     <!-- Internal form-elements js -->
     <script src="{{ URL::asset('assets/js/form-elements.js') }}"></script>
+    <!--Internal Fileuploads js-->
+    <script src="{{URL::asset('assets/plugins/fileuploads/js/fileupload.js')}}"></script>
+    <script src="{{URL::asset('assets/plugins/fileuploads/js/file-upload.js')}}"></script>
+
     <script>
+        const productsContainer=document.getElementById('prodcuts');
+        //error containers
+        const vatRateError=document.getElementById('vatRateError');
+        const paidAmountError=document.getElementById('paidAmountError');
+        const comissionError=document.getElementById('comissionError');
+        const deductionError=document.getElementById('deductionError');
+        //elements to get their values
+        const vatRate=document.getElementById('vatRate');
+        const paidAmount=document.getElementById('paidAmount');
+        const deductionAmount=document.getElementById('deductionAmount');
+        const commisionPercent=document.getElementById('commisionPercent');
+        //elements to calculate their values
+        const commisionAmount=document.getElementById('commisionAmount');
+        const vatValue=document.getElementById('vatValue');
+        const totalAmount=document.getElementById('totalAmount');
+
+        const submitBtn=document.getElementById('submitBtn');
         //this function is called when department is choosen
         function getProducts(e){
-            $productsContainer=document.getElementById('prodcuts');
-            $productsContainer.innerHTML='<option label="Choose product"></option>';
+            productsContainer.innerHTML='<option label="Choose product"></option>';
             fetch(`/invoice/get/products/${e}`)
             .then(response => response.json())
             .then(data => {
                 if(data.length<=0){
-                    if(!$productsContainer.hasAttribute("disabled")){
-                        $productsContainer.setAttribute('disabled',"disabled");
+                    if(!productsContainer.hasAttribute("disabled")){
+                        productsContainer.setAttribute('disabled',"disabled");
                    }
-                    alert("{{ __('invoice.There is no products in this department') }}");
+                    //alert("{{ __('invoice.There is no products in this department') }}");
+                    not8()
                 }else{
                    for(let product of data){
                        //loop over the response products and add them to options
-                        $productsContainer.innerHTML+=`
+                        productsContainer.innerHTML+=`
                                     <option value="${product.id}">
                                         ${product.title}
                                     </option>
                         `;
                    }
-                   if($productsContainer.hasAttribute("disabled")){
-                        $productsContainer.removeAttribute('disabled');
+                   if(productsContainer.hasAttribute("disabled")){
+                        productsContainer.removeAttribute('disabled');
                    }
                 }
             });
         }
+
+        function claculateCommisionAmount(){
+            let paidAmountVal=parseFloat(paidAmount.value);
+            let commisionPercentVal=parseFloat(commisionPercent.value);
+            if(isNaN(paidAmountVal)){
+                showErrorContainer(paidAmountError);
+            }else if(isNaN(commisionPercentVal)){
+                showErrorContainer(comissionError);
+            }else{
+                hideErrorcontainer(paidAmountError);
+                hideErrorcontainer(comissionError);
+                let val=((commisionPercentVal/100)*paidAmountVal);
+                commisionAmount.value=((commisionPercentVal/100)*paidAmountVal);
+                calculateTotalAmount()
+            }
+        }
+
+        function calculateVatValue(){
+            let vatPercent=parseFloat(vatRate.value);
+            let paidAmountVal=parseFloat(paidAmount.value);
+            if(isNaN(vatPercent)){
+                showErrorContainer(vatRateError);
+            }else if(isNaN(paidAmountVal)){
+                showErrorContainer(paidAmountError);
+            }else{
+                hideErrorcontainer(vatRateError);
+                hideErrorcontainer(paidAmountError);
+                vatValue.value=(vatPercent/100*paidAmountVal)
+                calculateTotalAmount()
+            }
+        }
+
+        function changeDeductionAmount(){
+            let deductionValue=parseFloat(deductionAmount.value);
+            if(isNaN(deductionValue)){
+               showErrorContainer(deductionError);
+            }else{
+                hideErrorcontainer(deductionError);
+                deductionAmount.value=deductionValue;
+                calculateTotalAmount();
+            }
+        }
+
+        function calculateTotalAmount(){
+            totalAmount.value=(parseFloat(vatValue.value)+parseFloat(commisionAmount.value)-parseFloat(deductionAmount.value));
+            if(isNaN(totalAmount.value))
+                submitBtn.setAttribute('disabled','disabled');
+            else
+                submitBtn.removeAttribute('disabled');
+        }
+
+        function showErrorContainer(container){
+            if(container.classList.contains('d-none')){
+                container.classList.remove('d-none')
+            }
+        }
+
+        function hideErrorcontainer(container){
+            if(!container.classList.contains('d-none')){
+                container.classList.add('d-none')
+            }
+        }
+
+        //sending a notification error message
+        function not8() {
+            notif({
+                msg: "<b>{{ __('invoice.There is no products in this department') }}",
+                type: "error",
+                position: "center"
+            });
+        }
     </script>
+<!--Internal  Notify js -->
+<script src="{{URL::asset('assets/plugins/notify/js/notifIt.js')}}"></script>
+
 @endsection

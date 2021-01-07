@@ -23,6 +23,7 @@ class CreateProductsTable extends Migration
             $table->string('img',255)->nullable();
             $table->unsignedBigInteger('department_id');
             $table->foreign('department_id')->references('id')->on('departments');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

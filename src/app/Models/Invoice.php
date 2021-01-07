@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Invoice extends Model
 {
     use HasFactory;
-    protected $fillable=['invoice_number','invoice_date','due_date','product','section','discount','vat_rate','vat_value','total','status','note','user','deleted_at','created_at','updated_at'];
+    protected $fillable=['invoice_number','invoice_date','department','due_date','product','section','deduction','commision_value','vat_value','total','status','user','deleted_at','created_at','created_by','updated_at'];
+    //accessors and mutators
     //not paid =0 , paid=1 , partially paid =2
     public function getStatusAttribute($val){
        if($val==0)
@@ -18,12 +19,21 @@ class Invoice extends Model
        else
         return "partially_paid";
     }
-    public function setStatusAttribute($val){
-       if($val=="not_paid")
-        $this->status=0;
-       elseif($val=="paid")
-        $this->status=1;
-       else
-        $this->status=2;
+    //Relations of the invoice model
+    public function user(){
+        return $this->belongsTo(\App\Models\User::class,'created_by');
+    }
+    public function attachments()
+    {
+        return $this->hasMany(\App\Models\Attachment::class,'invoice_id');
+    }
+    public function getDepartment(){
+        return $this->belongsTo(\App\Models\Department::class,'department');
+    }
+    public function details(){
+        return $this->hasMany(\App\Models\InvoiceDetails::class);
+    }
+    public function getProduct(){
+        return $this->belongsTo(\App\Models\Product::class,'product');
     }
 }

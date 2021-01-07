@@ -15,7 +15,7 @@ return [
     'price'=>'price',
     'all products'=>'all products',
     'department'=>'department',
-    'operations'=>'operations',
+    'operations'=>'Actions',
     'select department'=>'select department',
 
 ];
