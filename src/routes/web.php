@@ -2,8 +2,9 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DepartmentController;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\DepartmentController;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 /*
@@ -16,6 +17,10 @@ use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 | contains the "web" middleware group. Now create something great!
 |
 */
+//testting storage routes
+Route::get('/test',function(){
+   return Storage::download('storage/test.txt')    ;
+});
 
 
 Route::group( [ 'prefix' => LaravelLocalization::setLocale(), 'middleware' => [ 'localeSessionRedirect', 'localizationRedirect', 'localeViewPath' ]],
