@@ -232,7 +232,9 @@ class InvoiceController extends Controller
     }
     public function downloadAttachment(int $invoice_id,int $attach_id){
         $attach=$this->attachment::where('invoice_id',$invoice_id)->findOrFail($attach_id);
-        return Storage::download($attach['attachment-path']);
+        $file=Storage::getDriver('public_uploads')->getAdapter()->applyPathPrefix('uploads/invoices/'.$attach['attachment-path']);
+        return response()->download($file);
+        // return Storage::download('storage/uploads/invoices'.$attach['attachment-path']);
     }
     public function viewAttachment(int $invoice_id,int $attach_id){
         $attach=$this->attachment::where('invoice_id',$invoice_id)->findOrFail($attach_id);

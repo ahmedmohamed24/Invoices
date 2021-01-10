@@ -5,6 +5,6 @@ ADD ./nginx/default.conf /etc/nginx/conf.d/default.conf
 
 RUN mkdir -p /var/www/html
 
-RUN addgroup -g 1000 laravel && adduser -G laravel -g laravel -s /bin/sh -D laravel
+RUN addgroup -g 1000 ahmed && adduser -G laravel -g ahmed -s /bin/sh -D ahmed 
 
-RUN chown laravel:laravel /var/www/html
+RUN chown ahmed:ahmed /var/www/html
