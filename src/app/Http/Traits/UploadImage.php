@@ -14,8 +14,8 @@ trait UploadImage{
     public function uploadAttachment($img):string{
         $ext=$img->getClientOriginalExtension();
         $newImageName="invoice-".now().uniqid().".$ext";
-        // $img->move(public_path('storage/uploads/invoices'),$newImageName);
-        $img->storeAs('/',$newImageName);
+        $img->move(public_path('storage/uploads/invoices'),$newImageName);
+        //$img->storeAs('/',$newImageName);
         return "$newImageName";
     }
 }

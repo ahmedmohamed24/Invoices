@@ -10,6 +10,7 @@ use Illuminate\Validation\Rule;
 use App\Http\Traits\UploadImage;
 use App\Models\Attachment;
 use App\Models\InvoiceDetails;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -233,7 +234,18 @@ class InvoiceController extends Controller
         $attach=$this->attachment::where('invoice_id',$invoice_id)->findOrFail($attach_id);
         return Storage::download($attach['attachment-path']);
     }
-    public function viewAttachment(){
-
+    public function viewAttachment(int $invoice_id,int $attach_id){
+        $attach=$this->attachment::where('invoice_id',$invoice_id)->findOrFail($attach_id);
+        $file=Storage::getDriver('public_uploads')->getAdapter()->applyPathPrefix('uploads/invoices/'.$attach['attachment-path']);
+        return response()->file($file);
+    }
+    public function deleteAttachment(int $invoice_id,int $attach_id){
+        //may delete the file from storage also
+        try{
+            $this->attachment::where('invoice_id',$invoice_id)->findOrFail($attach_id)->delete();
+            return back()->with('msg','deleted successfully');
+        }catch(Exception $e){
+            abort(404,$e->getMessage());
+        }
     }
 }

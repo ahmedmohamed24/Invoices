@@ -29,7 +29,8 @@ Route::group( [ 'prefix' => LaravelLocalization::setLocale(), 'middleware' => [ 
             Route::get('/invoice/get/products/{id}',[App\Http\Controllers\InvoiceController::class,'getDepartmentProducts'])->name('invoice.getProducts');
             Route::get('/invoice/getInvoiceInfo/{id}',[App\Http\Controllers\InvoiceController::class,'getInfo'])->name('invoice.getInvoiceInfo');
             Route::get('/invoice/{invoice_id}/attacment/{attach_id}/download',[\App\Http\Controllers\InvoiceController::class,'downloadAttachment'])->name('attach.download');
-            Route::get('/invoice/{invoice_id}/attacment/{attach_id}/view',[\App\Http\Controllers\InvoiceController::class,'viewAttachment'])->name('attach.download');
+            Route::get('/invoice/{invoice_id}/attacment/{attach_id}/view',[\App\Http\Controllers\InvoiceController::class,'viewAttachment'])->name('attach.view');
+            Route::delete('/invoice/{invoice_id}/attacment/{attach_id}/delete',[\App\Http\Controllers\InvoiceController::class,'deleteAttachment'])->name('attach.delete');
 
 
             //departments routes
