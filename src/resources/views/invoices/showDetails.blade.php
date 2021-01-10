@@ -101,6 +101,7 @@
 											</thead>
 											<tbody>
                                                 @foreach ($invoice->attachments as $attachment)
+                                                    <img src="{{asset($attachment['attachment-path'])}}" alt="">
                                                     <tr>
                                                         <td>{{ $loop->count }}</td>
                                                         <td class="wd-40p"><img class='img-fluid' src="{{ asset($attachment['attachment-path']) }}" alt=""></td>
@@ -109,7 +110,7 @@
                                                             <a class="btn btn-purple mt-1" href="">
                                                                 <i class="fas fa-eye ml-1"></i>
                                                             </a>
-                                                            <a href="#" class="btn btn-info mt-1">
+                                                            <a href="{{ route('attach.download',['invoice_id'=>$attachment['invoice_id'],'attach_id'=>$attachment['id']]) }}" class="btn btn-info mt-1">
                                                               <i class="fas fa-download"></i>
                                                             </a>
                                                             <a href="#" class="btn btn-danger mt-1">

@@ -11,6 +11,7 @@ use App\Http\Traits\UploadImage;
 use App\Models\Attachment;
 use App\Models\InvoiceDetails;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class InvoiceController extends Controller
 {
@@ -189,7 +190,7 @@ class InvoiceController extends Controller
         //check if there is an attachment and store into attachments table
         if($request->hasFile('attachments')){
            $attachmentName=$this->uploadAttachment($request->attachments);
-           $this->attachment::create(['invoice_id'=>$validator['id'],'attachment-path'=>$attachmentName,'created_at'=>now(),'updated_at'=>null]);
+           $this->attachment::create(['invoice_id'=>$validator['id'],'attachment-path'=>$attachmentName,'created_at'=>now(),'updated_at'=>null,'created_by'=>Auth::id()]);
         }
 
         return back()->with('msg','invoice updated successfully');
@@ -227,5 +228,12 @@ class InvoiceController extends Controller
     public function getInfo(int $id){
         $invoiceInfo=$this->invoice::select('id','due_date','total','status')->where('deleted_at',null)->findOrFail($id);
         return $this->customResponse(200,'success',$invoiceInfo);
+    }
+    public function downloadAttachment(int $invoice_id,int $attach_id){
+        $attach=$this->attachment::where('invoice_id',$invoice_id)->findOrFail($attach_id);
+        return Storage::download($attach['attachment-path']);
+    }
+    public function viewAttachment(){
+
     }
 }

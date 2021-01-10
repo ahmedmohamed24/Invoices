@@ -2,25 +2,9 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\DepartmentController;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
-//testting storage routes
-Route::get('/test',function(){
-   return Storage::download('storage/test.txt')    ;
-});
 
 
 Route::group( [ 'prefix' => LaravelLocalization::setLocale(), 'middleware' => [ 'localeSessionRedirect', 'localizationRedirect', 'localeViewPath' ]],
@@ -44,6 +28,9 @@ Route::group( [ 'prefix' => LaravelLocalization::setLocale(), 'middleware' => [ 
             Route::post('/invoice/update',[App\Http\Controllers\InvoiceController::class,'update'])->name('invoice.update');
             Route::get('/invoice/get/products/{id}',[App\Http\Controllers\InvoiceController::class,'getDepartmentProducts'])->name('invoice.getProducts');
             Route::get('/invoice/getInvoiceInfo/{id}',[App\Http\Controllers\InvoiceController::class,'getInfo'])->name('invoice.getInvoiceInfo');
+            Route::get('/invoice/{invoice_id}/attacment/{attach_id}/download',[\App\Http\Controllers\InvoiceController::class,'downloadAttachment'])->name('attach.download');
+            Route::get('/invoice/{invoice_id}/attacment/{attach_id}/view',[\App\Http\Controllers\InvoiceController::class,'viewAttachment'])->name('attach.download');
+
 
             //departments routes
             Route::put('department/update',[\App\Http\Controllers\DepartmentController::class,'customUpdate'])->name('department.update.custom');

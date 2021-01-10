@@ -18,6 +18,8 @@ class CreateAttachmentsTable extends Migration
             $table->unsignedBigInteger('invoice_id');
             $table->foreign("invoice_id")->references('id')->on('invoices')->onDelete("cascade")->onUpdate("cascade");
             $table->string("attachment-path",100);
+            $table->unsignedBigInteger('created_by');
+            $table->foreign('created_by')->references('id')->on('users');
             $table->timestamps();
         });
     }

@@ -13,7 +13,7 @@ class Attachment extends Model
      *
      * @var array
      */
-    protected $fillable = ['attachment-path','invoice_id','created_at','updated_at'];
+    protected $fillable = ['attachment-path','invoice_id','created_by','created_at','updated_at'];
 
     public function invoice()
     {
