@@ -43,6 +43,12 @@
                                 <p class="invoice-info-row text-secondary"><span
                                         class="text-primary">{{ __('invoice.due date') }}</span><span>{{ $invoice->due_date }}
                                     </span></p>
+                                @if ($invoice->deleted_at !== null)
+                                <p class="invoice-info-row text-secondary"><span
+                                    class="text-primary">{{ __('invoice.deleted_at') }}</span><span>{{ $invoice->deleted_at}}
+                                </span></p>
+                                @endif
+
                                 <p class="invoice-info-row"><span
                                         class="text-primary">{{ __('invoice.deduction') }}</span><span>{{ $invoice->deduction }}
                                     </span></p>
@@ -89,7 +95,7 @@
                                 <tbody>
                                     @foreach ($invoice->details as $detail)
                                         <tr>
-                                            <td>{{ $loop->count }}</td>
+                                            <td>{{ $loop->index}}</td>
                                             <td class="tx-right text-secondary">{{ $detail->due_date }}</td>
                                             <td class="tx-right text-info">{{ $detail->total }}</td>
                                             @switch($detail->status)
@@ -139,7 +145,7 @@
                                 <tbody>
                                     @foreach ($invoice->attachments as $attachment)
                                         <tr>
-                                            <td>{{ $loop->count }}</td>
+                                            <td>{{ $loop->index }}</td>
                                             <td class="wd-40p"><img class='img-fluid'
                                                     src="{{ asset('storage/uploads/invoices/' . $attachment['attachment-path']) }}"
                                                     alt=""></td>

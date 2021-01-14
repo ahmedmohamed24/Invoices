@@ -42,6 +42,10 @@ class InvoiceController extends Controller
         $invoices=$this->invoice::with('user')->where('status',1)->where('deleted_at',null)->paginate(30);
         return view('invoices.invoices',['invoices'=>$invoices]);
     }
+    public function getArchived(){
+        $invoices=$this->invoice::with('user')->where('deleted_at','!=',null)->paginate(30);
+        return view('invoices.archive',['invoices'=>$invoices]);
+    }
     public function getNotPaid(){
         $invoices=$this->invoice::with('user')->where('status',0)->where('deleted_at',null)->paginate(30);
         return view('invoices.invoices',['invoices'=>$invoices]);
@@ -125,7 +129,7 @@ class InvoiceController extends Controller
      */
     public function show($id)
     {
-       $invoice=$this->invoice::where('deleted_at',null)->findOrFail($id);
+       $invoice=$this->invoice::findOrFail($id);
         return view('invoices.showDetails',['invoice'=>$invoice]);
     }
 
@@ -232,14 +236,16 @@ class InvoiceController extends Controller
     }
     public function downloadAttachment(int $invoice_id,int $attach_id){
         $attach=$this->attachment::where('invoice_id',$invoice_id)->findOrFail($attach_id);
-        $file=Storage::getDriver('public_uploads')->getAdapter()->applyPathPrefix('uploads/invoices/'.$attach['attachment-path']);
-        return response()->download($file);
-        // return Storage::download('storage/uploads/invoices'.$attach['attachment-path']);
+        // $file=Storage::getDriver('public_uploads')->getAdapter()->applyPathPrefix('uploads/invoices/'.$attach['attachment-path']);
+        return Storage::drive('local')->download('uploads/invoices/'.$attach['attachment-path']);
+        // return response()->download($file);
     }
     public function viewAttachment(int $invoice_id,int $attach_id){
         $attach=$this->attachment::where('invoice_id',$invoice_id)->findOrFail($attach_id);
-        $file=Storage::getDriver('public_uploads')->getAdapter()->applyPathPrefix('uploads/invoices/'.$attach['attachment-path']);
-        return response()->file($file);
+        // $file=Storage::getDriver('public_uploads')->getAdapter()->applyPathPrefix('uploads/invoices/'.$attach['attachment-path']);
+        $img=asset(Storage::drive('local')->url('uploads/invoices/'.$attach['attachment-path']));
+        return "<img src='$img' />";
+        // return response()->file($url);
     }
     public function deleteAttachment(int $invoice_id,int $attach_id){
         //may delete the file from storage also
@@ -249,5 +255,22 @@ class InvoiceController extends Controller
         }catch(Exception $e){
             abort(404,$e->getMessage());
         }
+    }
+
+    public function deleteArchived(Request $invoice){
+        $invoice->validate([
+            'id'=>'required|numeric|exists:invoices,id'
+        ]);
+        $this->invoice::findOrFail($invoice->id)->delete();
+        return back()->with('msg','successfully deleted');
+    }
+
+    public function restoreArchived(Request $invoice){
+        $invoice->validate([
+            'id'=>'required|numeric|exists:invoices,id'
+        ]);
+        $this->invoice::findOrFail($invoice->id)->update(['deleted_at'=>null]);
+        return back()->with('msg','successfully restored');
+
     }
 }

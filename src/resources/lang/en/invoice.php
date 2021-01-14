@@ -42,4 +42,5 @@ return [
     'not updated'=>'never updated',
     'attachment'=>'attachment',
     'operations'=>'operations',
+    'archived'=>'archived invoices',
 ];

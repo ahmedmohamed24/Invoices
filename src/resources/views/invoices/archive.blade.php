@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-{{ __('invoice.all invoices') }}
+{{ __('invoice.archived') }}
 @endsection
 @section('css')
 {{-- date time picker --}}
@@ -26,14 +26,6 @@
         }
     </style>
 @endsection
-@section('page-header')
-    <div class="row my-3">
-        <div class="col-sm-6 col-md-3">
-            <a class="btn btn-primary-gradient btn-block" href="{{ route('invoice.create') }}">{{ __('invoice.create invoice') }}</a>
-        </div>
-    </div>
-
-@endsection
 @section('content')
                 @if ($errors->any())
                     <div class="alert alert-danger">
@@ -53,7 +45,7 @@
 						<div class="card mg-b-20">
 							<div class="card-header pb-0">
 								<div class="d-flex justify-content-between">
-									<h4 class="card-title mg-b-0">{{ __('invoice.all invoices') }}</h4>
+									<h4 class="card-title mg-b-0">{{ __('invoice.archived') }}</h4>
 									<i class="mdi mdi-dots-horizontal text-gray"></i>
 								</div>
 							</div>
@@ -96,14 +88,14 @@
                                                         </td>
                                                 @endswitch
                                                 <td class="d-flex">
-                                                    <a href="{{ route('invoice.show',$invoice->id) }}" class="btn btn-primary ml-2 text-light">
-                                                        <i class="fas fa-eye"></i>
-													</a>
-                                                    <a class="btn btn-info ml-2 text-light"
-                                                        onclick="event.preventDefault();showUpdateModel('{{ route('invoice.getInvoiceInfo',$invoice->id) }}');"><i
-                                                            class="las la-pen"></i></a>
-                                                    <form action="{{ route('invoice.destroy') }}" method="POST">
+                                                    <form action="{{ route('restore.archived') }}" class="ml-2" method="POST">
                                                         @csrf
+                                                        <input type="hidden" name="id" value="{{ $invoice->id }}">
+                                                        <button class="btn btn-warning" title="restore" type="submit"><i class="mdi mdi-refresh"></i></button>
+                                                    </form>
+                                                    <form action="{{ route('delete.archived') }}" method="POST">
+                                                        @csrf
+                                                        @method('delete')
                                                         <input type="hidden" name="id" value="{{ $invoice->id }}">
                                                         <button class="btn btn-danger" type="submit"><i class="las la-trash"></i></button>
                                                     </form>

@@ -16,5 +16,5 @@ return [
     'add department'=>'اضافة قسم',
     'users reports'=>'تقارير المستخدمين',
     'invoices reports'=>'تقارير الفواتير',
-
+    'archive'=>'الأرشيف',
 ];

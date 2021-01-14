@@ -16,4 +16,5 @@ return [
     'add department'=>'add department',
     'users reports'=>'users reports',
     'invoices reports'=>'invoices reports',
+    'archive'=>'archive',
 ];

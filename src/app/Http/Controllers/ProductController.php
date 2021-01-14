@@ -69,7 +69,7 @@ class ProductController extends Controller
      */
     public function show(int $id)
     {
-        $product = $this->product->where('deleted_at',null)::findOrFail($id);
+        $product = $this->product::where('deleted_at',null)->findOrFail($id);
         return $this->customResponse(200, "success", $product);
     }
 
@@ -125,7 +125,7 @@ class ProductController extends Controller
     public function destroy(int $id)
     {
         $this->product::where('deleted_at',null)->findOrFail($id)->update([
-            'updated_at'=>now(),
+            'deleted_at'=>now(),
         ]);
         //may delete it's image also
         return redirect()->back()->with('message', 'Product deleted successfully');

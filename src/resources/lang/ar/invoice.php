@@ -40,5 +40,6 @@ return [
     'not updated'=>'لم يتم تعديلها',
     'attachment'=>'المرفقات',
     'operations'=>'العمليات',
+    'archived'=>'الفواتير المأرشفة',
 
 ];

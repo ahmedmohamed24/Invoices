@@ -32,6 +32,7 @@
 							<li><a class="slide-item" href="{{route('invoice.paid')}}">{{ __("main-sidebar.paid invoices") }}</a></li>
 							<li><a class="slide-item" href="{{route('invoice.paid.partially')  }}">{{ __("main-sidebar.partially paid") }}</a></li>
 							<li><a class="slide-item" href="{{route('invoice.notPaid')  }}">{{ __("main-sidebar.not paid") }}</a></li>
+							<li><a class="slide-item" href="{{route('invoice.archive')  }}">{{ __('main-sidebar.archive') }}</a></li>
 						</ul>
                     </li>
 
