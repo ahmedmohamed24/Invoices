@@ -46,4 +46,5 @@ return [
     'add attach'=>'add new attachment',
     'add'=>'add',
     'print'=>'print',
+    'export'=>'export',
 ];

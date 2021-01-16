@@ -2,18 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Traits\CustomResponse;
+use Exception;
 use App\Models\Invoice;
+use App\Models\Attachment;
 use App\Models\Department;
 use Illuminate\Http\Request;
+use App\Models\InvoiceDetails;
+use App\Exports\InvociesExport;
 use Illuminate\Validation\Rule;
 use App\Http\Traits\UploadImage;
-use App\Models\Attachment;
-use App\Models\InvoiceDetails;
-use Exception;
+use Illuminate\Support\Facades\DB;
+use App\Http\Traits\CustomResponse;
+use App\Mail\Invoice as MailInvoice;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
-
+use App\Exports\UsersExport;
+use Maatwebsite\Excel\Facades\Excel;
 class InvoiceController extends Controller
 {
     use UploadImage,CustomResponse;
@@ -87,38 +92,50 @@ class InvoiceController extends Controller
             'notes'=>"string|nullable",
             'attachments'=>'nullable|file|mimes:png,jpg,jpeg,pdf|max:2048',
         ]);
-        $attachmentName=null;
-        if($request->hasFile('attachments')){
-            //upload these files
-            $attachmentName=$this->uploadAttachment($request->attachments);
+        try{
+            DB::beginTransaction(); //to make sure all data is added or all was canceled
+                $attachmentName=null;
+                if($request->hasFile('attachments')){
+                    //upload this file
+                    $attachmentName=$this->uploadAttachment($request->attachments);
+                }
+                //store main data in invoices table and get the id to store the attachments and details
+                $invoice=Invoice::create([
+                    'invoice_number'=> $request->invoiceNumber,
+                    'invoice_date'=> $request->invoiceDate,
+                    'due_date'=> $request->invoiceDueDate,
+                    'product'=> $request->product,
+                    'department'=> $request->department,
+                    'deduction'=> $request->deductionAmount,
+                    'commision_value'=> $request->commisionAmount,
+                    'vat_value'=> $request->vatValue,
+                    'total'=> $request->totalAmount,
+                    'status'=>0 ,
+                    'created_by'=> Auth::user()->id ,
+                    'deleted_at'=>null ,
+                    'created_at'=> now() ,
+                    'updated_at'=> null ,
+                ]);
+                $invoiceId=$invoice->id;
+                if($attachmentName){
+                    Attachment::create([
+                        'invoice_id'=>$invoiceId,
+                        'attachment-path'=>$attachmentName,
+                        'created_at'=>now(),
+                        'created_by'=>Auth::id(),
+                        'updated_at'=>null
+                    ]);
+                }
+            //send email to the admin that there is new attachment added
+            Mail::to(env('ADMIN_MAIL'))->send(new MailInvoice($invoice));
+            DB::commit();
+            return back()->with('msg','invoice added successfully');
+        }catch(Exception $e){
+            //add it to log file with error message
+            DB::rollback();
+            // return back()->with('msg','something went wrong please contact the adminstrator');
+            return back()->with('msg',$e->getMessage());//only for debugging
         }
-        //store main data in invoices table and get the id to store the attachments and details
-        $invoice=Invoice::create([
-            'invoice_number'=> $request->invoiceNumber,
-            'invoice_date'=> $request->invoiceDate,
-            'due_date'=> $request->invoiceDueDate,
-            'product'=> $request->product,
-            'department'=> $request->department,
-            'deduction'=> $request->deductionAmount,
-            'commision_value'=> $request->commisionAmount,
-            'vat_value'=> $request->vatValue,
-            'total'=> $request->totalAmount,
-            'status'=>0 ,
-            'created_by'=> Auth::user()->id ,
-            'deleted_at'=>null ,
-            'created_at'=> now() ,
-            'updated_at'=> null ,
-        ]);
-        $invoiceId=$invoice->id;
-        if($attachmentName){
-            Attachment::create([
-                'invoice_id'=>$invoiceId,
-                'attachment-path'=>$attachmentName,
-                'created_at'=>now(),
-                'updated_at'=>null
-            ]);
-        }
-        return back()->with('msg','invoice added successfully');
     }
 
     /**
@@ -285,5 +302,8 @@ class InvoiceController extends Controller
             'created_by'=>Auth::id()
         ]);
         return back()->with('msg','attachment added successfully');
+    }
+    public function exportInvoices(){
+        return Excel::download(new InvociesExport, "invoices-".now()."-.xlsx");
     }
 }

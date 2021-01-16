@@ -31,6 +31,9 @@
         <div class="col-sm-6 col-md-3">
             <a class="btn btn-primary-gradient btn-block" href="{{ route('invoice.create') }}">{{ __('invoice.create invoice') }}</a>
         </div>
+        <div class="col-sm-6 col-md-3">
+                <a class="btn btn-success-gradient btn-block" href="{{ route('invoices.export') }}">{{ __('invoice.export') }}</a>
+        </div>
     </div>
 
 @endsection
