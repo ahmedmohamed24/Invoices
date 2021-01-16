@@ -23,6 +23,5 @@ Route::group( [ 'prefix' => LaravelLocalization::setLocale(), 'middleware' => [ 
             Route::resource('product', ProductController::class);
 
             Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-            Route::get('/{page}', [App\Http\Controllers\AdminController::class,'index']);
         });
 });

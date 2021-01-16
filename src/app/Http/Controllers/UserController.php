@@ -1,10 +1,17 @@
 <?php
-namespace App\Http\Controllers;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
-class AdminController extends Controller
+namespace App\Http\Controllers;
+
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Contracts\Role;
+
+class UserController extends Controller
 {
+    private Auth $auth;
+    private User $user;
     /**
      * Display a listing of the resource.
      *
@@ -12,20 +19,18 @@ class AdminController extends Controller
      */
     public function __construct()
     {
-       if(!Auth::check())
+        $this->auth=new Auth;
+        $this->user=new User;
+        if(!$this->auth::check())
              return redirect(route('login'),302,['message'=>'not authenticated']);
     }
-    public function index($id)
+    public function index()
     {
-        if(view()->exists($id)){
-            return view($id);
-        }
-        else
-        {
-            return view('404');
-        }
+        // User::findOrFail(1)->assignRole('admin');
+        // User::findOrFail(1)->givePermissionTo('edit articles');
 
-     //   return view($id);
+        $users=$this->user::paginate(20);
+        return view('user.users',['users'=>$users]);
     }
 
     /**

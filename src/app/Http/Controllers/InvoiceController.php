@@ -31,12 +31,12 @@ class InvoiceController extends Controller
     private Department $department;
     private InvoiceDetails $invoiceDetails;
     private Attachment $attachment;
-    public function __construct(Invoice $invoice,Department $department, InvoiceDetails $invoiceDetails, Attachment $attachment)
+    public function __construct()
     {
-        $this->invoice=$invoice;
-        $this->department=$department;
-        $this->invoiceDetails=$invoiceDetails;
-        $this->attachment=$attachment;
+        $this->invoice=new Invoice;
+        $this->department=new Department;
+        $this->invoiceDetails=new InvoiceDetails;
+        $this->attachment=new Attachment;
     }
     public function index()
     {

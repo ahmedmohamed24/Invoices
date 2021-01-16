@@ -14,10 +14,10 @@ class ProductController extends Controller
     use  UploadImage, ProductTrait, CustomResponse;
     private Product $product;
     private Department $department;
-    public function __construct(Product $product, Department $department)
+    public function __construct()
     {
-        $this->product = $product;
-        $this->department = $department;
+        $this->product = new Product;
+        $this->department = new Department;
     }
     /**
      * Display a listing of the resource.

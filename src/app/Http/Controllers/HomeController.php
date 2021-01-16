@@ -14,6 +14,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
+        $this->auth=new Auth;
         $this->middleware('auth');
         if(!Auth::check())
              return redirect(route('login'),302,['message'=>'not authenticated']);
