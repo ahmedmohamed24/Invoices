@@ -41,5 +41,8 @@ return [
     'attachment'=>'المرفقات',
     'operations'=>'العمليات',
     'archived'=>'الفواتير المأرشفة',
+    'add attach'=>'اضافة مرفق جديد',
+    'add'=>'اضافة',
+    'print'=>'طباعة',
 
 ];

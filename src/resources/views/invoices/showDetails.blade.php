@@ -1,14 +1,23 @@
 @extends('layouts.master')
 @section('css')
+
 @endsection
 @section('title')
     {{ __('invoice.invoice details') }}
 @endsection
 @section('content')
     @if (session('msg') !== null)
-        <div class="alert alert-success">
+        <div class="alert alert-success mt-2">
             {{ session()->get('msg') }}
         </div>
+    @endif
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            @foreach ($errors->all() as $err)
+                <p class="my-1">{{ $err }}</p>
+            @endforeach
+        </div>
+
     @endif
     <!-- row -->
     <div class="row row-sm mt-2">
@@ -20,7 +29,7 @@
                         <div class="invoice-header">
                             <h1 class="invoice-title">{{ __('invoice.invoice') }}</h1>
                         </div>
-                        <div class="row mg-t-20">
+                        <div class="row mg-t-20" id="printedArea">
                             <div class="col-md">
                                 <h3 class="invoice-title mb-2">{{ __('invoice.invoice details') }}</h3>
                                 <p class="invoice-info-row"><span
@@ -78,6 +87,7 @@
                                         class="text-primary h2">{{ $invoice->total }}$ </span></p>
                             </div>
                         </div>
+                            <button class="btn btn-info mb-4" onclick="printInvoice()">{{ __('invoice.print') }}</button>
                         {{-- view mor details --}}
                         <h3 class="invoice-title mb-2">{{ __('invoice.more details') }}</h3>
                         <div class="table-responsive mg-t-40">
@@ -131,6 +141,33 @@
                         <hr class="mg-b-40">
                         {{-- attachments --}}
                         <h3 class="invoice-title">{{ __('invoice.attachments') }}</h3>
+                        <div class="float-left my-2">
+                            {{-- add new attachment section --}}
+                            <a class="btn ripple btn-primary" data-target="#modaldemo7" data-toggle="modal" href="">{{ __('invoice.add attach') }}</a>
+                            <div class="modal" id="modaldemo7">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <form class="modal-content modal-content-demo" method="POST" action="{{ route('attach.add') }}" enctype="multipart/form-data">
+                                        <div class="modal-header">
+                                            <h6 class="modal-title">{{__('invoice.add attach')}}</h6><button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
+                                        </div>
+                                        @csrf
+                                        <input type="hidden" name="invoice" value="{{ $invoice->id }}">
+                                        <div class="modal-body">
+                                            <div class="">
+                                                <div class="custom-file">
+                                                    <input class="custom-file-input" name="attach" id="customFile" type="file"> <label class="custom-file-label" for="customFile">Choose file</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button class="btn ripple btn-primary" type="submit">{{__('invoice.add')}}</button>
+                                            <button class="btn ripple btn-secondary" data-dismiss="modal" type="reset">{{__('invoice.cancel')}}</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            {{-- end of adding new attachment section --}}
+                        </div>
                         <div class="table-responsive mg-t-40">
                             <table class="table table-invoice border text-md-nowrap mb-0">
                                 <thead>
@@ -189,6 +226,16 @@
     <!-- main-content closed -->
 @endsection
 @section('js')
-    <!--Internal  Chart.bundle js -->
-    <script src="{{ URL::asset('assets/plugins/chart.js/Chart.bundle.min.js') }}"></script>
+<!-- Internal Modal js-->
+<script src="{{URL::asset('assets/js/modal.js')}}"></script>
+<script>
+    function printInvoice(){
+        let printedArea=document.getElementById('printedArea').innerHTML;
+        let originalDocument=document.body.innerHTML;
+        document.body.innerHTML=printedArea;
+        window.print();
+        document.body.innerHTML=originalDocument;
+        location.reload();
+    }
+</script>
 @endsection

@@ -271,6 +271,19 @@ class InvoiceController extends Controller
         ]);
         $this->invoice::findOrFail($invoice->id)->update(['deleted_at'=>null]);
         return back()->with('msg','successfully restored');
+    }
+    public function addAttach(Request $attach){
+        $attach->validate([
+            'invoice'=>['required','numeric','exists:invoices,id'],
+            'attach'=>['required','file','mimes:png,jpg,jpeg,pdf','max:2024']
+        ]);
 
+        $img=$this->uploadAttachment($attach->attach);
+        $this->attachment::create([
+            'invoice_id'=>$attach->invoice,
+            'attachment-path'=>$img,
+            'created_by'=>Auth::id()
+        ]);
+        return back()->with('msg','attachment added successfully');
     }
 }

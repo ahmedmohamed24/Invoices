@@ -43,4 +43,7 @@ return [
     'attachment'=>'attachment',
     'operations'=>'operations',
     'archived'=>'archived invoices',
+    'add attach'=>'add new attachment',
+    'add'=>'add',
+    'print'=>'print',
 ];

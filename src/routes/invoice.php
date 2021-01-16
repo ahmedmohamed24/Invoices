@@ -25,5 +25,6 @@ Route::group( [ 'prefix' => LaravelLocalization::setLocale(), 'middleware' => [ 
             Route::delete('/invoice/{invoice_id}/attacment/{attach_id}/delete',[\App\Http\Controllers\InvoiceController::class,'deleteAttachment'])->name('attach.delete');
             Route::delete('/invoice/delete/archived',[\App\Http\Controllers\InvoiceController::class,'deleteArchived'])->name('delete.archived');
             Route::post('/invoice/archive/restore',[\App\Http\Controllers\InvoiceController::class,'restoreArchived'])->name('restore.archived');
+            Route::post('/invoice/attach/add',[\App\Http\Controllers\InvoiceController::class,'addAttach'])->name('attach.add');
         });
 });
