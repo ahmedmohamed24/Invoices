@@ -18,7 +18,7 @@ class CreateProductsTable extends Migration
             $table->string('title',255);
             $table->decimal('price',8,2);
             $table->unsignedBigInteger('created_by');
-            $table->foreign('created_by')->references('id')->on('users');//on update and delete restricted as default
+            $table->foreign('created_by')->references('id')->on('users')->onDelete("SET NULL");
             $table->text('description')->nullable();
             $table->string('img',255)->nullable();
             $table->unsignedBigInteger('department_id');
