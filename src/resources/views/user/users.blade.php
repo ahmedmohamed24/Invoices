@@ -68,8 +68,8 @@
                                                         <label for="password_confirm">{{ __('user.confirm password') }}</label>
                                                         <input class="form-control" type="password" id="password_confirm" name="cPassword">
                                                     </div>
-                                                    <div class="form-group">
-                                                        <label for="userStatus">{{ __('user.status') }}</label>
+                                                    <div class="d-flex flex-column">
+                                                        <label for="userStatus" class="mt-2">{{ __('user.status') }}</label>
                                                         <select id="userStatus" name="status" class="form-control select2-no-search" >
                                                             <option selected value="active">
                                                                 {{ __('user.active') }}
@@ -79,8 +79,8 @@
                                                             </option>
                                                         </select>
                                                     </div>
-                                                    <div class="form-group">
-                                                        <label for="userRoles">{{ __('user.roles') }}</label>
+                                                    <div class="d-flex flex-column">
+                                                        <label for="userRoles"class="mt-2">{{ __('user.roles') }}</label>
                                                         <select id="userRoles" name="roles[]"class="form-control select2" multiple>
                                                             @foreach ($roles as $item)
                                                                 <option value=" {{$item}}">
@@ -89,8 +89,8 @@
                                                             @endforeach
                                                         </select>
                                                     </div>
-                                                    <div class="form-group">
-                                                        <label for="userPermissions">{{ __('user.permissions') }}</label>
+                                                    <div class="d-flex flex-column">
+                                                        <label for="userPermissions"class="mt-2">{{ __('user.permissions') }}</label>
                                                         <select id="userPermissions" name="permissions[]" class="form-control select2" multiple>
                                                             @foreach ($permissions as $item)
                                                                 <option value="{{$item}}">
@@ -215,7 +215,7 @@
                         </div>
                         <div class="d-flex flex-column">
                             <label for="userStatus-edit">{{ __('user.status') }}</label>
-                            <select id="userStatus-edit" name="status" class="form-control select2-no-search" >
+                            <select id="userStatus-edit" name="status" class="form-control" >
                                 <option  value="active" id="activeStatus">
                                     {{ __('user.active') }}
                                 </option>
@@ -226,9 +226,9 @@
                         </div>
                         <div class="d-flex flex-column">
                             <label for="userRoles-edit">{{ __('user.roles') }}</label>
-                            <select id="userRoles-edit"name="roles[]" class="form-control w-100 select2" multiple="multiple">
+                            <select id="userRoles-edit" name="roles[]" class="form-control" multiple="multiple">
                                 @foreach ($roles as $item)
-                                    <option value="{{$item}}">
+                                    <option value="{{$item}}" id="role-option-{{$item}}">
                                         {{$item}}
                                     </option>
                                 @endforeach
@@ -238,7 +238,7 @@
                             <label for="userPermissions-edit">{{ __('user.permissions') }}</label>
                             <select id="userPermissions-edit" name="permissions[]" class="form-control select2" multiple>
                                 @foreach ($permissions as $item)
-                                    <option value="{{$item}}">
+                                    <option value="{{$item}}" id="permission-option-{{$item}}">
                                         {{$item}}
                                     </option>
                                 @endforeach
@@ -281,22 +281,50 @@
             fetch(route)
             .then(response => response.json())
             .then(data => {
-                console.log(data)
-                //append data to form
-                document.getElementById("userId-edit").value=data.data.id;
-                document.getElementById("userName-edit").value=data.data.name;
-                document.getElementById("userEmail-edit").value=data.data.email;
-                document.getElementById("modaldemo1").action=window.location.origin+'/user/'+data.data.id;
-                switch(data.data.status){
-                    case 'active':
-                        document.getElementById("activeStatus").setAttribute('selected','selected');
-                    break;
-                    default:
-                        document.getElementById("inactiveStatus").setAttribute('selected','selected');
+                if(data.status===200){
+                    //remove old selections if there is any
+                    let allOptions=document.getElementById('userPermissions-edit').children;
+                    for(let i=0;i<allOptions.length;i++){
+                        allOptions[i].removeAttribute('selected');
+                    }
+                    let allRoles=document.getElementById('userRoles-edit').children;
+                    for(let i=0;i<allRoles.length;i++){
+                       allRoles[i].removeAttribute('selected');
+                    }
+
+                    //append data to form
+                    document.getElementById("userId-edit").value=data.data.id;
+                    document.getElementById("userName-edit").value=data.data.name;
+                    document.getElementById("userEmail-edit").value=data.data.email;
+                    document.getElementById("modaldemo1").action=window.location.origin+'/user/'+data.data.id;
+                    switch(data.data.status){
+                        case 'active':
+                            document.getElementById("activeStatus").setAttribute('selected','selected');
+                            document.getElementById("inactiveStatus").removeAttribute('selected');
+                        break;
+                        default:
+                            document.getElementById("inactiveStatus").setAttribute('selected','selected');
+                            document.getElementById("activeStatus").removeAttribute('selected');
+                    }
+                    let roles=data.data.roles;
+                    for(let i=0; i<roles.length;i++){
+                        document.getElementById(`role-option-${roles[i].name}`).setAttribute('selected','selected');
+                    }
+                    let permissions=data.data.permissions;
+                    for(let i=0; i<permissions.length;i++){
+                        document.getElementById(`permission-option-${permissions[i].name}`).setAttribute('selected','selected');
+                    }
+                    //call select2 plugin to render
+                    $('#userStatus-edit').select2();
+                    $('#userPermissions-edit').select2();
+                    $('#userRoles-edit').select2();
+                    //show edit form
+                    document.getElementById('showEditModal').click();
+                }else{
+                    alert('error');
                 }
             });
-            //show edit form
-            document.getElementById('showEditModal').click();
+
         }
     </script>
 @endsection
