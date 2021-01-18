@@ -14,7 +14,7 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         //may run every seeder alone or seed all once
-        \App\Models\User::factory(1)->create();
+        \App\Models\User::factory(10)->create();
         \App\Models\Department::factory(10)->create();
         \App\Models\Product::factory(10)->create();
         \App\Models\Invoice::factory(50)->create();

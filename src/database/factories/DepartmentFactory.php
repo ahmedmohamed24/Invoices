@@ -24,8 +24,7 @@ class DepartmentFactory extends Factory
         return [
             'title'=>$this->faker->unique()->word(),
             'description'=>$this->faker->sentences(3,true),
-            'created_by'=>1,
-
+            'created_by'=>$this->faker->randomDigitNot(0),
         ];
     }
 }

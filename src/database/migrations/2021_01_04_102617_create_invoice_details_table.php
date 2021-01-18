@@ -21,8 +21,8 @@ class CreateInvoiceDetailsTable extends Migration
             $table->decimal('total');
             $table->char('status',1)->default('2');//when there's an update, mostly it's partially paid
             $table->text("note");
-            $table->unsignedBigInteger('created_by');
-            $table->foreign('created_by')->references('id')->on('users')->onDelete("SET NULL");
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->foreign('created_by')->references('id')->on('users')->onDelete("set null");
             $table->timestamps();
         });
     }

@@ -28,8 +28,8 @@ class CreateInvoicesTable extends Migration
             $table->decimal('vat_value');
             $table->decimal('total');
             $table->char('status',1)->default('0');//0-> not paid , 1=> paid , 2 => partially paid
-            $table->unsignedBigInteger('created_by');
-            $table->foreign('created_by')->references('id')->on('users')->onDelete("SET NULL");
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->foreign('created_by')->references('id')->on('users')->onDelete("set null");
             $table->softDeletes();
             $table->timestamps();
         });
