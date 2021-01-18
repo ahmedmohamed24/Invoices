@@ -17,4 +17,5 @@ return [
     'users reports'=>'تقارير المستخدمين',
     'invoices reports'=>'تقارير الفواتير',
     'archive'=>'الأرشيف',
+    'users roles'=>'وظيفة المستخدم',
 ];

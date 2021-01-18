@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('title')
-
+    {{ __('user.users') }}
 @endsection
 @section('css')
 <!-- Internal Select2 css -->
@@ -184,7 +184,7 @@
                                         </tbody>
                                     </table>
                                 </div>
-                               <div class="d-flex justify-content-center align-items-center">{!! $users->render() !!}</div>
+                               <div class="d-flex justify-content-center align-items-center my-3">{!! $users->render() !!}</div>
 							</div>
 						</div>
 					</div>

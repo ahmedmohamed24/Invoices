@@ -1,0 +1,21 @@
+<?php
+return [
+    'role list'=>'وظيفة المستخدم',
+    'role'=>'وظيفة',
+    'roles'=>'الوظائف',
+    'guard name'=>'اسم الحارث',
+    'name'=>'الاسم',
+    'email'=>'الحساب',
+    'status'=>'الحالة',
+    'created_at'=>'أنشأ فى',
+    'updated_at'=>'تم تعديله فى',
+    'add role'=>'أضف وظيفة',
+    'never updated'=>'لم يتم تعديله',
+    'show role'=>'اعرض الوظيفة',
+    'who own this role'=>'من لديه هذه الوظيفة',
+    'active'=>'نشط',
+    'inactive'=>'غير نشط',
+    'save'=>'حفظ',
+    'cancel'=>'الغاء',
+    'update'=>'تعديل',
+];

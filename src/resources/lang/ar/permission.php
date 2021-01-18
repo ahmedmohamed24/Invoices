@@ -1,0 +1,21 @@
+<?php
+return [
+    'permission list'=>'قائمة الصلاحيات',
+    'permission'=>'الصلاحية',
+    'permissions'=>'الصلاحيات',
+    'add permission'=>'أضف صلاحية',
+    'show permission'=>'أظهر الصلاحية',
+    'who own this permission'=>'من لديه هذه الصلاحيه',
+    'guard name'=>'اسم الحارث',
+    'name'=>'الاسم',
+    'email'=>'الحساب',
+    'status'=>'الحالة',
+    'created_at'=>'أنشأ فى',
+    'updated_at'=>'تم تعديله فى',
+    'never updated'=>'لم يتم تعديله',
+    'active'=>'نشط',
+    'inactive'=>'غير نشط',
+    'save'=>'حفظ',
+    'cancel'=>'الغاء',
+    'update'=>'تعديل',
+];

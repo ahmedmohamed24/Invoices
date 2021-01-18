@@ -17,4 +17,6 @@ return [
     'users reports'=>'users reports',
     'invoices reports'=>'invoices reports',
     'archive'=>'archive',
+    'users roles'=>'users roles',
+
 ];

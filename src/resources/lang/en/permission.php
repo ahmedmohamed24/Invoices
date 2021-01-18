@@ -1,0 +1,21 @@
+<?php
+return [
+    'permission list'=>'permission list',
+    'permission'=>'permission',
+    'permissions'=>'permissions',
+    'guard name'=>'guard name',
+    'name'=>'name',
+    'email'=>'email',
+    'status'=>'status',
+    'created_at'=>'created_at',
+    'updated_at'=>'updated_at',
+    'add permission'=>'add permission',
+    'never updated'=>'never updated',
+    'show permission'=>'show permission',
+    'who own this permission'=>'who own this permission',
+    'active'=>'active',
+    'inactive'=>'inactive',
+    'save'=>'save',
+    'cancel'=>'cancel',
+    'update'=>'update',
+];
