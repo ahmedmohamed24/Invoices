@@ -2,18 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Traits\CustomResponse;
 use App\Models\Invoice;
-use Illuminate\Database\Eloquent\Collection;
+use App\Models\Department;
 use Illuminate\Http\Request;
+use App\Http\Traits\CustomResponse;
+use Illuminate\Database\Eloquent\Collection;
 
 class ReportController extends Controller
 {
     use CustomResponse;
     private Invoice $invoice;
+    private Department $department;
     public function __construct()
     {
         $this->invoice=new Invoice;
+        $this->department=new Department;
     }
     /**
      * Display a listing of the resource.
@@ -81,6 +84,25 @@ class ReportController extends Controller
         // dd($invoice->isEmpty());
         if(!$invoice->isEmpty())
             return back()->with('invoices',$invoice);
+        return  back()->with('nullResult',true);
+    }
+    public function main(){
+        $departments=$this->department::all();
+        return view('reports.departments',['departments'=>$departments]);
+    }
+    public function searchDepartment(Request $request){
+        $request->validate([
+            'department'=>['required','numeric','exists:departments,id'],
+            'product'=>['required','numeric','exists:products,id'],
+            'rangeStart'=>['required','date'],
+            'rangeEnd'=>'required|date',
+        ]);
+        $invoices=$this->invoice::where('department',$request->department)
+                        ->where('product',$request->product)
+                        ->whereBetween('created_at',[$request->rangeStart,$request->rangeEnd])
+                        ->get();
+        if(!$invoices->isEmpty())
+            return back()->with('invoices',$invoices);
         return  back()->with('nullResult',true);
     }
 

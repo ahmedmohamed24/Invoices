@@ -33,5 +33,8 @@ Route::group( [ 'prefix' => LaravelLocalization::setLocale(), 'middleware' => [ 
             Route::get('/invoice/report', [\App\Http\Controllers\ReportController::class,'index'])->name('report.index');
             Route::post('/report/range/search', [\App\Http\Controllers\ReportController::class,'searchRange'])->name('report.search.range');
             Route::post('/report/number/search', [\App\Http\Controllers\ReportController::class,'searchNumber'])->name('report.search.number');
+            //invoice reports
+            Route::get('/report/department', [\App\Http\Controllers\ReportController::class,'main'])->name('report.main');
+            Route::post('/report/department/search', [\App\Http\Controllers\ReportController::class,'searchDepartment'])->name('report.department.search');
         });
 });

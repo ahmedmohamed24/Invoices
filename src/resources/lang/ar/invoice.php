@@ -10,6 +10,7 @@ return [
     'user'=>'المستخدم',
     'product'=>'المنتج',
     'department'=>'القسم',
+    'Department'=>'القسم',
     'total'=>'المجموع',
     'status'=>'الحالة',
     'create invoice'=>"انشاء فاتورة",

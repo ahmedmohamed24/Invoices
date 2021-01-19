@@ -36,7 +36,7 @@
                                     <form action="{{ route('report.search.range') }}" method="post" class="">
                                         @csrf
                                         <div class="form-group">
-                                            <select class="form-control" multiple name='status[]'>
+                                            <select class="form-control select2" multiple name='status[]'>
                                                 <option value="all">{{ __('report.all') }}</option>
                                                 <option value="1">{{ __('report.paid') }}</option>
                                                 <option value="0">{{ __('report.not paid') }}</option>

@@ -11,6 +11,7 @@ return [
     'end range'=>'end range',
     'search'=>'search',
     'invoice number'=>'invoice number',
+    'search for department Info'=>'search for department Info',
 
 
 ];
