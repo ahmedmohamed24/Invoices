@@ -30,6 +30,8 @@ Route::group( [ 'prefix' => LaravelLocalization::setLocale(), 'middleware' => [ 
             Route::get('/invoices/export',[\App\Http\Controllers\InvoiceController::class,'exportInvoices'])->name('invoices.export');
 
             //invoice reports
-            Route::resource('/invoice/report', \App\Http\Controllers\ReportController::class);
+            Route::get('/invoice/report', [\App\Http\Controllers\ReportController::class,'index'])->name('report.index');
+            Route::post('/report/range/search', [\App\Http\Controllers\ReportController::class,'searchRange'])->name('report.search.range');
+            Route::post('/report/number/search', [\App\Http\Controllers\ReportController::class,'searchNumber'])->name('report.search.number');
         });
 });
