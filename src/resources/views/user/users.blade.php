@@ -196,14 +196,15 @@
         <!-- main-content closed -->
         <!-- edit modal -->
         <a class="hidden" id="showEditModal" data-effect="effect-scale" data-toggle="modal" href="#modaldemo1">hidden</a>
-        <form method="POST" action=""  class="modal" id="modaldemo1">
+        <form method="POST" action="{{ route('user.custom.update') }}"  class="modal" id="modaldemo1">
             @csrf
+            @method('PUT')
             <div class="modal-dialog" role="document">
                 <div class="modal-content modal-content-demo">
                     <div class="modal-header">
                         <h6 class="modal-title">{{ __('user.edit user') }}</h6><button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
                     </div>
-                    <input type="hidden" name="" id="userId-edit">
+                    <input type="hidden" name="id" id="userId-edit">
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="userName">{{ __('user.name') }}</label>
@@ -296,7 +297,7 @@
                     document.getElementById("userId-edit").value=data.data.id;
                     document.getElementById("userName-edit").value=data.data.name;
                     document.getElementById("userEmail-edit").value=data.data.email;
-                    document.getElementById("modaldemo1").action=window.location.origin+'/user/'+data.data.id;
+                    // document.getElementById("modaldemo1").action=window.location.origin+'user/custom/update';
                     switch(data.data.status){
                         case 'active':
                             document.getElementById("activeStatus").setAttribute('selected','selected');

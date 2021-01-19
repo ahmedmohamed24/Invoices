@@ -28,5 +28,8 @@ Route::group( [ 'prefix' => LaravelLocalization::setLocale(), 'middleware' => [ 
             Route::post('/invoice/attach/add',[\App\Http\Controllers\InvoiceController::class,'addAttach'])->name('attach.add');
             // Route::get('/invoice/send/mail',[\App\Http\Controllers\InvoiceController::class,'sendMail']);
             Route::get('/invoices/export',[\App\Http\Controllers\InvoiceController::class,'exportInvoices'])->name('invoices.export');
+
+            //invoice reports
+            Route::resource('/invoice/report', \App\Http\Controllers\ReportController::class);
         });
 });

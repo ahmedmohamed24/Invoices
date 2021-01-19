@@ -13,8 +13,6 @@ Route::group( [ 'prefix' => LaravelLocalization::setLocale(), 'middleware' => [ 
         Auth::routes();
         //Auth::routes(['register'=>false]);
         Route::group(['middleware'=>'auth'], function () {
-            //available links for logged users
-
             //departments routes
             Route::put('department/update',[\App\Http\Controllers\DepartmentController::class,'customUpdate'])->name('department.update.custom');
             Route::resource('department', DepartmentController::class);

@@ -114,7 +114,10 @@
 											</tr>
                                             @endforeach
 										</tbody>
-									</table>
+                                    </table>
+                                    <div class="my-2">
+                                        {{ $invoices->render() }}
+                                    </div>
 								</div>
 							</div>
 						</div>

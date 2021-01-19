@@ -18,7 +18,7 @@ class PermissionSeeder extends Seeder
             'see invoices',
             'edit invoices',
             'archive invoices',
-            'delete inooice',
+            'delete invoice',
             'restore invoices',
             'add attachment',
             'print invoice',

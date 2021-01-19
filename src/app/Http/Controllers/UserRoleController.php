@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class UserRoleController extends Controller
@@ -11,14 +12,18 @@ class UserRoleController extends Controller
     public function __construct()
     {
         $this->role=new Role;
+        $this->permission=new Permission();
     }
     public function index(){
         $roles=$this->role::paginate(20);
         return view('user.roles',['roles'=>$roles]);
     }
     public function show(int $id){
+
         $role=$this->role::with('users')->findOrFail($id);
-        return view('user.show_role',['role'=>$role]);
+        $role->givePermissionTo('edit invoices');
+        $permissions=$this->permission::all()->pluck('name');
+        return view('user.show_role',['role'=>$role,'permissions'=>$permissions]);
     }
     public function store(Request $request){
         $request->validate([
@@ -31,9 +36,21 @@ class UserRoleController extends Controller
     }
     public function update(Request $request){
         $request->validate([
-            'name'=>['required','string','unique:roles,name'],
+            'name'=>['required','string'],
+            'permissions.*'=>['nullable','string','exists:permissions,name'],
             'id'=>['required','numeric']
         ]);
+        $role=$this->role::with('permissions')->findOrFail($request->id);
+        //remove old permissions
+        foreach ($role->permissions as $permission ) {
+            $role->revokePermissionTo($permission);
+        }
+        //assign the new permissions
+        foreach($request->permissions as $permission){
+            $role->givePermissionTo($permission);
+        }
+
+        //update the name
         $this->role::findOrFail($request->id)->update([
             'name'=>$request->name,
             'updated_at'=>now()

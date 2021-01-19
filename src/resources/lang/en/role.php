@@ -18,4 +18,6 @@ return [
     'save'=>'save',
     'cancel'=>'cancel',
     'update'=>'update',
+    'assigned permissions'=>'assigned permissions',
+    'assign roles'=>'assign roles',
 ];

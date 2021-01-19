@@ -139,11 +139,68 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+       abort(404) ;
     }
+    public function customUpdate(Request $request){
+        $request->validate([
+            'id'=>['required','numeric'],
+            'name'=>['required','string','max:255'],
+            'email'=>['required','email'],
+            'status'=>['required','string','in:active,inactive'],
+            'roles.*'=>['nullable','string','exists:roles,name'],
+            'permissions.*'=>['nullable','string','exists:permissions,name'],
+        ]);
+        try{
+            $user=$this->user::with('permissions')->with('roles')->findOrFail($request->id);
+            //validate email is unique
+            if($user->email !== $request->email){
+                $countOfEmails=$this->user::where('email',$request->email)->count();
+                if($countOfEmails>0)
+                    throw new Exception('email must be unique');
+            }
 
+            DB::beginTransaction();
+            // update user
+            $isUpdated=$user->update([
+                'name'=>$request->name,
+                'email'=>$request->email,
+                'status'=>$request->status
+            ]);
+            if(!$isUpdated)
+                throw new Exception('not updated');
+            //remove old rules
+            foreach($user->roles as $role){
+                $user->removeRole($role);
+            }
+            //remove old permissions
+            foreach($user->permissions as $permission){
+                $user->revokePermissionTo($permission);
+            }
+            //assign his role
+            if($request->roles){
+                foreach($request->roles as $role){
+                    $user->assignRole($role);
+                }
+            }
+            //give direct Permssions
+            if($request->permissions){
+                foreach($request->permissions as $permission){
+                    $user->givePermissionTo($permission);
+                }
+            }
+
+            DB::commit();
+            return back()->with('success','successfully updated');
+
+        }catch(Exception $e){
+            DB::rollback();
+            // abort(404);
+            //display only for dubugging
+            return back()->with('error',$e->getMessage());
+        }
+    }
     /**
      * Remove the specified resource from storage.
      *
