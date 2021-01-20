@@ -142,31 +142,33 @@
                         {{-- attachments --}}
                         <h3 class="invoice-title">{{ __('invoice.attachments') }}</h3>
                         <div class="float-left my-2">
-                            {{-- add new attachment section --}}
-                            <a class="btn ripple btn-primary" data-target="#modaldemo7" data-toggle="modal" href="">{{ __('invoice.add attach') }}</a>
-                            <div class="modal" id="modaldemo7">
-                                <div class="modal-dialog modal-dialog-centered" role="document">
-                                    <form class="modal-content modal-content-demo" method="POST" action="{{ route('attach.add') }}" enctype="multipart/form-data">
-                                        <div class="modal-header">
-                                            <h6 class="modal-title">{{__('invoice.add attach')}}</h6><button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
-                                        </div>
-                                        @csrf
-                                        <input type="hidden" name="invoice" value="{{ $invoice->id }}">
-                                        <div class="modal-body">
-                                            <div class="">
-                                                <div class="custom-file">
-                                                    <input class="custom-file-input" name="attach" id="customFile" type="file"> <label class="custom-file-label" for="customFile">Choose file</label>
+                            @can('add attachment')
+                                {{-- add new attachment section --}}
+                                <a class="btn ripple btn-primary" data-target="#modaldemo7" data-toggle="modal" href="">{{ __('invoice.add attach') }}</a>
+                                <div class="modal" id="modaldemo7">
+                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                        <form class="modal-content modal-content-demo" method="POST" action="{{ route('attach.add') }}" enctype="multipart/form-data">
+                                            <div class="modal-header">
+                                                <h6 class="modal-title">{{__('invoice.add attach')}}</h6><button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
+                                            </div>
+                                            @csrf
+                                            <input type="hidden" name="invoice" value="{{ $invoice->id }}">
+                                            <div class="modal-body">
+                                                <div class="">
+                                                    <div class="custom-file">
+                                                        <input class="custom-file-input" name="attach" id="customFile" type="file"> <label class="custom-file-label" for="customFile">Choose file</label>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button class="btn ripple btn-primary" type="submit">{{__('invoice.add')}}</button>
-                                            <button class="btn ripple btn-secondary" data-dismiss="modal" type="reset">{{__('invoice.cancel')}}</button>
-                                        </div>
-                                    </form>
+                                            <div class="modal-footer">
+                                                <button class="btn ripple btn-primary" type="submit">{{__('invoice.add')}}</button>
+                                                <button class="btn ripple btn-secondary" data-dismiss="modal" type="reset">{{__('invoice.cancel')}}</button>
+                                            </div>
+                                        </form>
+                                    </div>
                                 </div>
-                            </div>
-                            {{-- end of adding new attachment section --}}
+                                {{-- end of adding new attachment section --}}
+                            @endcan
                         </div>
                         <div class="table-responsive mg-t-40">
                             <table class="table table-invoice border text-md-nowrap mb-0">
@@ -197,7 +199,8 @@
                                                     class="btn btn-info mt-1">
                                                     <i class="fas fa-download"></i>
                                                 </a>
-                                                <form
+                                                @can("delete attach")
+                                                 <form
                                                     action="{{ route('attach.delete', ['invoice_id' => $attachment['invoice_id'], 'attach_id' => $attachment['id']]) }}"
                                                     method="POST">
                                                     @csrf
@@ -206,6 +209,8 @@
                                                         <i class="las la-trash"></i>
                                                     </button>
                                                 </form>
+                                                @endcan
+
 
                                             </td>
                                         </tr>

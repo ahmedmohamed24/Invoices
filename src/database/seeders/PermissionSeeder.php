@@ -17,6 +17,7 @@ class PermissionSeeder extends Seeder
         $data=[
             'see invoices',
             'edit invoices',
+            'add invoice',
             'archive invoices',
             'delete invoice',
             'restore invoices',

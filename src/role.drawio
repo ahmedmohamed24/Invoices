@@ -1,74 +1,74 @@
-<mxfile host="65bd71144e" modified="2021-01-16T19:58:47.821Z" agent="5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.52.1 Chrome/83.0.4103.122 Electron/9.3.5 Safari/537.36" version="13.10.0" etag="WaQp4IKVcrShiX4eelwn" type="embed">
+<mxfile host="65bd71144e" modified="2021-01-20T13:35:49.344Z" agent="5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.52.1 Chrome/83.0.4103.122 Electron/9.3.5 Safari/537.36" etag="KJ7lt1W-S3JZRtEZf5jf" version="13.10.0" type="embed">
     <diagram id="60eonICmhS7J-1Q32GZj" name="Page-1">
-        <mxGraphModel dx="836" dy="552" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="846" dy="552" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
-                <mxCell id="6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="2" target="3">
+                <mxCell id="6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="2" target="3" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="2" target="4">
+                <mxCell id="7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="2" target="4" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="2" target="5">
+                <mxCell id="8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="2" target="5" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="23" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="2" target="21">
+                <mxCell id="23" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="2" target="21" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="2" value="Roles" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="2" value="Roles" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="365" y="10" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="3" target="14">
+                <mxCell id="17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="3" target="14" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="3" value="user" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="3" value="user" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="80" y="130" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="4" target="15">
+                <mxCell id="18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="4" target="15" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="4" value="admin" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="4" value="admin" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="260" y="120" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="5" target="16">
+                <mxCell id="19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="5" target="16" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="5" value="superAdmin" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="5" value="superAdmin" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="430" y="120" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.462;entryY=-0.009;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" target="10">
+                <mxCell id="11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.462;entryY=-0.009;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" target="10" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint x="1009" y="150" as="targetPoint"/>
                         <mxPoint x="1010" y="150" as="sourcePoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="9" value="Permissions" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="9" value="Permissions" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="965" y="80" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="10" value="&lt;span&gt;see invoices&lt;/span&gt;&lt;br&gt;&lt;span&gt;edit invoices&amp;nbsp;&lt;/span&gt;&lt;br&gt;&lt;span&gt;archive invoices&lt;/span&gt;&lt;br&gt;&lt;span&gt;delete inooice&amp;nbsp;&lt;/span&gt;&lt;br&gt;&lt;span&gt;restore invoices&lt;/span&gt;&lt;br&gt;&lt;span&gt;add attachment&lt;/span&gt;&lt;br&gt;&lt;span&gt;print invoice&lt;/span&gt;&lt;br&gt;&lt;span&gt;add department&lt;/span&gt;&lt;br&gt;&lt;span&gt;view department&lt;/span&gt;&lt;br&gt;&lt;span&gt;edit department&lt;/span&gt;&lt;br&gt;&lt;span&gt;delete department&lt;/span&gt;&lt;br&gt;&lt;span&gt;view_products&lt;/span&gt;&lt;br&gt;&lt;span&gt;add_product&lt;/span&gt;&lt;br&gt;&lt;span&gt;edit_product&lt;/span&gt;&lt;br&gt;&lt;span&gt;delete_product&lt;/span&gt;&lt;br&gt;&lt;span&gt;view_users&lt;/span&gt;&lt;br&gt;&lt;span&gt;add_user&lt;/span&gt;&lt;br&gt;&lt;span&gt;delete_user&lt;/span&gt;&lt;br&gt;&lt;span&gt;change_user_permission&lt;/span&gt;&lt;br&gt;&lt;span&gt;change_user_status&lt;/span&gt;&lt;br&gt;&lt;span&gt;add_role&lt;/span&gt;&lt;br&gt;&lt;span&gt;delete_role&lt;/span&gt;&lt;br&gt;&lt;span&gt;add_permission&lt;/span&gt;&lt;br&gt;&lt;span&gt;edit_permission&lt;/span&gt;&lt;br&gt;&lt;span&gt;remove_permission&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="10" value="&lt;span&gt;see invoices&lt;/span&gt;&lt;br&gt;&lt;span&gt;edit invoices&amp;nbsp;&lt;/span&gt;&lt;br&gt;&lt;span&gt;archive invoices&lt;/span&gt;&lt;br&gt;&lt;span&gt;delete inooice&amp;nbsp;&lt;/span&gt;&lt;br&gt;&lt;span&gt;restore invoices&lt;/span&gt;&lt;br&gt;&lt;span&gt;add attachment&lt;/span&gt;&lt;br&gt;&lt;span&gt;print invoice&lt;/span&gt;&lt;br&gt;&lt;span&gt;add department&lt;/span&gt;&lt;br&gt;&lt;span&gt;view department&lt;/span&gt;&lt;br&gt;&lt;span&gt;edit department&lt;/span&gt;&lt;br&gt;&lt;span&gt;delete department&lt;/span&gt;&lt;br&gt;&lt;span&gt;view_products&lt;/span&gt;&lt;br&gt;&lt;span&gt;add_product&lt;/span&gt;&lt;br&gt;&lt;span&gt;edit_product&lt;/span&gt;&lt;br&gt;&lt;span&gt;delete_product&lt;/span&gt;&lt;br&gt;&lt;span&gt;view_users&lt;/span&gt;&lt;br&gt;&lt;span&gt;add_user&lt;/span&gt;&lt;br&gt;&lt;span&gt;delete_user&lt;/span&gt;&lt;br&gt;&lt;span&gt;change_user_permission&lt;/span&gt;&lt;br&gt;&lt;span&gt;change_user_status&lt;/span&gt;&lt;br&gt;&lt;span&gt;add_role&lt;/span&gt;&lt;br&gt;&lt;span&gt;delete_role&lt;/span&gt;&lt;br&gt;&lt;span&gt;add_permission&lt;/span&gt;&lt;br&gt;&lt;span&gt;edit_permission&lt;/span&gt;&lt;br&gt;&lt;span&gt;remove_permission&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="920" y="190" width="210" height="390" as="geometry"/>
                 </mxCell>
-                <mxCell id="14" value="see invoices&lt;br&gt;print invoice&lt;br&gt;view department&lt;br&gt;view_products&lt;br&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="14" value="see invoices&lt;br&gt;print invoice&lt;br&gt;view department&lt;br&gt;view_products&lt;br&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="40" y="220" width="180" height="350" as="geometry"/>
                 </mxCell>
-                <mxCell id="15" value="see invoices&lt;br&gt;edit invoices&amp;nbsp;&lt;br&gt;archive invoices&lt;br&gt;add attachment&lt;br&gt;print invoice&lt;br&gt;add department&lt;br&gt;view department&lt;br&gt;edit department&lt;br&gt;view_products&lt;br&gt;add_product&lt;br&gt;edit_product&lt;br&gt;view_users&lt;br&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="15" value="see invoices&lt;br&gt;add invoice&lt;br&gt;edit invoices&lt;br&gt;archive invoices&lt;br&gt;add attachment&lt;br&gt;print invoice&lt;br&gt;add department&lt;br&gt;view department&lt;br&gt;edit department&lt;br&gt;view_products&lt;br&gt;add_product&lt;br&gt;edit_product&lt;br&gt;view_users" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="245" y="210" width="180" height="350" as="geometry"/>
                 </mxCell>
-                <mxCell id="16" value="see invoices&lt;br&gt;edit invoices&amp;nbsp;&lt;br&gt;archive invoices&lt;br&gt;delete inooice&amp;nbsp;&lt;br&gt;restore invoices&lt;br&gt;add attachment&lt;br&gt;print invoice&lt;br&gt;add department&lt;br&gt;view department&lt;br&gt;edit department&lt;br&gt;delete department&lt;br&gt;view_products&lt;br&gt;add_product&lt;br&gt;edit_product&lt;br&gt;delete_product&lt;br&gt;view_users&lt;br&gt;change_user_status" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="16" value="see invoices&lt;br&gt;edit invoices&lt;br&gt;add invoice&amp;nbsp;&lt;br&gt;archive invoices&lt;br&gt;delete inooice&amp;nbsp;&lt;br&gt;restore invoices&lt;br&gt;add attachment&lt;br&gt;print invoice&lt;br&gt;add department&lt;br&gt;view department&lt;br&gt;edit department&lt;br&gt;delete department&lt;br&gt;view_products&lt;br&gt;add_product&lt;br&gt;edit_product&lt;br&gt;delete_product&lt;br&gt;view_users&lt;br&gt;change_user_status" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="440" y="210" width="180" height="350" as="geometry"/>
                 </mxCell>
-                <mxCell id="20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.462;entryY=-0.009;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" target="22" parent="1">
+                <mxCell id="20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.462;entryY=-0.009;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" target="22" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint x="749" y="170" as="targetPoint"/>
                         <mxPoint x="750" y="170" as="sourcePoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="21" value="owner" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="21" value="owner" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="690" y="110" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="22" value="see invoices&lt;br&gt;edit invoices&amp;nbsp;&lt;br&gt;archive invoices&lt;br&gt;delete inooice&amp;nbsp;&lt;br&gt;restore invoices&lt;br&gt;add attachment&lt;br&gt;print invoice&lt;br&gt;add department&lt;br&gt;view department&lt;br&gt;edit department&lt;br&gt;delete department&lt;br&gt;view_products&lt;br&gt;add_product&lt;br&gt;edit_product&lt;br&gt;delete_product&lt;br&gt;view_users&lt;br&gt;add_user&lt;br&gt;delete_user&lt;br&gt;change_user_permission&lt;br&gt;change_user_status&lt;br&gt;add_role&lt;br&gt;delete_role&lt;br&gt;add_permission&lt;br&gt;edit_permission&lt;br&gt;remove_permission" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-                    <mxGeometry x="660" y="210" width="210" height="350" as="geometry"/>
+                <mxCell id="22" value="see invoices&lt;br&gt;edit invoices&lt;br&gt;add invoice&amp;nbsp;&lt;br&gt;archive invoices&lt;br&gt;delete inooice&amp;nbsp;&lt;br&gt;restore invoices&lt;br&gt;add attachment&lt;br&gt;print invoice&lt;br&gt;add department&lt;br&gt;view department&lt;br&gt;edit department&lt;br&gt;delete department&lt;br&gt;view_products&lt;br&gt;add_product&lt;br&gt;edit_product&lt;br&gt;delete_product&lt;br&gt;view_users&lt;br&gt;add_user&lt;br&gt;delete_user&lt;br&gt;change_user_permission&lt;br&gt;change_user_status&lt;br&gt;add_role&lt;br&gt;delete_role&lt;br&gt;add_permission&lt;br&gt;edit_permission&lt;br&gt;remove_permission" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="660" y="210" width="210" height="380" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>

@@ -38,7 +38,7 @@ class ProductController extends Controller
      */
     public function create()
     {
-       return redirect(route('product.index'));
+        return view('404');
     }
 
     /**
@@ -81,7 +81,7 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        //no logic because of using AJAX
+        return view('404');
     }
     public function update(Product $product){
         return redirect(route('product.update'));

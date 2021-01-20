@@ -38,24 +38,53 @@ class InvoiceController extends Controller
         $this->invoiceDetails=new InvoiceDetails;
         $this->attachment=new Attachment;
     }
+    protected function canShowInvoice(){
+        if((!Auth::user()->hasPermissionTo('see invoices')) and (!Auth::user()->hasRole(['user','admin','super admin','owner'])) )
+            abort(404);
+    }
+    protected function canCreateInvoice(){
+        if((!Auth::user()->hasPermissionTo('add invoice')) and (!Auth::user()->hasRole(['admin','super admin','owner'])) )
+            abort(404);
+    }
+    protected function canArchiveInvoice(){
+        if((!Auth::user()->hasPermissionTo('archive invoices')) and(!Auth::user()->hasRole(['admin','super admin','owner'])) )
+            abort(404);
+    }
+    protected function canDeleteInvoice(){
+        if((!Auth::user()->hasPermissionTo('delete inooice')) && (!Auth::user()->hasRole(['super admin','owner'])) )
+            abort(404);
+    }
+    protected function canRestoreInvoice(){
+        if((!Auth::user()->hasPermissionTo('restore invoices')) &&(!Auth::user()->hasRole(['super admin','owner'])) )
+            abort(404);
+    }
+    protected function canUpdateInvoice(){
+        if((!Auth::user()->hasPermissionTo('edit invoices')) && (!Auth::user()->hasRole(['admin','super admin','owner'])) )
+            abort(404);
+    }
     public function index()
     {
+        $this->canShowInvoice();
         $invoices=$this->invoice::with('user')->where('deleted_at',null)->paginate(30);
         return view('invoices.invoices',['invoices'=>$invoices]);
     }
     public function getPaid(){
+        $this->canShowInvoice();
         $invoices=$this->invoice::with('user')->where('status',1)->where('deleted_at',null)->paginate(30);
         return view('invoices.invoices',['invoices'=>$invoices]);
     }
     public function getArchived(){
+        $this->canShowInvoice();
         $invoices=$this->invoice::with('user')->where('deleted_at','!=',null)->paginate(30);
         return view('invoices.archive',['invoices'=>$invoices]);
     }
     public function getNotPaid(){
+        $this->canShowInvoice();
         $invoices=$this->invoice::with('user')->where('status',0)->where('deleted_at',null)->paginate(30);
         return view('invoices.invoices',['invoices'=>$invoices]);
     }
     public function getPartiallyPaid(){
+        $this->canShowInvoice();
         $invoices=$this->invoice::with('user')->where('status',2)->where('deleted_at',null)->paginate(30);
         return view('invoices.invoices',['invoices'=>$invoices]);
     }
@@ -66,6 +95,7 @@ class InvoiceController extends Controller
      */
     public function create()
     {
+        $this->canCreateInvoice();
         $departments=$this->department::all();
         return view('invoices.create',['departments'=>$departments]);
     }
@@ -78,6 +108,7 @@ class InvoiceController extends Controller
      */
     public function store(Request $request)
     {
+        $this->canCreateInvoice();
         //deduction, vat-rate, vat-value, total
         $request->validate([
             'invoiceNumber'=>'required|unique:invoices,invoice_number|string',
@@ -146,6 +177,7 @@ class InvoiceController extends Controller
      */
     public function show($id)
     {
+        $this->canShowInvoice();
        $invoice=$this->invoice::findOrFail($id);
         return view('invoices.showDetails',['invoice'=>$invoice]);
     }
@@ -158,7 +190,7 @@ class InvoiceController extends Controller
      */
     public function edit(Invoice $invoice)
     {
-        //
+        return view('404');
     }
 
     /**
@@ -170,6 +202,7 @@ class InvoiceController extends Controller
      */
     public function update(Request $request)
     {
+        $this->canUpdateInvoice();
         $validator=$request->validate([
             'id'=>"required|numeric",
             'invoiceDueDate'=>"required|date|after:today",
@@ -227,6 +260,7 @@ class InvoiceController extends Controller
      */
     public function destroy(Request $invoice)
     {
+        $this->canArchiveInvoice();
         $invoice->validate([
             'id'=>'required|numeric|exists:invoices,id'
         ]);
@@ -241,6 +275,7 @@ class InvoiceController extends Controller
      * @return object
      */
     public function getDepartmentProducts($departmentId){
+        $this->canCreateInvoice();
         $products=$this->department::findOrFail($departmentId);
         return $products->product;
     }
@@ -248,16 +283,19 @@ class InvoiceController extends Controller
      * retrieves the info of an invoice to push them in modal for updating
      */
     public function getInfo(int $id){
+        $this->canUpdateInvoice();
         $invoiceInfo=$this->invoice::select('id','due_date','total','status')->where('deleted_at',null)->findOrFail($id);
         return $this->customResponse(200,'success',$invoiceInfo);
     }
     public function downloadAttachment(int $invoice_id,int $attach_id){
+        $this->canShowInvoice();
         $attach=$this->attachment::where('invoice_id',$invoice_id)->findOrFail($attach_id);
         // $file=Storage::getDriver('public_uploads')->getAdapter()->applyPathPrefix('uploads/invoices/'.$attach['attachment-path']);
         return Storage::drive('local')->download('uploads/invoices/'.$attach['attachment-path']);
         // return response()->download($file);
     }
     public function viewAttachment(int $invoice_id,int $attach_id){
+        $this->canShowInvoice();
         $attach=$this->attachment::where('invoice_id',$invoice_id)->findOrFail($attach_id);
         // $file=Storage::getDriver('public_uploads')->getAdapter()->applyPathPrefix('uploads/invoices/'.$attach['attachment-path']);
         $img=asset(Storage::drive('local')->url('uploads/invoices/'.$attach['attachment-path']));
@@ -265,16 +303,18 @@ class InvoiceController extends Controller
         // return response()->file($url);
     }
     public function deleteAttachment(int $invoice_id,int $attach_id){
+        $this->canDeleteInvoice();
         //may delete the file from storage also
         try{
             $this->attachment::where('invoice_id',$invoice_id)->findOrFail($attach_id)->delete();
             return back()->with('msg','deleted successfully');
         }catch(Exception $e){
-            abort(404,$e->getMessage());
+            return view('404');
         }
     }
 
     public function deleteArchived(Request $invoice){
+        $this->canDeleteInvoice();
         $invoice->validate([
             'id'=>'required|numeric|exists:invoices,id'
         ]);
@@ -283,6 +323,7 @@ class InvoiceController extends Controller
     }
 
     public function restoreArchived(Request $invoice){
+        $this->canRestoreInvoice();
         $invoice->validate([
             'id'=>'required|numeric|exists:invoices,id'
         ]);
@@ -290,6 +331,7 @@ class InvoiceController extends Controller
         return back()->with('msg','successfully restored');
     }
     public function addAttach(Request $attach){
+        $this->canCreateInvoice();
         $attach->validate([
             'invoice'=>['required','numeric','exists:invoices,id'],
             'attach'=>['required','file','mimes:png,jpg,jpeg,pdf','max:2024']
@@ -304,6 +346,7 @@ class InvoiceController extends Controller
         return back()->with('msg','attachment added successfully');
     }
     public function exportInvoices(){
+        $this->canShowInvoice();
         return Excel::download(new InvociesExport, "invoices-".now()."-.xlsx");
     }
 }

@@ -38,11 +38,6 @@ class UserController extends Controller
     }
     public function index()
     {
-        // User::findOrFail(1)->assignRole('admin');
-        // User::findOrFail(1)->givePermissionTo('edit articles');
-        // Permission::create(['name'=>'write articles']);
-        // User::findOrFail(1)->givePermissionTo('write articles');
-        // User::findOrFail(1)->revokePermissionTo('write articles');
         $roles=$this->role::all()->pluck('name');
         $permissions=$this->permission::all()->pluck('name');
         $users=$this->user::paginate(10);
@@ -56,7 +51,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        return view('404');
     }
 
     /**
@@ -116,7 +111,6 @@ class UserController extends Controller
      */
     public function show(int $id)
     {
-        // $user=$this->user::select(['id','name','email','status'])->findOrFail($id);
         $user=$this->user::select(['id','name','email','status'])->with('roles')->with('permissions')->findOrFail($id);
         return $this->customResponse(200,'success',$user);
     }
@@ -129,7 +123,7 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        //
+        return view('404');
     }
 
     /**
@@ -141,7 +135,7 @@ class UserController extends Controller
      */
     public function update(Request $request)
     {
-       abort(404) ;
+        return view('404');
     }
     public function customUpdate(Request $request){
         $request->validate([
