@@ -21,5 +21,7 @@ Route::group( [ 'prefix' => LaravelLocalization::setLocale(), 'middleware' => [ 
             Route::resource('product', ProductController::class);
 
             Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+            Route::get('/profile/settings', [App\Http\Controllers\HomeController::class, 'getProfileSettings'])->name('profile.settings');
+            Route::post('/profile/settings', [App\Http\Controllers\HomeController::class, 'saveProfileSettings'])->name('profile.save');
         });
 });

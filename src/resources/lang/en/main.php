@@ -17,5 +17,12 @@ return [
     'owners'=>'owners',
     'users with no roles'=>'users with no roles',
     'user may have more than one role'=>'user may have more than one role',
+    'account settings'=>'account settings',
+    'Name'=>'Name',
+    'old password'=>'old Password',
+    'new password'=>'new Password',
+    're-password'=>'Re-password',
+    'save'=>'save',
+    'successfully updated'=>'successfully updated',
 ];
 
