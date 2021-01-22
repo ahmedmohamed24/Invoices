@@ -176,6 +176,8 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\HomeStatisticsProvider::class,
         Fx3costa\LaravelChartJs\Providers\ChartjsServiceProvider::class,
+        //ide helper
+        Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
     ],
 
     /*

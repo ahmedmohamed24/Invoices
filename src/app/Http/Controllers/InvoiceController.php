@@ -19,9 +19,10 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use App\Exports\UsersExport;
 use Maatwebsite\Excel\Facades\Excel;
+
 class InvoiceController extends Controller
 {
-    use UploadImage,CustomResponse;
+    use UploadImage, CustomResponse;
     /**
      * Display a listing of the resource.
      *
@@ -33,60 +34,70 @@ class InvoiceController extends Controller
     private Attachment $attachment;
     public function __construct()
     {
-        $this->invoice=new Invoice;
-        $this->department=new Department;
-        $this->invoiceDetails=new InvoiceDetails;
-        $this->attachment=new Attachment;
+        $this->invoice = new Invoice;
+        $this->department = new Department;
+        $this->invoiceDetails = new InvoiceDetails;
+        $this->attachment = new Attachment;
     }
-    protected function canShowInvoice(){
-        if((!Auth::user()->hasPermissionTo('see invoices')) and (!Auth::user()->hasRole(['user','admin','super admin','owner'])) )
+    protected function canShowInvoice()
+    {
+        if ((!Auth::user()->hasPermissionTo('see invoices')) and (!Auth::user()->hasRole(['user', 'admin', 'super admin', 'owner'])))
             abort(404);
     }
-    protected function canCreateInvoice(){
-        if((!Auth::user()->hasPermissionTo('add invoice')) and (!Auth::user()->hasRole(['admin','super admin','owner'])) )
+    protected function canCreateInvoice()
+    {
+        if ((!Auth::user()->hasPermissionTo('add invoice')) and (!Auth::user()->hasRole(['admin', 'super admin', 'owner'])))
             abort(404);
     }
-    protected function canArchiveInvoice(){
-        if((!Auth::user()->hasPermissionTo('archive invoices')) and(!Auth::user()->hasRole(['admin','super admin','owner'])) )
+    protected function canArchiveInvoice()
+    {
+        if ((!Auth::user()->hasPermissionTo('archive invoices')) and (!Auth::user()->hasRole(['admin', 'super admin', 'owner'])))
             abort(404);
     }
-    protected function canDeleteInvoice(){
-        if((!Auth::user()->hasPermissionTo('delete inooice')) && (!Auth::user()->hasRole(['super admin','owner'])) )
+    protected function canDeleteInvoice()
+    {
+        if ((!Auth::user()->hasPermissionTo('delete inooice')) && (!Auth::user()->hasRole(['super admin', 'owner'])))
             abort(404);
     }
-    protected function canRestoreInvoice(){
-        if((!Auth::user()->hasPermissionTo('restore invoices')) &&(!Auth::user()->hasRole(['super admin','owner'])) )
+    protected function canRestoreInvoice()
+    {
+        if ((!Auth::user()->hasPermissionTo('restore invoices')) && (!Auth::user()->hasRole(['super admin', 'owner'])))
             abort(404);
     }
-    protected function canUpdateInvoice(){
-        if((!Auth::user()->hasPermissionTo('edit invoices')) && (!Auth::user()->hasRole(['admin','super admin','owner'])) )
+    protected function canUpdateInvoice()
+    {
+        if ((!Auth::user()->hasPermissionTo('edit invoices')) && (!Auth::user()->hasRole(['admin', 'super admin', 'owner'])))
             abort(404);
     }
     public function index()
     {
         $this->canShowInvoice();
-        $invoices=$this->invoice::with('user')->where('deleted_at',null)->paginate(30);
-        return view('invoices.invoices',['invoices'=>$invoices]);
+        $invoices = $this->invoice::with('user')->where('deleted_at', null)->paginate(30);
+        return view('invoices.invoices', ['invoices' => $invoices]);
     }
-    public function getPaid(){
+    public function getPaid()
+    {
         $this->canShowInvoice();
-        $invoices=$this->invoice::with('user')->where('status',1)->where('deleted_at',null)->paginate(30);
-        return view('invoices.invoices',['invoices'=>$invoices]);
+        $invoices = $this->invoice::with('user')->where('status', 1)->where('deleted_at', null)->paginate(30);
+        return view('invoices.invoices', ['invoices' => $invoices]);
     }
-    public function getArchived(){
+    public function getArchived()
+    {
         $this->canShowInvoice();
-        $invoices=$this->invoice::with('user')->where('deleted_at','!=',null)->paginate(30);
-        return view('invoices.archive',['invoices'=>$invoices]);
+        $invoices = $this->invoice::with('user')->where('deleted_at', '!=', null)->paginate(30);
+        return view('invoices.archive', ['invoices' => $invoices]);
     }
-    public function getNotPaid(){
+    public function getNotPaid()
+    {
         $this->canShowInvoice();
-        $invoices=$this->invoice::with('user')->where('status',0)->where('deleted_at',null)->paginate(30);
-        return view('invoices.invoices',['invoices'=>$invoices]);
+        $invoices = $this->invoice::with('user')->where('status', 0)->where('deleted_at', null)->paginate(30);
+        return view('invoices.invoices', ['invoices' => $invoices]);
     }
-    public function getPartiallyPaid(){
+    public function getPartiallyPaid()
+    {
         $this->canShowInvoice();
-        $invoices=$this->invoice::with('user')->where('status',2)->where('deleted_at',null)->paginate(30);
-        return view('invoices.invoices',['invoices'=>$invoices]);
+        $invoices = $this->invoice::with('user')->where('status', 2)->where('deleted_at', null)->paginate(30);
+        return view('invoices.invoices', ['invoices' => $invoices]);
     }
     /**
      * Show the form for creating a new Invoice.
@@ -96,8 +107,8 @@ class InvoiceController extends Controller
     public function create()
     {
         $this->canCreateInvoice();
-        $departments=$this->department::all();
-        return view('invoices.create',['departments'=>$departments]);
+        $departments = $this->department::all();
+        return view('invoices.create', ['departments' => $departments]);
     }
 
     /**
@@ -111,61 +122,63 @@ class InvoiceController extends Controller
         $this->canCreateInvoice();
         //deduction, vat-rate, vat-value, total
         $request->validate([
-            'invoiceNumber'=>'required|unique:invoices,invoice_number|string',
-            'invoiceDate'=>'required|date',
-            'invoiceDueDate'=>'required|date',
-            'department'=>'required|exists:departments,id',
-            'product'=> ['required',Rule::exists('products','id')->where(function($query)use($request){$query->where('department_id',$request->department);})],
-            'commisionAmount'=>"required|numeric|min:0|max:999999",
-            'deductionAmount'=>"required|numeric|min:0|max:$request->commisionAmount",
-            'vatValue'=>"required|numeric|min:0|max:$request->commisionAmount",
-            'totalAmount'=>"required|numeric",
-            'notes'=>"string|nullable",
-            'attachments'=>'nullable|file|mimes:png,jpg,jpeg,pdf|max:2048',
+            'invoiceNumber' => 'required|unique:invoices,invoice_number|string',
+            'invoiceDate' => 'required|date',
+            'invoiceDueDate' => 'required|date',
+            'department' => 'required|exists:departments,id',
+            'product' => ['required', Rule::exists('products', 'id')->where(function ($query) use ($request) {
+                $query->where('department_id', $request->department);
+            })],
+            'commisionAmount' => "required|numeric|min:0|max:999999",
+            'deductionAmount' => "required|numeric|min:0|max:$request->commisionAmount",
+            'vatValue' => "required|numeric|min:0|max:$request->commisionAmount",
+            'totalAmount' => "required|numeric",
+            'notes' => "string|nullable",
+            'attachments' => 'nullable|file|mimes:png,jpg,jpeg,pdf|max:2048',
         ]);
-        try{
+        try {
             DB::beginTransaction(); //to make sure all data is added or all was canceled
-                $attachmentName=null;
-                if($request->hasFile('attachments')){
-                    //upload this file
-                    $attachmentName=$this->uploadAttachment($request->attachments);
-                }
-                //store main data in invoices table and get the id to store the attachments and details
-                $invoice=Invoice::create([
-                    'invoice_number'=> $request->invoiceNumber,
-                    'invoice_date'=> $request->invoiceDate,
-                    'due_date'=> $request->invoiceDueDate,
-                    'product'=> $request->product,
-                    'department'=> $request->department,
-                    'deduction'=> $request->deductionAmount,
-                    'commision_value'=> $request->commisionAmount,
-                    'vat_value'=> $request->vatValue,
-                    'total'=> $request->totalAmount,
-                    'status'=>0 ,
-                    'created_by'=> Auth::user()->id ,
-                    'deleted_at'=>null ,
-                    'created_at'=> now() ,
-                    'updated_at'=> null ,
+            $attachmentName = null;
+            if ($request->hasFile('attachments')) {
+                //upload this file
+                $attachmentName = $this->uploadAttachment($request->attachments);
+            }
+            //store main data in invoices table and get the id to store the attachments and details
+            $invoice = Invoice::create([
+                'invoice_number' => $request->invoiceNumber,
+                'invoice_date' => $request->invoiceDate,
+                'due_date' => $request->invoiceDueDate,
+                'product' => $request->product,
+                'department' => $request->department,
+                'deduction' => $request->deductionAmount,
+                'commision_value' => $request->commisionAmount,
+                'vat_value' => $request->vatValue,
+                'total' => $request->totalAmount,
+                'status' => 0,
+                'created_by' => Auth::user()->id,
+                'deleted_at' => null,
+                'created_at' => now(),
+                'updated_at' => null,
+            ]);
+            $invoiceId = $invoice->id;
+            if ($attachmentName) {
+                Attachment::create([
+                    'invoice_id' => $invoiceId,
+                    'attachment-path' => $attachmentName,
+                    'created_at' => now(),
+                    'created_by' => Auth::id(),
+                    'updated_at' => null
                 ]);
-                $invoiceId=$invoice->id;
-                if($attachmentName){
-                    Attachment::create([
-                        'invoice_id'=>$invoiceId,
-                        'attachment-path'=>$attachmentName,
-                        'created_at'=>now(),
-                        'created_by'=>Auth::id(),
-                        'updated_at'=>null
-                    ]);
-                }
+            }
             //send email to the admin that there is new attachment added
             Mail::to(env('ADMIN_MAIL'))->send(new MailInvoice($invoice));
             DB::commit();
-            return back()->with('msg','invoice added successfully');
-        }catch(Exception $e){
+            return back()->with('msg', 'invoice added successfully');
+        } catch (Exception $e) {
             //add it to log file with error message
             DB::rollback();
             // return back()->with('msg','something went wrong please contact the adminstrator');
-            return back()->with('msg',$e->getMessage());//only for debugging
+            return back()->withErrors($e->getMessage()); //only for debugging
         }
     }
 
@@ -178,8 +191,8 @@ class InvoiceController extends Controller
     public function show($id)
     {
         $this->canShowInvoice();
-       $invoice=$this->invoice::findOrFail($id);
-        return view('invoices.showDetails',['invoice'=>$invoice]);
+        $invoice = $this->invoice::findOrFail($id);
+        return view('invoices.showDetails', ['invoice' => $invoice]);
     }
 
     /**
@@ -203,53 +216,59 @@ class InvoiceController extends Controller
     public function update(Request $request)
     {
         $this->canUpdateInvoice();
-        $validator=$request->validate([
-            'id'=>"required|numeric",
-            'invoiceDueDate'=>"required|date|after:today",
-            'totalAmount'=>'required|numeric|min:0|max:999999',
-            'status'=>["required","regex:/^(0|1|2)$/i"],
-            'notes'=>'required|string',
-            'attachments'=>'nullable|file|mimes:pdf,jpg,jpeg,png'
+        $validator = $request->validate([
+            'id' => "required|numeric",
+            'invoiceDueDate' => "required|date|after:today",
+            'totalAmount' => 'required|numeric|min:0|max:999999',
+            'status' => ["required", "regex:/^(0|1|2)$/i"],
+            'notes' => 'required|string',
+            'attachments' => 'nullable|file|mimes:pdf,jpg,jpeg,png'
         ]);
         //if the data is valid, get the old data
-        $oldInvoiceData=$this->invoice::where('deleted_at',null)->findOrFail($validator['id']);
-        //change the format of status to insert it again
-        switch($oldInvoiceData->status){
-            case 'paid':
-                $status=1;
-            break;
-            case 'not_paid':
-                $status=0;
-            break;
-            default:
-                $status=2;
-        }
-        //create new row in invoice-details table
-        $detailsInfo=[
-            'invoice_id'=>$validator['id'],
-            'due_date'=>$oldInvoiceData->due_date,
-            'total'=>$oldInvoiceData->total,
-            'status'=> $status,
-            'note'=>$validator['notes'],
-            'created_by'=>Auth::user()->id,
-            'created_at'=>now()
-        ];
-        //store the fetched old data to invoice-details table
-        $this->invoiceDetails::create($detailsInfo);
-        $this->invoice::where('deleted_at',null)->findOrFail($validator['id'])->update([
-            'due_date'=>$validator['invoiceDueDate'],
-            'total'=>$validator['totalAmount'],
-            'status'=>$validator['status'],
-            'update_at'=>now(),
-        ]);
-        //check if there is an attachment and store into attachments table
-        if($request->hasFile('attachments')){
-           $attachmentName=$this->uploadAttachment($request->attachments);
-           $this->attachment::create(['invoice_id'=>$validator['id'],'attachment-path'=>$attachmentName,'created_at'=>now(),'updated_at'=>null,'created_by'=>Auth::id()]);
-        }
+        $oldInvoiceData = $this->invoice::where('deleted_at', null)->findOrFail($validator['id']);
+        try {
+            DB::beginTransaction();
 
-        return back()->with('msg','invoice updated successfully');
-
+            //change the format of status to insert it again
+            switch ($oldInvoiceData->status) {
+                case 'paid':
+                    $status = 1;
+                    break;
+                case 'not_paid':
+                    $status = 0;
+                    break;
+                default:
+                    $status = 2;
+            }
+            //create new row in invoice-details table
+            $detailsInfo = [
+                'invoice_id' => $validator['id'],
+                'due_date' => $oldInvoiceData->due_date,
+                'total' => $oldInvoiceData->total,
+                'status' => $status,
+                'note' => $validator['notes'],
+                'created_by' => Auth::user()->id,
+                'created_at' => now()
+            ];
+            //store the fetched old data to invoice-details table
+            $this->invoiceDetails::create($detailsInfo);
+            $this->invoice::where('deleted_at', null)->findOrFail($validator['id'])->update([
+                'due_date' => $validator['invoiceDueDate'],
+                'total' => $validator['totalAmount'],
+                'status' => $validator['status'],
+                'update_at' => now(),
+            ]);
+            //check if there is an attachment and store into attachments table
+            if ($request->hasFile('attachments')) {
+                $attachmentName = $this->uploadAttachment($request->attachments);
+                $this->attachment::create(['invoice_id' => $validator['id'], 'attachment-path' => $attachmentName, 'created_at' => now(), 'updated_at' => null, 'created_by' => Auth::id()]);
+            }
+            DB::commit();
+            return back()->with('msg', 'invoice updated successfully');
+        } catch (Exception $e) {
+            DB::rollback();
+            return back()->withErrors($e->getMessage()); //show these error for debugging only
+        }
     }
 
     /**
@@ -262,91 +281,97 @@ class InvoiceController extends Controller
     {
         $this->canArchiveInvoice();
         $invoice->validate([
-            'id'=>'required|numeric|exists:invoices,id'
+            'id' => 'required|numeric|exists:invoices,id'
         ]);
-        $this->invoice::where('deleted_at',null)->findOrFail($invoice->id)->update([
-            'deleted_at'=>now(),
+        $this->invoice::where('deleted_at', null)->findOrFail($invoice->id)->update([
+            'deleted_at' => now(),
         ]);
-        return back()->with('msg','successfully deleted');
+        return back()->with('msg', 'successfully deleted');
     }
     /**
      * retrieves the products based on the selected dapartment
      * @param int $departmentId
      * @return object
      */
-    public function getDepartmentProducts($departmentId){
+    public function getDepartmentProducts($departmentId)
+    {
         $this->canCreateInvoice();
-        $products=$this->department::findOrFail($departmentId);
+        $products = $this->department::findOrFail($departmentId);
         return $products->product;
     }
     /**
      * retrieves the info of an invoice to push them in modal for updating
      */
-    public function getInfo(int $id){
+    public function getInfo(int $id)
+    {
         $this->canUpdateInvoice();
-        $invoiceInfo=$this->invoice::select('id','due_date','total','status')->where('deleted_at',null)->findOrFail($id);
-        return $this->customResponse(200,'success',$invoiceInfo);
+        $invoiceInfo = $this->invoice::select('id', 'due_date', 'total', 'status')->where('deleted_at', null)->findOrFail($id);
+        return $this->customResponse(200, 'success', $invoiceInfo);
     }
-    public function downloadAttachment(int $invoice_id,int $attach_id){
+    public function downloadAttachment(int $invoice_id, int $attach_id)
+    {
         $this->canShowInvoice();
-        $attach=$this->attachment::where('invoice_id',$invoice_id)->findOrFail($attach_id);
-        // $file=Storage::getDriver('public_uploads')->getAdapter()->applyPathPrefix('uploads/invoices/'.$attach['attachment-path']);
-        return Storage::drive('local')->download('uploads/invoices/'.$attach['attachment-path']);
-        // return response()->download($file);
+        $attach = $this->attachment::where('invoice_id', $invoice_id)->findOrFail($attach_id);
+        return Storage::drive('local')->download('uploads/invoices/' . $attach['attachment-path']);
     }
-    public function viewAttachment(int $invoice_id,int $attach_id){
+    public function viewAttachment(int $invoice_id, int $attach_id)
+    {
         $this->canShowInvoice();
-        $attach=$this->attachment::where('invoice_id',$invoice_id)->findOrFail($attach_id);
-        // $file=Storage::getDriver('public_uploads')->getAdapter()->applyPathPrefix('uploads/invoices/'.$attach['attachment-path']);
-        $img=asset(Storage::drive('local')->url('uploads/invoices/'.$attach['attachment-path']));
-        return "<img src='$img' />";
-        // return response()->file($url);
+        $attach = $this->attachment::where('invoice_id', $invoice_id)->findOrFail($attach_id);
+        $img = asset(Storage::drive('local')->url('uploads/invoices/' . $attach['attachment-path']));
+        return "<img width=100% height='auto' src='$img' />";
     }
-    public function deleteAttachment(int $invoice_id,int $attach_id){
+    public function deleteAttachment(int $invoice_id, int $attach_id)
+    {
         $this->canDeleteInvoice();
         //may delete the file from storage also
-        try{
-            $this->attachment::where('invoice_id',$invoice_id)->findOrFail($attach_id)->delete();
-            return back()->with('msg','deleted successfully');
-        }catch(Exception $e){
-            return view('404');
+        try {
+            $this->attachment::where('invoice_id', $invoice_id)->findOrFail($attach_id)->delete();
+            return back()->with('msg', 'deleted successfully');
+        } catch (Exception $e) {
+            return back()->withErrors($e->getMessage());
+            // return view('404');
         }
     }
 
-    public function deleteArchived(Request $invoice){
+    public function deleteArchived(Request $invoice)
+    {
         $this->canDeleteInvoice();
         $invoice->validate([
-            'id'=>'required|numeric|exists:invoices,id'
+            'id' => 'required|numeric|exists:invoices,id'
         ]);
         $this->invoice::findOrFail($invoice->id)->delete();
-        return back()->with('msg','successfully deleted');
+        return back()->with('msg', 'successfully deleted');
     }
 
-    public function restoreArchived(Request $invoice){
+    public function restoreArchived(Request $invoice)
+    {
         $this->canRestoreInvoice();
         $invoice->validate([
-            'id'=>'required|numeric|exists:invoices,id'
+            'id' => 'required|numeric|exists:invoices,id'
         ]);
-        $this->invoice::findOrFail($invoice->id)->update(['deleted_at'=>null]);
-        return back()->with('msg','successfully restored');
+        $this->invoice::findOrFail($invoice->id)->update(['deleted_at' => null]);
+        return back()->with('msg', 'successfully restored');
     }
-    public function addAttach(Request $attach){
+    public function addAttach(Request $attach)
+    {
         $this->canCreateInvoice();
         $attach->validate([
-            'invoice'=>['required','numeric','exists:invoices,id'],
-            'attach'=>['required','file','mimes:png,jpg,jpeg,pdf','max:2024']
+            'invoice' => ['required', 'numeric', 'exists:invoices,id'],
+            'attach' => ['required', 'file', 'mimes:png,jpg,jpeg,pdf', 'max:2024']
         ]);
 
-        $img=$this->uploadAttachment($attach->attach);
+        $img = $this->uploadAttachment($attach->attach);
         $this->attachment::create([
-            'invoice_id'=>$attach->invoice,
-            'attachment-path'=>$img,
-            'created_by'=>Auth::id()
+            'invoice_id' => $attach->invoice,
+            'attachment-path' => $img,
+            'created_by' => Auth::id()
         ]);
-        return back()->with('msg','attachment added successfully');
+        return back()->with('msg', 'attachment added successfully');
     }
-    public function exportInvoices(){
+    public function exportInvoices()
+    {
         $this->canShowInvoice();
-        return Excel::download(new InvociesExport, "invoices-".now()."-.xlsx");
+        return Excel::download(new InvociesExport, "invoices-" . now() . "-.xlsx");
     }
 }

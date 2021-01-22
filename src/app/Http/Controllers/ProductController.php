@@ -26,7 +26,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = $this->product::select('id', 'img', 'description', 'title', 'department_id', 'price')->where('deleted_at',null)->paginate(10);
+        $products = $this->product::select('id', 'img', 'description', 'title', 'department_id', 'price')->where('deleted_at', null)->paginate(10);
         $departments = $this->department->select('id', 'title')->get();
         return view('settings.products', ['products' => $products, "departments" => $departments]);
     }
@@ -49,15 +49,15 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $isValid =$this->validateProduct($request);
+        $isValid = $this->validateProduct($request);
         if ($isValid->fails())
             return $this->customResponse(406, $isValid->errors(), null);
-        $newImageName=null;
+        $newImageName = null;
         if ($request->hasFile('img')) {
             //the user uploaded an image for product
-            $newImageName =$this->customUpload($request->file('img'));
+            $newImageName = $this->customUpload($request->file('img'));
         }
-        $this->createProduct($request,$newImageName);
+        $this->createProduct($request, $newImageName);
         return $this->customResponse(200, "product $request->title Uploaded");
     }
 
@@ -69,7 +69,7 @@ class ProductController extends Controller
      */
     public function show(int $id)
     {
-        $product = $this->product::where('deleted_at',null)->findOrFail($id);
+        $product = $this->product::where('deleted_at', null)->findOrFail($id);
         return $this->customResponse(200, "success", $product);
     }
 
@@ -83,7 +83,8 @@ class ProductController extends Controller
     {
         return view('404');
     }
-    public function update(Product $product){
+    public function update(Product $product)
+    {
         return redirect(route('product.update'));
     }
     /**
@@ -95,24 +96,23 @@ class ProductController extends Controller
      */
     public function customUpdate(Request $request)
     {
-        $isValid=$this->validateProduct($request);
-        if($isValid->fails())
-            return $this->customResponse(406,$isValid->errors(),null);
-        $oldProductData = $this->product::where('deleted_at',null)->findOrFail($request->product);
+        $isValid = $this->validateProduct($request);
+        if ($isValid->fails())
+            return $this->customResponse(406, $isValid->errors(), null);
+        $oldProductData = $this->product::where('deleted_at', null)->findOrFail($request->product);
 
         $newImageName = null;
         //check if the product has new image or not
-        if( $request->img !== null)
-        {
+        if ($request->img !== null) {
             //check if the product had a previous image
-            if ( $oldProductData->img !== "assets/img/ecommerce/01.jpg") {
+            if ($oldProductData->img !== "assets/img/ecommerce/01.jpg") {
                 //delete the old one
                 unlink(public_path($oldProductData->img));
             }
             $newImageName = $this->customUpload($request->file('img'));
         }
         //update using custom trait
-        $this->updateProduct($request,$newImageName);
+        $this->updateProduct($request, $newImageName);
         return $this->customResponse(200, "product /$request->title/ updated, please reload the page to view");
     }
 
@@ -124,8 +124,8 @@ class ProductController extends Controller
      */
     public function destroy(int $id)
     {
-        $this->product::where('deleted_at',null)->findOrFail($id)->update([
-            'deleted_at'=>now(),
+        $this->product::where('deleted_at', null)->findOrFail($id)->update([
+            'deleted_at' => now(),
         ]);
         //may delete it's image also
         return redirect()->back()->with('message', 'Product deleted successfully');

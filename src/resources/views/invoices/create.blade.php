@@ -27,10 +27,6 @@
     {{ __('invoice.create invoice') }}
 @endsection
 @section('content')
-@if (session('msg')!==null)
-    <p class="alert alert-success mt-2">{{ session()->get('msg') }}</p>
-
-@endif
 @if ($errors->any())
 <div class="alert alert-danger">
    @foreach ($errors->all() as $error)
