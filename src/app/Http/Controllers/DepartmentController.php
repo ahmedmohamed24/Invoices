@@ -114,7 +114,8 @@ class DepartmentController extends Controller
     {
         if (!$this->auth::user()->hasPermissionTo('delete department'))
             abort(404);
-        $this->department::findOrFail($id)->delete();
+        $department = $this->department::findOrFail($id);
+        $department->delete();
         return redirect()->back()->with('message', 'Department deleted successfully');
     }
 }

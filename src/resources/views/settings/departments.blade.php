@@ -51,7 +51,7 @@
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="col-lg-12">
-                                                    <div class="bg-gray-200 p-4">
+                                                    <div class=" p-4">
                                                         <div class="form-group">
                                                             <input class="form-control"
                                                                 placeholder="{{ __('settings.Department Title') }}" type="text"

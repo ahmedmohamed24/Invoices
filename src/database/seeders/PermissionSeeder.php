@@ -14,10 +14,12 @@ class PermissionSeeder extends Seeder
      */
     public function run()
     {
-        $data=[
+        $data = [
             'see invoices',
             'edit invoices',
             'add invoice',
+            'view_permissions',
+            'view_roles',
             'archive invoices',
             'delete invoice',
             'restore invoices',
@@ -41,10 +43,12 @@ class PermissionSeeder extends Seeder
             'add_permission',
             'edit_permission',
             'remove_permission',
+            'edit_users',
+            'edit_roles',
         ];
-        foreach($data as $permission){
-            $temp=new Permission;
-            $temp->name=$permission;
+        foreach ($data as $permission) {
+            $temp = new Permission;
+            $temp->name = $permission;
             $temp->save();
         }
     }
