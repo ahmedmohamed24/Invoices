@@ -3,31 +3,40 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Models\Permission;
 
 class UserRoleController extends Controller
 {
     private Role $role;
+    private Auth $auth;
     public function __construct()
     {
         $this->role = new Role;
+        $this->auth = new Auth;
         $this->permission = new Permission();
     }
     public function index()
     {
+        if (!$this->auth::user()->hasPermissionTo('view_roles'))
+            abort(404);
         $roles = $this->role::paginate(20);
         return view('user.roles', ['roles' => $roles]);
     }
     public function show(int $id)
     {
-
+        if (!$this->auth::user()->hasPermissionTo('view_roles'))
+            abort(404);
         $role = $this->role::with('users')->findOrFail($id);
-        $permissions = $this->permission::all()->pluck('name');
+        if ($this->auth::user()->hasPermissionTo('view_permissions'))
+            $permissions = $this->permission::all()->pluck('name');
         return view('user.show_role', ['role' => $role, 'permissions' => $permissions]);
     }
     public function store(Request $request)
     {
+        if (!$this->auth::user()->hasPermissionTo('add_role'))
+            abort(404);
         $request->validate([
             'name' => ['string', 'required', 'unique:roles,name']
         ]);
@@ -38,6 +47,8 @@ class UserRoleController extends Controller
     }
     public function update(Request $request)
     {
+        if (!$this->auth::user()->hasPermissionTo('edit_roles'))
+            abort(404);
         $request->validate([
             'name' => ['required', 'string'],
             'permissions.*' => ['nullable', 'string', 'exists:permissions,name'],
@@ -58,6 +69,8 @@ class UserRoleController extends Controller
     }
     public function destroy(Request $request)
     {
+        if (!$this->auth::user()->hasPermissionTo('delete_role'))
+            abort(404);
         $request->validate([
             'id' => ['required', 'numeric']
         ]);

@@ -87,18 +87,20 @@
                                                     class="btn btn-primary ml-2 text-light">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
-                                                <form action="{{ route('permission.destroy',$permission->id) }}" method="POST">
-                                                    @csrf
-                                                    @method('delete')
-                                                    <input type="hidden" name="id" value="{{ $permission->id }}">
-                                                    <button  class="btn btn-danger" type="submit"title="delete this permission"><i
-                                                            class="las la-trash"></i></button>
-                                                </form>
+                                                @can('remove_permission')
+                                                    <form action="{{ route('permission.destroy',$permission->id) }}" method="POST">
+                                                        @csrf
+                                                        @method('delete')
+                                                        <input type="hidden" name="id" value="{{ $permission->id }}">
+                                                        <button  class="btn btn-danger" type="submit"title="delete this permission"><i
+                                                                class="las la-trash"></i></button>
+                                                    </form>
+                                                @endcan
                                             </td>
                                         </tr>
                                     @endforeach
 
-                                    <div class="d-flex justify-content-center align-items-center my-3">{!! $permissions->render() !!}</div>
+                                    <div class="d-flex justify-content-center align-items-center my-3">{!! $permissions->links() !!}</div>
                                 </tbody>
                             </table>
                         </div>

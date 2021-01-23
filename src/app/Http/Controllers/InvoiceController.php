@@ -41,32 +41,32 @@ class InvoiceController extends Controller
     }
     protected function canShowInvoice()
     {
-        if ((!Auth::user()->hasPermissionTo('see invoices')) and (!Auth::user()->hasRole(['user', 'admin', 'super admin', 'owner'])))
+        if (!Auth::user()->hasPermissionTo('see invoices'))
             abort(404);
     }
     protected function canCreateInvoice()
     {
-        if ((!Auth::user()->hasPermissionTo('add invoice')) and (!Auth::user()->hasRole(['admin', 'super admin', 'owner'])))
+        if (!Auth::user()->hasPermissionTo('add invoice'))
             abort(404);
     }
     protected function canArchiveInvoice()
     {
-        if ((!Auth::user()->hasPermissionTo('archive invoices')) and (!Auth::user()->hasRole(['admin', 'super admin', 'owner'])))
+        if (!Auth::user()->hasPermissionTo('archive invoices'))
             abort(404);
     }
     protected function canDeleteInvoice()
     {
-        if ((!Auth::user()->hasPermissionTo('delete inooice')) && (!Auth::user()->hasRole(['super admin', 'owner'])))
+        if (!Auth::user()->hasPermissionTo('delete inooice'))
             abort(404);
     }
     protected function canRestoreInvoice()
     {
-        if ((!Auth::user()->hasPermissionTo('restore invoices')) && (!Auth::user()->hasRole(['super admin', 'owner'])))
+        if (!Auth::user()->hasPermissionTo('restore invoices'))
             abort(404);
     }
     protected function canUpdateInvoice()
     {
-        if ((!Auth::user()->hasPermissionTo('edit invoices')) && (!Auth::user()->hasRole(['admin', 'super admin', 'owner'])))
+        if (!Auth::user()->hasPermissionTo('edit invoices'))
             abort(404);
     }
     public function index()
@@ -319,7 +319,7 @@ class InvoiceController extends Controller
         $this->canShowInvoice();
         $attach = $this->attachment::where('invoice_id', $invoice_id)->findOrFail($attach_id);
         $img = asset(Storage::drive('local')->url('uploads/invoices/' . $attach['attachment-path']));
-        return "<img width=100% height='auto' src='$img' />";
+        return "<img style='max-width:100%;' height='auto' src='$img' />";
     }
     public function deleteAttachment(int $invoice_id, int $attach_id)
     {

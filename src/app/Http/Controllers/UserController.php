@@ -36,6 +36,9 @@ class UserController extends Controller
     }
     public function index()
     {
+        if (!$this->auth::user()->hasPermissionTo('view_users'))
+            abort(404);
+
         $roles = $this->role::all()->pluck('name');
         $permissions = $this->permission::all()->pluck('name');
         $users = $this->user::paginate(10);
@@ -60,6 +63,8 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        if (!$this->auth::user()->hasPermissionTo('add_user'))
+            abort(404);
         $request->validate([
             'name' => ['required', 'string', 'max:255', 'min:2'],
             'email' => ['required', 'email', 'unique:users,email', 'max:255'],
@@ -79,15 +84,14 @@ class UserController extends Controller
                 'status' => $request->status
             ]);
             //assign his role
-            if ($request->roles) {
-                foreach ($request->roles as $role) {
-                    $user->assignRole($role);
-                }
+            if ($this->auth::user()->hasPermissionTo('change_user_roles')) {
+                if ($request->roles)
+                    collect($request->roles)->map(fn ($role) => $user->assignRole($role));
             }
-            if ($request->permissions) {
-                foreach ($request->permissions as $permission) {
-                    $user->givePermissionTo($permission);
-                }
+            // assing user permissions
+            if ($this->auth::user()->hasPermissionTo('change_user_permission')) {
+                if ($request->permissions)
+                    collect($request->permissions)->map(fn ($permission) => $user->givePermissionTo($permission));
             }
 
             DB::commit();
@@ -108,6 +112,8 @@ class UserController extends Controller
      */
     public function show(int $id)
     {
+        if (!$this->auth::user()->hasPermissionTo('view_users'))
+            abort(404);
         $user = $this->user::select(['id', 'name', 'email', 'status'])->with('roles')->with('permissions')->findOrFail($id);
         return $this->customResponse(200, 'success', $user);
     }
@@ -136,6 +142,8 @@ class UserController extends Controller
     }
     public function customUpdate(Request $request)
     {
+        if (!$this->auth::user()->hasPermissionTo('edit_users'))
+            abort(404);
         $request->validate([
             'id' => ['required', 'numeric'],
             'name' => ['required', 'string', 'max:255'],
@@ -162,19 +170,24 @@ class UserController extends Controller
             ]);
             if (!$isUpdated)
                 throw new Exception('did not updated');
-            //remove old rules
-            foreach ($user->roles as $role) {
-                $user->removeRole($role);
+            if ($this->auth::user()->hasPermissionTo('change_user_roles')) {
+                //remove old rules
+                foreach ($user->roles as $role) {
+                    $user->removeRole($role);
+                }
+                //assign new roles
+                if ($request->roles)
+                    collect($request->roles)->map(fn ($role) => $user->assignRole($role));
             }
-            //remove old permissions if any
-            if ($user->permissions)
-                collect($user->permissions)->map(fn ($permission) => $user->revokePermissionTo($permission));
-            //assign his role
-            if ($request->roles)
-                collect($request->roles)->map(fn ($role) => $user->assignRole($role));
-            //give direct Permssions
-            if ($request->permissions)
-                collect($request->permissions)->map(fn ($permission) => $user->givePermissionTo($permission));
+            if ($this->auth::user()->hasPermissionTo('change_user_permission')) {
+                //remove old permissions if any
+                if ($user->permissions) {
+                    collect($user->permissions)->map(fn ($permission) => $user->revokePermissionTo($permission));
+                }
+                //give direct Permssions
+                if ($request->permissions)
+                    collect($request->permissions)->map(fn ($permission) => $user->givePermissionTo($permission));
+            }
             DB::commit();
             return back()->with('success', 'successfully updated');
         } catch (Exception $e) {
@@ -192,6 +205,8 @@ class UserController extends Controller
      */
     public function destroy(int $id)
     {
+        if (!$this->auth::user()->hasPermissionTo('delete_user'))
+            abort(404);
         try {
             $this->user::findOrFail($id)->delete();
             return back()->with('success', 'successfully deleted');

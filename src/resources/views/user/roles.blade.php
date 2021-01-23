@@ -28,32 +28,34 @@
                     @if (session('success') !== null)
                         <div class="alert alert-success my-2">{{ session()->get('success') }}</div>
                     @endif
-                    <div class="my-3">
-                        <div class="col-sm-6 col-md-4 col-xl-3">
-                            <a class="modal-effect btn btn-outline-primary btn-block" data-effect="effect-scale" data-toggle="modal" href="#modaldemo8">{{ __('role.add role') }}</a>
-                        </div>
-                        <!-- Basic modal -->
-                        <form method="POST" action="{{ route('role.store') }}"  class="modal" id="modaldemo8">
-                            @csrf
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content modal-content-demo">
-                                    <div class="modal-header">
-                                        <h6 class="modal-title">{{ __('role.add role') }}</h6><button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="form-group">
-                                            <label for="name">{{ __('user.name') }}</label>
-                                            <input class="form-control" type="text" value="{{ old('name') }}" id="name" name="name">
+                    @can('add_role')
+                        <div class="my-3">
+                            <div class="col-sm-6 col-md-4 col-xl-3">
+                                <a class="modal-effect btn btn-outline-primary btn-block" data-effect="effect-scale" data-toggle="modal" href="#modaldemo8">{{ __('role.add role') }}</a>
+                            </div>
+                            <!-- Basic modal -->
+                            <form method="POST" action="{{ route('role.store') }}"  class="modal" id="modaldemo8">
+                                @csrf
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content modal-content-demo">
+                                        <div class="modal-header">
+                                            <h6 class="modal-title">{{ __('role.add role') }}</h6><button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
                                         </div>
-                                    <div class="modal-footer">
-                                        <button class="btn ripple btn-primary" type="submit">{{ __('role.save') }}</button>
-                                        <button class="btn ripple btn-secondary" data-dismiss="modal" type="button">{{ __('role.cancel') }}</button>
+                                        <div class="modal-body">
+                                            <div class="form-group">
+                                                <label for="name">{{ __('user.name') }}</label>
+                                                <input class="form-control" type="text" value="{{ old('name') }}" id="name" name="name">
+                                            </div>
+                                        <div class="modal-footer">
+                                            <button class="btn ripple btn-primary" type="submit">{{ __('role.save') }}</button>
+                                            <button class="btn ripple btn-secondary" data-dismiss="modal" type="button">{{ __('role.cancel') }}</button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </form>
-                        <!-- end basic modal -->
-                    </div>
+                            </form>
+                            <!-- end basic modal -->
+                        </div>
+                    @endcan
                     {{-- end of creating new user modal --}}
                     <div class="row my-4">
                         <div class="table-responsive">
@@ -86,13 +88,15 @@
                                                     class="btn btn-primary ml-2 text-light">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
-                                                <form action="{{ route('role.destroy',$role->id) }}" method="POST">
-                                                    @csrf
-                                                    @method('delete')
-                                                    <input type="hidden" name="id" value="{{ $role->id }}">
-                                                    <button  class="btn btn-danger" type="submit"title="delete this role"><i
-                                                            class="las la-trash"></i></button>
-                                                </form>
+                                                @can('delete_role')
+                                                    <form action="{{ route('role.destroy',$role->id) }}" method="POST">
+                                                        @csrf
+                                                        @method('delete')
+                                                        <input type="hidden" name="id" value="{{ $role->id }}">
+                                                        <button  class="btn btn-danger" type="submit"title="delete this role"><i
+                                                                class="las la-trash"></i></button>
+                                                    </form>
+                                                @endcan
                                             </td>
                                         </tr>
                                     @endforeach

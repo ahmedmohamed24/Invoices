@@ -112,7 +112,7 @@
                                                             class="las la-pen"></i>
                                                         </a>
                                                     @endcan
-                                                    @can('delete inooice')
+                                                    @can('archive invoices')
                                                         <form action="{{ route('invoice.destroy') }}" method="POST">
                                                             @csrf
                                                             <input type="hidden" name="id" value="{{ $invoice->id }}">

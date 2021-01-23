@@ -10,13 +10,13 @@ use Illuminate\Support\Facades\Auth;
 
 class DepartmentController extends Controller
 {
-    use CustomResponse,DepartmentTrait;
+    use CustomResponse, DepartmentTrait;
     private Department $department;
     private Auth $auth;
     public function __construct(Department $department)
     {
-        $this->department=$department;
-        $this->auth=new Auth;
+        $this->department = $department;
+        $this->auth = new Auth;
     }
     /**
      * Display a listing of the resource.
@@ -25,10 +25,10 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        if((!$this->auth::user()->hasPermissionTo('view department')) or (!$this->auth::user()->hasRole(['user','admin','super admin','owner'])) )
-            return view('404');
-        $departments=$this->department::select('id','title','description')->where('deleted_at',NULL)->paginate(20);
-        return view('settings.departments',['departments'=>$departments]);
+        if (!$this->auth::user()->hasPermissionTo('view department'))
+            abort(404);
+        $departments = $this->department::select('id', 'title', 'description')->where('deleted_at', NULL)->paginate(10);
+        return view('settings.departments', ['departments' => $departments]);
     }
 
     /**
@@ -38,7 +38,7 @@ class DepartmentController extends Controller
      */
     public function create()
     {
-        return view('404');
+        abort(404);
     }
 
     /**
@@ -49,14 +49,14 @@ class DepartmentController extends Controller
      */
     public function store(Request $request)
     {
-        if((!$this->auth::user()->hasPermissionTo('add department')) or (!$this->auth::user()->hasRole(['admin','super admin','owner'])) )
-            return view('404');
-        $isValid=$this->validateDepartment($request);
-        if($isValid->fails())
-           return $this->customResponse(406,$isValid->errors()->all(),null);
+        if (!$this->auth::user()->hasPermissionTo('add department'))
+            abort(404);
+        $isValid = $this->validateDepartment($request);
+        if ($isValid->fails())
+            return $this->customResponse(406, $isValid->errors()->all(), null);
         $this->createDepartment($request);
 
-        return $this->customResponse(200,"data added successfully");
+        return $this->customResponse(200, "data added successfully");
     }
 
     /**
@@ -67,10 +67,10 @@ class DepartmentController extends Controller
      */
     public function show(int $id)
     {
-        if((!$this->auth::user()->hasPermissionTo('view department')) or (!$this->auth::user()->hasRole(['user','admin','super admin','owner'])) )
-            return view('404');
-        $department=$this->department::findOrFail($id);
-        return $this->customResponse(200,"success",$department);
+        if (!$this->auth::user()->hasPermissionTo('view department'))
+            abort(404);
+        $department = $this->department::findOrFail($id);
+        return $this->customResponse(200, "success", $department);
     }
 
     /**
@@ -79,9 +79,9 @@ class DepartmentController extends Controller
      * @param  \App\Models\Department  $department
      * @return \Illuminate\Http\Response
      */
-    public function edit(int $id)
+    public function edit(int $id = null)
     {
-        return view('404');
+        abort(404);
     }
     /**
      * Update the specified resource in storage.
@@ -91,17 +91,17 @@ class DepartmentController extends Controller
      */
     public function customUpdate(Request $request)
     {
-        if((!$this->auth::user()->hasPermissionTo('edit department')) or (!$this->auth::user()->hasRole(['admin','super admin','owner'])) )
-            return view('404');
-        $isValid=$this->validateDepartment($request);
-        if($isValid->fails()){
-            return $this->customResponse(406,$isValid->errors(),null);
+        if (!$this->auth::user()->hasPermissionTo('edit department'))
+            abort(404);
+        $isValid = $this->validateDepartment($request);
+        if ($isValid->fails()) {
+            return $this->customResponse(406, $isValid->errors(), null);
         }
-        $isUnique=$this->department::select('*')->where('title',$request->title)->where('id','!=',$request->department)->count();
-        if($isUnique!=0)
-            return $this->customResponse(406,'Title is already taken',null);
-        $this->department::findOrFail($request->department)->update(['title'=>$request->title,'description'=>$request->description,'updated_at'=>now()]);
-        return $this->customResponse(200,'Department update successfully, reload to view changes',null);
+        $isUnique = $this->department::select('*')->where('title', $request->title)->where('id', '!=', $request->department)->count();
+        if ($isUnique != 0)
+            return $this->customResponse(406, 'Title is already taken', null);
+        $this->department::findOrFail($request->department)->update(['title' => $request->title, 'description' => $request->description, 'updated_at' => now()]);
+        return $this->customResponse(200, 'Department update successfully, reload to view changes', null);
     }
 
     /**
@@ -112,9 +112,9 @@ class DepartmentController extends Controller
      */
     public function destroy(int $id)
     {
-        if((!$this->auth::user()->hasPermissionTo('delete department')) or (!$this->auth::user()->hasRole(['super admin','owner'])) )
-            return view('404');
-       $this->department::findOrFail($id)->delete();
-       return redirect()->back()->with('message','Department deleted successfully');
+        if (!$this->auth::user()->hasPermissionTo('delete department'))
+            abort(404);
+        $this->department::findOrFail($id)->delete();
+        return redirect()->back()->with('message', 'Department deleted successfully');
     }
 }

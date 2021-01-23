@@ -30,45 +30,47 @@
                     @if (session('success') !== null)
                         <div class="alert alert-success my-2">{{ session()->get('success') }}</div>
                     @endif
-                    <div class="my-3">
-                        <!-- Basic modal -->
-                        <form method="POST" action="{{ route('role.update',$role->id) }}"  class="modal" id="modaldemo8">
-                            @method('put')
-                            @csrf
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content modal-content-demo">
-                                    <div class="modal-header">
-                                        <h6 class="modal-title">{{ __('role.update') }}</h6><button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
-                                    </div>
-                                    <div class="modal-body ">
+                    @can('edit_roles')
+                        <div class="my-3">
+                            <!-- Basic modal -->
+                            <form method="POST" action="{{ route('role.update',$role->id) }}"  class="modal" id="modaldemo8">
+                                @method('put')
+                                @csrf
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content modal-content-demo">
+                                        <div class="modal-header">
+                                            <h6 class="modal-title">{{ __('role.update') }}</h6><button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
+                                        </div>
+                                        <div class="modal-body ">
 
-                                        <div class="form-group">
-                                            <label for="name">{{ __('role.name') }}</label>
-                                            <input type="hidden" name="id" value="{{ $role->id }}">
-                                            <input class="form-control" type="text" value="{{ $role->name }}" id="name" name="name">
+                                            <div class="form-group">
+                                                <label for="name">{{ __('role.name') }}</label>
+                                                <input type="hidden" name="id" value="{{ $role->id }}">
+                                                <input class="form-control" type="text" value="{{ $role->name }}" id="name" name="name">
+                                            </div>
+                                            <div class=" mb-3 d-flex flex-column">
+                                                <label >{{ __('role.assigned permissions') }}</label>
+                                                <select name='permissions[]' class="form-control select2" multiple="multiple">
+                                                    @foreach ($permissions as $permission)
+                                                        <option
+                                                            @if ($role->hasPermissionTo($permission))
+                                                                selected
+                                                            @endif>
+                                                            {{ $permission }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        <div class="modal-footer">
+                                            <button class="btn ripple btn-primary" type="submit">{{ __('role.save') }}</button>
+                                            <button class="btn ripple btn-secondary" data-dismiss="modal" type="button">{{ __('role.cancel') }}</button>
                                         </div>
-                                        <div class=" mb-3 d-flex flex-column">
-                                            <label >{{ __('role.assigned permissions') }}</label>
-                                            <select name='permissions[]' class="form-control select2" multiple="multiple">
-                                                @foreach ($permissions as $permission)
-                                                    <option
-                                                        @if ($role->hasPermissionTo($permission))
-                                                            selected
-                                                        @endif>
-                                                        {{ $permission }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    <div class="modal-footer">
-                                        <button class="btn ripple btn-primary" type="submit">{{ __('role.save') }}</button>
-                                        <button class="btn ripple btn-secondary" data-dismiss="modal" type="button">{{ __('role.cancel') }}</button>
                                     </div>
                                 </div>
-                            </div>
-                        </form>
-                        <!-- end basic modal -->
-                    </div>
+                            </form>
+                            <!-- end basic modal -->
+                        </div>
+                    @endcan
                     {{-- end of edit user modal --}}
 
                     <div class="card-body">

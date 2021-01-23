@@ -137,17 +137,24 @@
                                             </td>
                                     @endswitch
                                     <td class="d-flex">
-                                        <a href="{{ route('invoice.show',$invoice->id) }}" class="btn btn-primary ml-2 text-light">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <a class="btn btn-info ml-2 text-light"
-                                            onclick="event.preventDefault();showUpdateModel('{{ route('invoice.getInvoiceInfo',$invoice->id) }}');"><i
-                                                class="las la-pen"></i></a>
-                                        <form action="{{ route('invoice.destroy') }}" method="POST">
-                                            @csrf
-                                            <input type="hidden" name="id" value="{{ $invoice->id }}">
-                                            <button class="btn btn-danger" type="submit"><i class="las la-trash"></i></button>
-                                        </form>
+                                        @can('see invoices')
+                                            <a href="{{ route('invoice.show',$invoice->id) }}" class="btn btn-primary ml-2 text-light">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        @endcan
+                                        @can('edit invoices')
+                                            <a class="btn btn-info ml-2 text-light"
+                                                onclick="event.preventDefault();showUpdateModel('{{ route('invoice.getInvoiceInfo',$invoice->id) }}');"><i
+                                                class="las la-pen"></i>
+                                            </a>
+                                        @endcan
+                                        @can('archive invoices')
+                                            <form action="{{ route('invoice.destroy') }}" method="POST">
+                                                @csrf
+                                                <input type="hidden" name="id" value="{{ $invoice->id }}">
+                                                <button class="btn btn-danger" type="submit"><i class="las la-trash"></i></button>
+                                            </form>
+                                        @endcan
                                     </td>
                                 </tr>
                                 @endforeach

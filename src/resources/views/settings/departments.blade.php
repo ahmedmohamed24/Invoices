@@ -19,165 +19,171 @@
             {{ session('message') }}
         </div>
     @endif
-				<!-- row opened -->
-				<div class="row row-sm">
-					<div class="col-xl-12">
-						<div class="card">
-							<div class="card-header pb-0">
-								<div class="d-flex justify-content-between">
-									<h4 class="card-title mg-b-0">{{ __('settings.departments') }}</h4>
-								</div>
-                            </div>
-                            {{-- adding new deparment model --}}
-                            <div class="w-50 mt-3">
-                                <a class="modal-effect btn btn-success btn-block" data-effect="effect-scale" data-toggle="modal"
-                                    href="#modaldemo1">{{ __('settings.add department') }}</a>
-                            </div>
-                            <!-- Basic modal -->
-                            <div class="modal" id="modaldemo1">
-                                <div class="modal-dialog" role="document">
-                                    <form id="homeForm" action="{{ route('department.store') }}" method="POST"
-                                        class="modal-content modal-content-demo">
-                                        @csrf
+    <!-- row opened -->
+    <div class="row row-sm">
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="d-flex justify-content-between">
+                        <h4 class="card-title mg-b-0">{{ __('settings.departments') }}</h4>
+                    </div>
+                </div>
+                {{-- adding new deparment model --}}
+                @can('add department')
+                    <div class="w-50 mt-3">
+                        <a class="modal-effect btn btn-success btn-block" data-effect="effect-scale" data-toggle="modal"
+                            href="#modaldemo1">{{ __('settings.add department') }}</a>
+                    </div>
+                    <!-- Basic modal -->
+                    <div class="modal" id="modaldemo1">
+                        <div class="modal-dialog" role="document">
+                            <form id="homeForm" action="{{ route('department.store') }}" method="POST"
+                                class="modal-content modal-content-demo">
+                                @csrf
 
-                                        <div class="modal-header">
-                                            <h6 class="modal-title">{{ __('settings.add department') }}</h6><button aria-label="Close"
-                                                class="close" data-dismiss="modal" type="button"><span
-                                                    aria-hidden="true">&times;</span></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <div class="row">
-                                                        <div class="col-lg-12">
-                                                            <div class="bg-gray-200 p-4">
-                                                                <div class="form-group">
-                                                                    <input class="form-control"
-                                                                        placeholder="{{ __('settings.Department Title') }}" type="text"
-                                                                        name="title">
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <textarea class="form-control"
-                                                                        placeholder="{{ __('settings.Description') }}" rows="3"
-                                                                        name="description"></textarea>
-                                                                </div>
-                                                                <div class="alert alert-success mg-y-1 succesContainer d-none" role="alert">
-                                                                </div>
-                                                                <div class="alert alert-danger mg-y-1 errorContainer d-none" role="alert">
-                                                                </div>
-
-                                                            </div>
+                                <div class="modal-header">
+                                    <h6 class="modal-title">{{ __('settings.add department') }}</h6><button aria-label="Close"
+                                        class="close" data-dismiss="modal" type="button"><span
+                                            aria-hidden="true">&times;</span></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <div class="bg-gray-200 p-4">
+                                                        <div class="form-group">
+                                                            <input class="form-control"
+                                                                placeholder="{{ __('settings.Department Title') }}" type="text"
+                                                                name="title">
                                                         </div>
+                                                        <div class="form-group">
+                                                            <textarea class="form-control"
+                                                                placeholder="{{ __('settings.Description') }}" rows="3"
+                                                                name="description"></textarea>
+                                                        </div>
+                                                        <div class="alert alert-success mg-y-1 succesContainer d-none"
+                                                            role="alert">
+                                                        </div>
+                                                        <div class="alert alert-danger mg-y-1 errorContainer d-none"
+                                                            role="alert">
+                                                        </div>
+
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="modal-footer">
-                                           <button class="btn ripple btn-primary" type="submit">Save</button>
-                                            <button class="btn ripple btn-secondary" data-dismiss="modal" type="button">Close</button>
-                                        </div>
-                                    </form>
+                                    </div>
                                 </div>
-                            </div>
-                            {{-- all products view --}}
-							<div class="card-body">
-								<div class="table-responsive">
-									<table class="table table-hover mb-0 text-md-nowrap">
-										<thead>
-											<tr>
-                                                <th>#</th>
-                                                <th>{{ __('settings.title') }}</th>
-                                                <th>{{ __('settings.notes') }}</th>
-                                                <th>{{ __('settings.products number') }}</th>
-                                                <th>{{ __('settings.operations') }}</th>
-                                            </tr>
-										</thead>
-										<tbody>
-                                            @foreach ($departments as $department)
-                                                <tr>
-                                                    <td>{{ $loop->iteration}}</td>
-                                                    <td>{{ $department->title }}</td>
-                                                    <td>{{ $department->description }}</td>
-                                                    <td>{{ $department->product->count() }}</td>
-                                                    <td class="d-flex">
-                                                        <a class="btn btn-info ml-2 "
-                                                            onclick="event.preventDefault();showEditModal({{ $department->id }});"><i
-                                                                class="las la-pen"></i></a>
-                                                        @if ($department->product->count() > 0)
-                                                            <button data-placement="top" data-toggle="tooltip" title="{{ __('settings.can not delete department, if it has products') }}"  class="btn btn-danger disabled"><i class="las la-trash"></i></button>
-                                                        @else
-                                                        <form action="{{ route('department.destroy', $department->id) }}" method="POST">
-                                                            @method('DELETE')
-                                                            @csrf
-                                                            <button class="btn btn-danger"><i class="las la-trash"></i></button>
-                                                        </form>
-                                                        @endif
-
-
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-									</table>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-                <!-- /row -->
-                {{-- pagination --}}
-                <div class="d-flex justify-content-center">
-                    <ul class="pagination pagination-circled mb-0 text-center "data-placement="top" data-toggle="tooltip" title="{{ $departments->total() }} total items">
-                        <li class="page-item @if (!$departments->hasMorePages()) disabled @endif"><a class="page-link" href="{{ $departments->nextPageUrl() }}"><i class="icon ion-ios-arrow-forward"></i></a></li>
-                        <li class="page-item @if (!$departments->hasMorePages())
-                        disabled
-                        @endif"><a class="page-link" href="#">{{ $departments->currentPage()+1 }}</a></li>
-                        <li class="page-item active"><a class="page-link" href="{{ $departments->previousPageUrl() }}">{{ $departments->currentPage() }}</a></li>
-                        <li class="page-item @if ($departments->onFirstPage()) disabled @endif"><a class="page-link " href="{{ $departments->previousPageUrl() }}"><i class="icon ion-ios-arrow-back"></i></a></li>
-                    </ul>
-                </div>
-			</div>
-			<!-- Container closed -->
-		</div>
-        <!-- main-content closed -->
-    {{-- Update Model --}}
-    <div class="hidden">
-        <a class="modal-effect hidden" id="openEditModel" data-effect="effect-scale" data-toggle="modal"
-            href="#modaldemo5">Update</a>
-    </div>
-    <form method="POST" action="{{ route('department.update.custom') }}" id="updateForm" class="w-75 my-4">
-        @csrf
-        @method('PUT')
-        <div class="modal" id="modaldemo5">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content modal-content-demo">
-                    <div class="modal-header">
-                        <h6 class="modal-title">{{ __('settings.update') }}</h6><button aria-label="Close" class="close"
-                            data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
-                    </div>
-                    <div class="modal-body">
-                        <input value="" type="hidden" id="department" name="department">
-                        <div class="form-group">
-                            <input class="form-control" value="" type="text" id="departmentTitle" name="title">
-                        </div>
-                        <div class="form-group">
-                            <textarea class="form-control" value="" rows="3" id="departmentDesc"
-                                name="description"></textarea>
-                        </div>
-                        <div class="alert alert-success mg-y-1 succesContainerUpdate d-none" role="alert">
-                        </div>
-                        <div class="alert alert-danger mg-y-1 errorContainerUpdate  d-none" role="alert">
+                                <div class="modal-footer">
+                                    <button class="btn ripple btn-primary" type="submit">Save</button>
+                                    <button class="btn ripple btn-secondary" data-dismiss="modal" type="button">Close</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
-                    <div class="modal-footer">
+                @endcan
+                {{-- all products view --}}
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0 text-md-nowrap">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>{{ __('settings.title') }}</th>
+                                    <th>{{ __('settings.notes') }}</th>
+                                    <th>{{ __('settings.products number') }}</th>
+                                    <th>{{ __('settings.operations') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($departments as $department)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $department->title }}</td>
+                                        <td>{{ $department->description }}</td>
+                                        <td>{{ $department->product->count() }}</td>
+                                        <td class="d-flex">
+                                            @can('edit department')
+                                                <a class="btn btn-info ml-2 "
+                                                    onclick="event.preventDefault();showEditModal({{ $department->id }});"><i
+                                                        class="las la-pen"></i></a>
+                                            @endcan
+                                            @can('delete department')
+                                                @if ($department->product->count() > 0)
+                                                    <button data-placement="top" data-toggle="tooltip"
+                                                        title="{{ __('settings.can not delete department, if it has products') }}"
+                                                        class="btn btn-danger disabled"><i class="las la-trash"></i></button>
+                                                @else
+                                                    <form action="{{ route('department.destroy', $department->id) }}"
+                                                        method="POST">
+                                                        @method('DELETE')
+                                                        @csrf
+                                                        <button class="btn btn-danger"><i class="las la-trash"></i></button>
+                                                    </form>
+                                                @endif
+                                            @endcan
 
-                        <button class="btn ripple btn-primary" type="submit">{{ __('settings.save') }}</button>
-						<button class="btn ripple btn-secondary" data-dismiss="modal" type="button">Close</button>
+
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
-    </form>
+    </div>
+    <!-- /row -->
+    {{-- pagination --}}
+    <div class="d-flex justify-content-center">
+        {{ $departments->links() }}
+    </div>
+    </div>
+    <!-- Container closed -->
+    </div>
+    <!-- main-content closed -->
+    {{-- Update Model --}}
+    @can('edit department')
+        <div class="hidden">
+            <a class="modal-effect hidden" id="openEditModel" data-effect="effect-scale" data-toggle="modal"
+                href="#modaldemo5">Update</a>
+        </div>
+        <form method="POST" action="{{ route('department.update.custom') }}" id="updateForm" class="w-75 my-4">
+            @csrf
+            @method('PUT')
+            <div class="modal" id="modaldemo5">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content modal-content-demo">
+                        <div class="modal-header">
+                            <h6 class="modal-title">{{ __('settings.update') }}</h6><button aria-label="Close" class="close"
+                                data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
+                        </div>
+                        <div class="modal-body">
+                            <input value="" type="hidden" id="department" name="department">
+                            <div class="form-group">
+                                <input class="form-control" value="" type="text" id="departmentTitle" name="title">
+                            </div>
+                            <div class="form-group">
+                                <textarea class="form-control" value="" rows="3" id="departmentDesc"
+                                    name="description"></textarea>
+                            </div>
+                            <div class="alert alert-success mg-y-1 succesContainerUpdate d-none" role="alert">
+                            </div>
+                            <div class="alert alert-danger mg-y-1 errorContainerUpdate  d-none" role="alert">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+
+                            <button class="btn ripple btn-primary" type="submit">{{ __('settings.save') }}</button>
+                            <button class="btn ripple btn-secondary" data-dismiss="modal" type="button">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    @endcan
     <!-- End of update Model -->
 @endsection
 @section('js')
@@ -231,22 +237,18 @@
                     if (data.status == 200) {
                         successContainer.classList.remove('d-none');
                         successContainer.innerHTML = data.msg;
-                    }
-                    else
-                    {
+                    } else {
                         errorContainer.classList.remove('d-none');
-                        if(typeof(data.msg) == "string")
-                        {
+                        if (typeof(data.msg) == "string") {
                             var temp = document.createElement('P');
                             temp.innerHTML = data.msg;
                             errorContainer.appendChild(temp)
-                        }
-                        else{
+                        } else {
                             for (let msg in data.msg) {
-                            var temp = document.createElement('P');
-                            temp.innerHTML = data.msg[msg];
-                            errorContainer.appendChild(temp)
-                        }
+                                var temp = document.createElement('P');
+                                temp.innerHTML = data.msg[msg];
+                                errorContainer.appendChild(temp)
+                            }
                         }
 
 
@@ -285,18 +287,16 @@
                         successContainer.innerHTML = data.msg;
                     } else {
                         errorContainer.classList.remove('d-none');
-                        if(typeof(data.msg) == "string")
-                        {
+                        if (typeof(data.msg) == "string") {
                             var temp = document.createElement('P');
                             temp.innerHTML = data.msg;
                             errorContainer.appendChild(temp)
-                        }
-                        else{
+                        } else {
                             for (let msg in data.msg) {
-                            var temp = document.createElement('P');
-                            temp.innerHTML = data.msg[msg];
-                            errorContainer.appendChild(temp)
-                        }
+                                var temp = document.createElement('P');
+                                temp.innerHTML = data.msg[msg];
+                                errorContainer.appendChild(temp)
+                            }
                         }
 
                     }

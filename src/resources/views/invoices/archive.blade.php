@@ -88,17 +88,21 @@
                                                         </td>
                                                 @endswitch
                                                 <td class="d-flex">
-                                                    <form action="{{ route('restore.archived') }}" class="ml-2" method="POST">
-                                                        @csrf
-                                                        <input type="hidden" name="id" value="{{ $invoice->id }}">
-                                                        <button class="btn btn-warning" title="restore" type="submit"><i class="mdi mdi-refresh"></i></button>
-                                                    </form>
-                                                    <form action="{{ route('delete.archived') }}" method="POST">
-                                                        @csrf
-                                                        @method('delete')
-                                                        <input type="hidden" name="id" value="{{ $invoice->id }}">
-                                                        <button class="btn btn-danger" type="submit"><i class="las la-trash"></i></button>
-                                                    </form>
+                                                    @can('restore invoices')
+                                                        <form action="{{ route('restore.archived') }}" class="ml-2" method="POST">
+                                                            @csrf
+                                                            <input type="hidden" name="id" value="{{ $invoice->id }}">
+                                                            <button class="btn btn-warning" title="restore" type="submit"><i class="mdi mdi-refresh"></i></button>
+                                                        </form>
+                                                    @endcan
+                                                    @can('delete inooice')
+                                                        <form action="{{ route('delete.archived') }}" method="POST">
+                                                            @csrf
+                                                            @method('delete')
+                                                            <input type="hidden" name="id" value="{{ $invoice->id }}">
+                                                            <button class="btn btn-danger" type="submit"><i class="las la-trash"></i></button>
+                                                        </form>
+                                                    @endcan
                                                 </td>
 											</tr>
                                             @endforeach
