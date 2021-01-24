@@ -175,9 +175,9 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\HomeStatisticsProvider::class,
+        App\Providers\NotificationsProvider::class,
+
         Fx3costa\LaravelChartJs\Providers\ChartjsServiceProvider::class,
-        //ide helper
-        Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
     ],
 
     /*

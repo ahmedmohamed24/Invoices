@@ -27,5 +27,5 @@
 				@include('layouts.models')
             	@include('layouts.footer')
 				@include('layouts.footer-scripts')
-	</body>
+    </body>
 </html>

@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Events\InvoiceCreated;
 use App\Events\MostlyExpiredInvoices;
 use App\Listeners\AlertUserAboutInvoiceDueDate;
+use App\Listeners\NotifyUser;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -22,6 +24,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         MostlyExpiredInvoices::class => [
             AlertUserAboutInvoiceDueDate::class,
+        ],
+        InvoiceCreated::class => [
+            NotifyUser::class,
         ],
     ];
 

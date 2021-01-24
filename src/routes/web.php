@@ -1,5 +1,8 @@
 <?php
 
+use App\Events\InvoiceCreated;
+use App\Models\User;
+use App\Models\Invoice;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;

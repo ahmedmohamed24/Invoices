@@ -3,22 +3,21 @@
 namespace App\Http\Controllers;
 
 use Exception;
+use App\Models\User;
 use App\Models\Invoice;
 use App\Models\Attachment;
 use App\Models\Department;
 use Illuminate\Http\Request;
+use App\Events\InvoiceCreated;
 use App\Models\InvoiceDetails;
 use App\Exports\InvociesExport;
 use Illuminate\Validation\Rule;
 use App\Http\Traits\UploadImage;
 use Illuminate\Support\Facades\DB;
 use App\Http\Traits\CustomResponse;
-use App\Mail\Invoice as MailInvoice;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Storage;
-use App\Exports\UsersExport;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Storage;
 
 class InvoiceController extends Controller
 {
@@ -32,12 +31,16 @@ class InvoiceController extends Controller
     private Department $department;
     private InvoiceDetails $invoiceDetails;
     private Attachment $attachment;
+    private User $user;
+    private Auth $auth;
     public function __construct()
     {
         $this->invoice = new Invoice;
+        $this->user = new User;
         $this->department = new Department;
         $this->invoiceDetails = new InvoiceDetails;
         $this->attachment = new Attachment;
+        $this->auth = new Auth;
     }
     protected function canShowInvoice()
     {
@@ -170,8 +173,9 @@ class InvoiceController extends Controller
                     'updated_at' => null
                 ]);
             }
-            //send email to the admin that there is new attachment added
-            Mail::to(env('ADMIN_MAIL'))->send(new MailInvoice($invoice));
+            //fire the event ro send notfications to admins and send email to the owner
+            event(new InvoiceCreated($invoice));
+
             DB::commit();
             return back()->with('msg', 'invoice added successfully');
         } catch (Exception $e) {
@@ -365,7 +369,7 @@ class InvoiceController extends Controller
         $this->attachment::create([
             'invoice_id' => $attach->invoice,
             'attachment-path' => $img,
-            'created_by' => Auth::id()
+            'created_by' => $this->auth::id()
         ]);
         return back()->with('msg', 'attachment added successfully');
     }
@@ -373,5 +377,23 @@ class InvoiceController extends Controller
     {
         $this->canShowInvoice();
         return Excel::download(new InvociesExport, "invoices-" . now() . "-.xlsx");
+    }
+    public function markAsRead($id)
+    {
+        $notification = $this->auth::user()->notifications->where('id', $id)->first();
+        $notification->markAsRead();
+        return  redirect($notification->data['link']);
+    }
+    public function markAllAsRead()
+    {
+        if ($this->auth::user()->unreadNotifications->count()) {
+            $this->auth::user()->unreadNotifications->markAsRead();
+        }
+        return $this->customResponse(200, 'success');
+    }
+    public function showAllNotifications()
+    {
+        $notifications = $this->auth::user()->notifications;
+        return view('notificaitons.show', ['notifications' => $notifications]);
     }
 }

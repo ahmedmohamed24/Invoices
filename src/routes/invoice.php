@@ -40,6 +40,9 @@ Route::group(
                 Route::get('/report/department', [\App\Http\Controllers\ReportController::class, 'main'])->name('report.main');
                 Route::post('/report/department/search', [\App\Http\Controllers\ReportController::class, 'searchDepartment'])->name('report.department.search');
             });
+            Route::get('/notifications/read/{invoice}', [\App\Http\Controllers\InvoiceController::class, 'markAsRead'])->name('notifications.read');
+            Route::get('/notifications/readAll', [\App\Http\Controllers\InvoiceController::class, 'markAllAsRead'])->name('notifications.readAll');
+            Route::get('/notifications/show', [\App\Http\Controllers\InvoiceController::class, 'showAllNotifications'])->name('notifications.all');
         });
     }
 );
