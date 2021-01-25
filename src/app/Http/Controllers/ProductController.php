@@ -50,8 +50,9 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $isValid = $this->validateProduct($request);
-        if ($isValid->fails())
+        if ($isValid->fails()) {
             return $this->customResponse(406, $isValid->errors(), null);
+        }
         $newImageName = null;
         if ($request->hasFile('img')) {
             //the user uploaded an image for product
@@ -97,8 +98,9 @@ class ProductController extends Controller
     public function customUpdate(Request $request)
     {
         $isValid = $this->validateProduct($request);
-        if ($isValid->fails())
+        if ($isValid->fails()) {
             return $this->customResponse(406, $isValid->errors(), null);
+        }
         $oldProductData = $this->product::where('deleted_at', null)->findOrFail($request->product);
 
         $newImageName = null;

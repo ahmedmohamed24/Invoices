@@ -3,15 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Http\Traits\CustomResponse;
-use Exception;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\DB;
-use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -31,13 +31,16 @@ class UserController extends Controller
         $this->user = new User;
         $this->role = new Role;
         $this->permission = new Permission;
-        if (!$this->auth::check())
+        if (!$this->auth::check()) {
             return redirect(route('login'), 302, ['message' => 'not authenticated']);
+        }
+
     }
     public function index()
     {
-        if (!$this->auth::user()->hasPermissionTo('view_users'))
+        if (!$this->auth::user()->hasPermissionTo('view_users')) {
             abort(404);
+        }
 
         $roles = $this->role::all()->pluck('name');
         $permissions = $this->permission::all()->pluck('name');
@@ -63,8 +66,10 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        if (!$this->auth::user()->hasPermissionTo('add_user'))
+        if (!$this->auth::user()->hasPermissionTo('add_user')) {
             abort(404);
+        }
+
         $request->validate([
             'name' => ['required', 'string', 'max:255', 'min:2'],
             'email' => ['required', 'email', 'unique:users,email', 'max:255'],
@@ -81,17 +86,21 @@ class UserController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'status' => $request->status
+                'status' => $request->status,
             ]);
             //assign his role
             if ($this->auth::user()->hasPermissionTo('change_user_roles')) {
-                if ($request->roles)
-                    collect($request->roles)->map(fn ($role) => $user->assignRole($role));
+                if ($request->roles) {
+                    collect($request->roles)->map(fn($role) => $user->assignRole($role));
+                }
+
             }
             // assing user permissions
             if ($this->auth::user()->hasPermissionTo('change_user_permission')) {
-                if ($request->permissions)
-                    collect($request->permissions)->map(fn ($permission) => $user->givePermissionTo($permission));
+                if ($request->permissions) {
+                    collect($request->permissions)->map(fn($permission) => $user->givePermissionTo($permission));
+                }
+
             }
 
             DB::commit();
@@ -112,8 +121,10 @@ class UserController extends Controller
      */
     public function show(int $id)
     {
-        if (!$this->auth::user()->hasPermissionTo('view_users'))
+        if (!$this->auth::user()->hasPermissionTo('view_users')) {
             abort(404);
+        }
+
         $user = $this->user::select(['id', 'name', 'email', 'status'])->with('roles')->with('permissions')->findOrFail($id);
         return $this->customResponse(200, 'success', $user);
     }
@@ -142,8 +153,10 @@ class UserController extends Controller
     }
     public function customUpdate(Request $request)
     {
-        if (!$this->auth::user()->hasPermissionTo('edit_users'))
+        if (!$this->auth::user()->hasPermissionTo('edit_users')) {
             abort(404);
+        }
+
         $request->validate([
             'id' => ['required', 'numeric'],
             'name' => ['required', 'string', 'max:255'],
@@ -157,8 +170,10 @@ class UserController extends Controller
             //validate email is unique
             if ($user->email !== $request->email) {
                 $countOfEmails = $this->user::where('email', $request->email)->count();
-                if ($countOfEmails > 0)
+                if ($countOfEmails > 0) {
                     throw new Exception('email must be unique');
+                }
+
             }
 
             DB::beginTransaction();
@@ -166,27 +181,33 @@ class UserController extends Controller
             $isUpdated = $user->update([
                 'name' => $request->name,
                 'email' => $request->email,
-                'status' => $request->status
+                'status' => $request->status,
             ]);
-            if (!$isUpdated)
+            if (!$isUpdated) {
                 throw new Exception('did not updated');
+            }
+
             if ($this->auth::user()->hasPermissionTo('change_user_roles')) {
                 //remove old rules
                 foreach ($user->roles as $role) {
                     $user->removeRole($role);
                 }
                 //assign new roles
-                if ($request->roles)
-                    collect($request->roles)->map(fn ($role) => $user->assignRole($role));
+                if ($request->roles) {
+                    collect($request->roles)->map(fn($role) => $user->assignRole($role));
+                }
+
             }
             if ($this->auth::user()->hasPermissionTo('change_user_permission')) {
                 //remove old permissions if any
                 if ($user->permissions) {
-                    collect($user->permissions)->map(fn ($permission) => $user->revokePermissionTo($permission));
+                    collect($user->permissions)->map(fn($permission) => $user->revokePermissionTo($permission));
                 }
                 //give direct Permssions
-                if ($request->permissions)
-                    collect($request->permissions)->map(fn ($permission) => $user->givePermissionTo($permission));
+                if ($request->permissions) {
+                    collect($request->permissions)->map(fn($permission) => $user->givePermissionTo($permission));
+                }
+
             }
             DB::commit();
             return back()->with('success', 'successfully updated');
@@ -205,8 +226,10 @@ class UserController extends Controller
      */
     public function destroy(int $id)
     {
-        if (!$this->auth::user()->hasPermissionTo('delete_user'))
+        if (!$this->auth::user()->hasPermissionTo('delete_user')) {
             abort(404);
+        }
+
         try {
             $this->user::findOrFail($id)->delete();
             return back()->with('success', 'successfully deleted');

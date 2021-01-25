@@ -24,7 +24,7 @@
                                             <p class="mb-0">
                                             <b>{{ $notification->data['Description'] }}</p>
                                             <div class="d-sm-flex justify-content-between align-items-center">
-                                                <small class="text-muted "><i class="mdi mdi-clock text-muted "></i>{{  \Carbon\Carbon::parse($notification->created_at)->diffForHumans()  }}</small>
+                                                <small class="text-muted "><i class="mdi mdi-clock text-muted "></i>{{  $notification->created_at->diffForHumans()  }}</small>
                                             </div>
                                         </div>
                                     </a>

@@ -39,18 +39,18 @@
                                         class="text-primary">{{ __('invoice.created_by') }}</span><span>{{ $invoice->user->name }}
                                     </span></p>
                                 <p class="invoice-info-row text-secondary"><span
-                                        class="text-primary">{{ __('invoice.created_at') }}</span><span>{{ $invoice->created_at }}
+                                        class="text-primary">{{ __('invoice.created_at') }}</span><span>{{ $invoice->created_at->toFormattedDateString() }}
                                     </span></p>
                                 <p class="invoice-info-row text-secondary"><span
                                         class="text-primary">{{ __('invoice.updated_at') }}</span><span>
                                         @if ($invoice->updated_at)
-                                            {{ $invoice->updated_at }}
+                                            {{ $invoice->updated_at->toFormattedDateString() }}
                                         @else
                                             {{ __('invoice.not updated') }}
                                         @endif
                                     </span></p>
                                 <p class="invoice-info-row text-secondary"><span
-                                        class="text-primary">{{ __('invoice.due date') }}</span><span>{{ $invoice->due_date }}
+                                        class="text-primary">{{ __('invoice.due date') }}</span><span>{{ $invoice->due_date->toFormattedDateString()}}
                                     </span></p>
                                 @if ($invoice->deleted_at !== null)
                                 <p class="invoice-info-row text-secondary"><span
@@ -106,7 +106,7 @@
                                     @foreach ($invoice->details as $detail)
                                         <tr>
                                             <td>{{ $loop->index}}</td>
-                                            <td class="tx-right text-secondary">{{ $detail->due_date }}</td>
+                                            <td class="tx-right text-secondary">{{ $detail->due_date->toFormattedDateString() }}</td>
                                             <td class="tx-right text-info">{{ $detail->total }}</td>
                                             @switch($detail->status)
                                                 @case('paid')
@@ -188,7 +188,7 @@
                                             <td class="wd-40p"><img class='img-fluid'
                                                     src="{{ asset('storage/uploads/invoices/' . $attachment['attachment-path']) }}"
                                                     alt=""></td>
-                                            <td class="">{{ $attachment->created_at }}</td>
+                                            <td class="">{{ $attachment->created_at->toFormattedDateString() }}</td>
                                             <td class="">{{ $attachment->user->name }}</td>
                                             <td class="d-flex justify-content-between">
                                                 <a class="btn btn-purple mt-1"

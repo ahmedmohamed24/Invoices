@@ -15,6 +15,7 @@ use Illuminate\Validation\Rule;
 use App\Http\Traits\UploadImage;
 use Illuminate\Support\Facades\DB;
 use App\Http\Traits\CustomResponse;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
@@ -22,11 +23,7 @@ use Illuminate\Support\Facades\Storage;
 class InvoiceController extends Controller
 {
     use UploadImage, CustomResponse;
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     private Invoice $invoice;
     private Department $department;
     private InvoiceDetails $invoiceDetails;
@@ -44,33 +41,39 @@ class InvoiceController extends Controller
     }
     protected function canShowInvoice()
     {
-        if (!Auth::user()->hasPermissionTo('see invoices'))
+        if (!Auth::user()->hasPermissionTo('see invoices')) {
             abort(404);
+        }
     }
     protected function canCreateInvoice()
     {
-        if (!Auth::user()->hasPermissionTo('add invoice'))
+        if (!Auth::user()->hasPermissionTo('add invoice')) {
             abort(404);
+        }
     }
     protected function canArchiveInvoice()
     {
-        if (!Auth::user()->hasPermissionTo('archive invoices'))
+        if (!Auth::user()->hasPermissionTo('archive invoices')) {
             abort(404);
+        }
     }
     protected function canDeleteInvoice()
     {
-        if (!Auth::user()->hasPermissionTo('delete inooice'))
+        if (!Auth::user()->hasPermissionTo('delete inooice')) {
             abort(404);
+        }
     }
     protected function canRestoreInvoice()
     {
-        if (!Auth::user()->hasPermissionTo('restore invoices'))
+        if (!Auth::user()->hasPermissionTo('restore invoices')) {
             abort(404);
+        }
     }
     protected function canUpdateInvoice()
     {
-        if (!Auth::user()->hasPermissionTo('edit invoices'))
+        if (!Auth::user()->hasPermissionTo('edit invoices')) {
             abort(404);
+        }
     }
     public function index()
     {
@@ -120,6 +123,7 @@ class InvoiceController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+
     public function store(Request $request)
     {
         $this->canCreateInvoice();
@@ -170,9 +174,10 @@ class InvoiceController extends Controller
                     'attachment-path' => $attachmentName,
                     'created_at' => now(),
                     'created_by' => Auth::id(),
-                    'updated_at' => null
+                    'updated_at' => null,
                 ]);
             }
+
             //fire the event ro send notfications to admins and send email to the owner
             event(new InvoiceCreated($invoice));
 
@@ -226,7 +231,7 @@ class InvoiceController extends Controller
             'totalAmount' => 'required|numeric|min:0|max:999999',
             'status' => ["required", "regex:/^(0|1|2)$/i"],
             'notes' => 'required|string',
-            'attachments' => 'nullable|file|mimes:pdf,jpg,jpeg,png'
+            'attachments' => 'nullable|file|mimes:pdf,jpg,jpeg,png',
         ]);
         //if the data is valid, get the old data
         $oldInvoiceData = $this->invoice::where('deleted_at', null)->findOrFail($validator['id']);
@@ -252,7 +257,7 @@ class InvoiceController extends Controller
                 'status' => $status,
                 'note' => $validator['notes'],
                 'created_by' => Auth::user()->id,
-                'created_at' => now()
+                'created_at' => now(),
             ];
             //store the fetched old data to invoice-details table
             $this->invoiceDetails::create($detailsInfo);
@@ -285,7 +290,7 @@ class InvoiceController extends Controller
     {
         $this->canArchiveInvoice();
         $invoice->validate([
-            'id' => 'required|numeric|exists:invoices,id'
+            'id' => 'required|numeric|exists:invoices,id',
         ]);
         $this->invoice::where('deleted_at', null)->findOrFail($invoice->id)->update([
             'deleted_at' => now(),
@@ -342,7 +347,7 @@ class InvoiceController extends Controller
     {
         $this->canDeleteInvoice();
         $invoice->validate([
-            'id' => 'required|numeric|exists:invoices,id'
+            'id' => 'required|numeric|exists:invoices,id',
         ]);
         $this->invoice::findOrFail($invoice->id)->delete();
         return back()->with('msg', 'successfully deleted');
@@ -352,7 +357,7 @@ class InvoiceController extends Controller
     {
         $this->canRestoreInvoice();
         $invoice->validate([
-            'id' => 'required|numeric|exists:invoices,id'
+            'id' => 'required|numeric|exists:invoices,id',
         ]);
         $this->invoice::findOrFail($invoice->id)->update(['deleted_at' => null]);
         return back()->with('msg', 'successfully restored');
@@ -362,14 +367,14 @@ class InvoiceController extends Controller
         $this->canCreateInvoice();
         $attach->validate([
             'invoice' => ['required', 'numeric', 'exists:invoices,id'],
-            'attach' => ['required', 'file', 'mimes:png,jpg,jpeg,pdf', 'max:2024']
+            'attach' => ['required', 'file', 'mimes:png,jpg,jpeg,pdf', 'max:2024'],
         ]);
 
         $img = $this->uploadAttachment($attach->attach);
         $this->attachment::create([
             'invoice_id' => $attach->invoice,
             'attachment-path' => $img,
-            'created_by' => $this->auth::id()
+            'created_by' => $this->auth::id(),
         ]);
         return back()->with('msg', 'attachment added successfully');
     }
@@ -382,7 +387,7 @@ class InvoiceController extends Controller
     {
         $notification = $this->auth::user()->notifications->where('id', $id)->first();
         $notification->markAsRead();
-        return  redirect($notification->data['link']);
+        return redirect($notification->data['link']);
     }
     public function markAllAsRead()
     {

@@ -14,12 +14,12 @@ class Attachment extends Model
      * @var array
      */
     protected $fillable = ['attachment-path','invoice_id','created_by','created_at','updated_at'];
-
     public function invoice()
     {
-        return $this->belongsTo(\App\Models\Invoice::class,'invoice_id');
+        return $this->belongsTo(\App\Models\Invoice::class, 'invoice_id');
     }
-    public function user(){
-        return $this->belongsTo(\App\Models\User::class,'created_by');
+    public function user()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'created_by');
     }
 }

@@ -105,4 +105,5 @@ class ReportController extends Controller
             return back()->with('invoices', $invoices);
         return  back()->with('nullResult', true);
     }
+
 }
