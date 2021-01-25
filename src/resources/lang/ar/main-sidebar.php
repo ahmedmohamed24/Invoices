@@ -18,4 +18,13 @@ return [
     'invoices reports'=>'تقارير الفواتير',
     'archive'=>'الأرشيف',
     'users roles'=>'وظيفة المستخدم',
+    'notifications' => 'الاشعارات',
+    'Mark all as read' => 'تحديد كمقروء',
+    'You have' => 'لديك',
+    'unread Notifications' => 'اشعار غير مقروء',
+    'No notifications yet' => 'لا يوجد اشعارات',
+    'VIEW ALL' => 'اظهار الكل',
+    'view notifications' => 'رؤية الاشعارات',
+    'All notifications' => 'جميع الاشعارات',
+
 ];
