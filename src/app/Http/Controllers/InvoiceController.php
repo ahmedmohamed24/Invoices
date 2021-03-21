@@ -121,7 +121,6 @@ class InvoiceController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
 
     public function store(Request $request)
@@ -177,10 +176,8 @@ class InvoiceController extends Controller
                     'updated_at' => null,
                 ]);
             }
-
             //fire the event ro send notfications to admins and send email to the owner
             event(new InvoiceCreated($invoice));
-
             DB::commit();
             return back()->with('msg', 'invoice added successfully');
         } catch (Exception $e) {
