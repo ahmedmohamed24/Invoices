@@ -95,7 +95,7 @@
                                                             <button class="btn btn-warning" title="restore" type="submit"><i class="mdi mdi-refresh"></i></button>
                                                         </form>
                                                     @endcan
-                                                    @can('delete inooice')
+                                                    @can('delete invoice')
                                                         <form action="{{ route('delete.archived') }}" method="POST">
                                                             @csrf
                                                             @method('delete')
