@@ -20,6 +20,7 @@ class UserController extends Controller
     private User $user;
     private Role $role;
     private Permission $permission;
+
     /**
      * Display a listing of the resource.
      *
@@ -27,15 +28,15 @@ class UserController extends Controller
      */
     public function __construct()
     {
-        $this->auth = new Auth;
-        $this->user = new User;
-        $this->role = new Role;
-        $this->permission = new Permission;
+        $this->auth = new Auth();
+        $this->user = new User();
+        $this->role = new Role();
+        $this->permission = new Permission();
         if (!$this->auth::check()) {
             return redirect(route('login'), 302, ['message' => 'not authenticated']);
         }
-
     }
+
     public function index()
     {
         if (!$this->auth::user()->hasPermissionTo('view_users')) {
@@ -45,6 +46,7 @@ class UserController extends Controller
         $roles = $this->role::all()->pluck('name');
         $permissions = $this->permission::all()->pluck('name');
         $users = $this->user::paginate(10);
+
         return view('user.users', ['users' => $users, 'roles' => $roles, 'permissions' => $permissions]);
     }
 
@@ -61,7 +63,6 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -79,6 +80,7 @@ class UserController extends Controller
             'roles.*' => ['nullable', 'string', 'exists:roles,name'],
             'permissions.*' => ['nullable', 'string', 'exists:permissions,name'],
         ]);
+
         try {
             DB::beginTransaction();
             // save the user to database
@@ -91,19 +93,18 @@ class UserController extends Controller
             //assign his role
             if ($this->auth::user()->hasPermissionTo('change_user_roles')) {
                 if ($request->roles) {
-                    collect($request->roles)->map(fn($role) => $user->assignRole($role));
+                    collect($request->roles)->map(fn ($role) => $user->assignRole($role));
                 }
-
             }
             // assing user permissions
             if ($this->auth::user()->hasPermissionTo('change_user_permission')) {
                 if ($request->permissions) {
-                    collect($request->permissions)->map(fn($permission) => $user->givePermissionTo($permission));
+                    collect($request->permissions)->map(fn ($permission) => $user->givePermissionTo($permission));
                 }
-
             }
 
             DB::commit();
+
             return back()->with('success', 'successfully added');
         } catch (Exception $e) {
             DB::rollback();
@@ -116,7 +117,6 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function show(int $id)
@@ -126,13 +126,15 @@ class UserController extends Controller
         }
 
         $user = $this->user::select(['id', 'name', 'email', 'status'])->with('roles')->with('permissions')->findOrFail($id);
+
         return $this->customResponse(200, 'success', $user);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -143,14 +145,15 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request)
     {
         abort(404);
     }
+
     public function customUpdate(Request $request)
     {
         if (!$this->auth::user()->hasPermissionTo('edit_users')) {
@@ -165,6 +168,7 @@ class UserController extends Controller
             'roles.*' => ['nullable', 'string', 'exists:roles,name'],
             'permissions.*' => ['nullable', 'string', 'exists:permissions,name'],
         ]);
+
         try {
             $user = $this->user::with('permissions')->with('roles')->findOrFail($request->id);
             //validate email is unique
@@ -173,7 +177,6 @@ class UserController extends Controller
                 if ($countOfEmails > 0) {
                     throw new Exception('email must be unique');
                 }
-
             }
 
             DB::beginTransaction();
@@ -194,22 +197,21 @@ class UserController extends Controller
                 }
                 //assign new roles
                 if ($request->roles) {
-                    collect($request->roles)->map(fn($role) => $user->assignRole($role));
+                    collect($request->roles)->map(fn ($role) => $user->assignRole($role));
                 }
-
             }
             if ($this->auth::user()->hasPermissionTo('change_user_permission')) {
                 //remove old permissions if any
                 if ($user->permissions) {
-                    collect($user->permissions)->map(fn($permission) => $user->revokePermissionTo($permission));
+                    collect($user->permissions)->map(fn ($permission) => $user->revokePermissionTo($permission));
                 }
                 //give direct Permssions
                 if ($request->permissions) {
-                    collect($request->permissions)->map(fn($permission) => $user->givePermissionTo($permission));
+                    collect($request->permissions)->map(fn ($permission) => $user->givePermissionTo($permission));
                 }
-
             }
             DB::commit();
+
             return back()->with('success', 'successfully updated');
         } catch (Exception $e) {
             DB::rollback();
@@ -218,10 +220,10 @@ class UserController extends Controller
             return back()->withErrors($e->getMessage());
         }
     }
+
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy(int $id)
@@ -232,6 +234,7 @@ class UserController extends Controller
 
         try {
             $this->user::findOrFail($id)->delete();
+
             return back()->with('success', 'successfully deleted');
         } catch (Exception $e) {
             //only for debugging

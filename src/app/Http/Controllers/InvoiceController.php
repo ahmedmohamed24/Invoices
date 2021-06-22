@@ -151,7 +151,7 @@ class InvoiceController extends Controller
                     'updated_at' => null,
                 ]);
             }
-            //fire the event ro send notfications to admins and send email to the owner
+            //fire the event ro send notifications to admins and send email to the owner
             event(new InvoiceCreated($invoice));
             DB::commit();
 
@@ -159,7 +159,7 @@ class InvoiceController extends Controller
         } catch (Exception $e) {
             //add it to log file with error message
             DB::rollback();
-            // return back()->with('msg','something went wrong please contact the adminstrator');
+            // return back()->with('msg','something went wrong please contact the adminstration');
             return back()->withErrors($e->getMessage()); //only for debugging
         }
     }
@@ -283,7 +283,7 @@ class InvoiceController extends Controller
     }
 
     /**
-     * retrieves the products based on the selected dapartment.
+     * retrieves the products based on the selected department.
      *
      * @param int $departmentId
      *
@@ -335,7 +335,6 @@ class InvoiceController extends Controller
             return back()->with('msg', 'deleted successfully');
         } catch (Exception $e) {
             return back()->withErrors($e->getMessage());
-            // return view('404');
         }
     }
 

@@ -15,17 +15,16 @@ class HomeController extends Controller
 
     /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct()
     {
-        $this->auth = new Auth;
-        $this->user = new User;
-        $this->hash = new Hash;
+        $this->auth = new Auth();
+        $this->user = new User();
+        $this->hash = new Hash();
         $this->middleware('auth');
-        if (!$this->auth::check())
+        if (!$this->auth::check()) {
             return redirect(route('login'), 302, ['message' => 'not authenticated']);
+        }
     }
 
     /**
@@ -36,9 +35,7 @@ class HomeController extends Controller
     public function index()
     {
         $allUsers = $this->user::count();
-        $activeUsers = $this->user::where('status', 'active')->count();
         $inActiveUsers = $this->user::where('status', 'active')->count();
-        $percentActive = [($activeUsers / $allUsers) * 100];
         $percentActive = [($inActiveUsers / $allUsers) * 100];
         $chartjs = app()->chartjs
             ->name('pieChartTest')
@@ -49,34 +46,38 @@ class HomeController extends Controller
                 [
                     'backgroundColor' => ['#15a878', '#f85d77'],
                     'hoverBackgroundColor' => ['#15a878', '#f85d77'],
-                    'data' => [$percentActive, $inActiveUsers]
-                ]
+                    'data' => [$percentActive, $inActiveUsers],
+                ],
             ])
-            ->options([]);
+            ->options([])
+        ;
+
         return view('home.index', compact('chartjs'));
     }
+
     public function getProfileSettings()
     {
         return view('home.profile-settings');
     }
+
     public function saveProfileSettings(Request $request)
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'password' => 'required|string',
             'newPassword' => ['required_with:rePassword', 'same:rePassword', 'min:8'],
-            'rePassword' => 'required|min:8'
+            'rePassword' => 'required|min:8',
         ]);
         if (!$this->hash::check($request->password, $request->user()->password)) {
             return back()->withErrors([
-                'password' => ['The provided password does not match our records.']
+                'password' => ['The provided password does not match our records.'],
             ]);
         }
         $this->user::findOrFail($this->auth::user()->id)->update([
             'name' => $request->name,
-            'password' => $this->hash::make($request->newPassword)
+            'password' => $this->hash::make($request->newPassword),
         ]);
-        // $this->auth::logoutOtherDevices();
+
         return back()->with('msg', 'successfully updated');
     }
 }

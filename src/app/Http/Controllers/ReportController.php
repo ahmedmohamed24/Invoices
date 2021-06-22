@@ -2,20 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Invoice;
-use App\Models\Department;
-use Illuminate\Http\Request;
 use App\Http\Traits\CustomResponse;
+use App\Models\Department;
+use App\Models\Invoice;
+use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
     use CustomResponse;
     private Invoice $invoice;
     private Department $department;
+
     public function __construct()
     {
-        $this->invoice = new Invoice;
-        $this->department = new Department;
+        $this->invoice = new Invoice();
+        $this->department = new Department();
     }
 
     /**
@@ -27,6 +28,7 @@ class ReportController extends Controller
     {
         return view('reports.invoice');
     }
+
     public function searchRange(Request $request)
     {
         $request->validate([
@@ -41,11 +43,11 @@ class ReportController extends Controller
             $data = $this->invoice::whereBetween('invoice_date', [$request->rangeStart, $request->rangeEnd])->get();
         } else {
             if (in_array('archive', $request->status)) {
-                if (count($request->status) === 1) {
+                if (1 === count($request->status)) {
                     //only archived choosed
                     $data = $this->invoice::where('deleted_at', '!=', null)
                         ->whereBetween('invoice_date', [$request->rangeStart, $request->rangeEnd])->get();
-                } else
+                } else {
                     $data = $this->invoice::where('deleted_at', '!=', null)
                         ->whereBetween('invoice_date', [$request->rangeStart, $request->rangeEnd])
                         ->where(function ($query) use ($request) {
@@ -53,9 +55,12 @@ class ReportController extends Controller
                                 ->orWhere('status', $request->status[1] ?? null)
                                 ->orWhere('status', $request->status[2] ?? null)
                                 ->orWhere('status', $request->status[3] ?? null)
-                                ->orWhere('status', $request->status[4] ?? null);
+                                ->orWhere('status', $request->status[4] ?? null)
+                            ;
                         })
-                        ->get();
+                        ->get()
+                    ;
+                }
             } else {
                 $data = $this->invoice::where('deleted_at', null)
                     ->whereBetween('invoice_date', [$request->rangeStart, $request->rangeEnd])
@@ -64,31 +69,40 @@ class ReportController extends Controller
                             ->orWhere('status', $request->status[1] ?? null)
                             ->orWhere('status', $request->status[2] ?? null)
                             ->orWhere('status', $request->status[3] ?? null)
-                            ->orWhere('status', $request->status[4] ?? null);
+                            ->orWhere('status', $request->status[4] ?? null)
+                        ;
                     })
-                    ->get();
+                    ->get()
+                ;
             }
         }
-        if ($data)
-            return  back()->with('invoices', $data);
+        if ($data) {
+            return back()->with('invoices', $data);
+        }
         //if no data found
-        return  back()->with('nullResult', true);
+        return back()->with('nullResult', true);
     }
+
     public function searchNumber(Request $request)
     {
         $request->validate([
-            'invoice_number' => ['required', 'string', 'max:255']
+            'invoice_number' => ['required', 'string', 'max:255'],
         ]);
         $invoice = $this->invoice::where('invoice_number', $request->invoice_number)->get();
-        if (!$invoice->isEmpty())
+        if (!$invoice->isEmpty()) {
             return back()->with('invoices', $invoice);
-        return  back()->with('nullResult', true);
+        }
+
+        return back()->with('nullResult', true);
     }
+
     public function main()
     {
         $departments = $this->department::all();
+
         return view('reports.departments', ['departments' => $departments]);
     }
+
     public function searchDepartment(Request $request)
     {
         $request->validate([
@@ -100,10 +114,12 @@ class ReportController extends Controller
         $invoices = $this->invoice::where('department', $request->department)
             ->where('product', $request->product)
             ->whereBetween('created_at', [$request->rangeStart, $request->rangeEnd])
-            ->get();
-        if (!$invoices->isEmpty())
+            ->get()
+        ;
+        if (!$invoices->isEmpty()) {
             return back()->with('invoices', $invoices);
-        return  back()->with('nullResult', true);
-    }
+        }
 
+        return back()->with('nullResult', true);
+    }
 }

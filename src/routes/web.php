@@ -1,19 +1,16 @@
 <?php
 
-use App\Events\InvoiceCreated;
-use App\Models\User;
-use App\Models\Invoice;
+use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\DepartmentController;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 Route::group(
     ['prefix' => LaravelLocalization::setLocale(), 'middleware' => ['localeSessionRedirect', 'localizationRedirect', 'localeViewPath']],
     function () {
         //only for logging
-        Auth::routes(['register'=>false]);
+        Auth::routes(['register' => false]);
         Route::group(['middleware' => 'auth'], function () {
             //departments routes
             Route::put('department/update', [\App\Http\Controllers\DepartmentController::class, 'customUpdate'])->middleware('can:edit department')->name('department.update.custom');
